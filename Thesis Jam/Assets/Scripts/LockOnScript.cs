@@ -5,14 +5,14 @@ using UnityEngine;
 public class LockOnScript : MonoBehaviour {
 	public GameObject newTarget;
 	public GameObject currentTarget;
-	Vector3 sphereLoc = new Vector3 (0, 0, 0);
+	Vector3 sphereLoc;
 	public float sphereRad = 10.0f;
 	// Use this for initialization
 	void Update () {
-		
-		transform.localPosition = sphereLoc;
+		sphereLoc = transform.position;
 		LockOnCheck ();
 		lockOn ();
+//		unlock ();
 	}
 	
 	void LockOnCheck (){
@@ -27,19 +27,23 @@ public class LockOnScript : MonoBehaviour {
 					}
 				}
 			}
-		if (newTarget != null && Input.GetButtonDown ("R3Down")) {
-			currentTarget = null;
-		}
 
 		}
 
-	void lockOn (){
+	void lockOn ()
+	{
 		if (currentTarget != null) {
 			Transform target = currentTarget.transform;
 			transform.LookAt (target);
 
 		}
 	}
+		void unlock ()
+		{
+		if (currentTarget != null && Input.GetButtonDown ("R3Down")) {
+						currentTarget = null;
+						}
+		}
 
 }
 
