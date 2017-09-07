@@ -1,50 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using InControl;
 
 
 public class ControllerManager : MonoBehaviour {
     public static ControllerManager instance;
-    public string moveHorizontalAxis;
-    public string moveVerticalAxis;
-    public string jumpButton;
-    public string cameraHorizontalAxis;
-    public string cameraVerticalAxis;
-    public string fireButton;
-    public string fireTrigger;
-    public string aimButton;
-    public string aimTrigger;
-    public string sprintButton;
-    public string MenuButton;
-    public string BackButton;
+ 
+    private InputDevice myController;
 
     private void Awake() {
         instance = this;
+        myController = InputManager.ActiveDevice;
 
-        moveHorizontalAxis = "Horizontal";
-        moveVerticalAxis = "Vertical";
 
-        jumpButton = "Jump";
 
-		cameraHorizontalAxis = "RightStickHorizontal";
-		cameraVerticalAxis = "RightStickVertical";
-
-        fireButton = "Fire";
-        fireTrigger = "Right_Trigger";
-        aimButton = "Aim";
-        aimTrigger = "Left_Trigger";
-
-        sprintButton = "Sprint";
-
-        MenuButton = "Menu";
-        BackButton = "Back";
 
 #if UNITY_EDITOR
 
 #endif
 
 #if UNITY_STANDALONE
-        
+
 #endif
 
 #if UNITY_ANDROID
@@ -65,31 +42,50 @@ public class ControllerManager : MonoBehaviour {
 #endif
     }
 
+    void Update()
+    {
+        myController = InputManager.ActiveDevice;
+    }
+
+
+    public Vector3 OnRotate() {
+        return new Vector3(myController.RightStickX, -myController.RightStickY, 0);
+        
+    }
+
     public Vector3 OnMove() {
-        return new Vector3(Input.GetAxis(moveHorizontalAxis), 0, Input.GetAxis(moveVerticalAxis));
+        return new Vector3(myController.LeftStickX, 0, myController.LeftStickY);
     }
 
-    public bool OnJump() {
-        return Input.GetButtonDown(jumpButton);
+    public bool OnDodge() {
+        return myController.Action2.WasReleased;
     }
 
-    public bool OnAim() {
-        return (Input.GetButton(aimButton) || Input.GetAxis(aimTrigger) > 0.2f);
+    public bool onLock() {
+        return myController.LeftBumper.WasPressed;
+    }
+    public bool Unlock()
+    {
+        return myController.LeftBumper.WasReleased;
     }
 
     public bool OnSprint() {
-        return Input.GetButton(sprintButton);
+        return myController.Action2.WasPressed;
     }
 
-    public bool OnFire() {
-        return (Input.GetButton(fireButton) || Input.GetAxis(fireTrigger) > 0.2f);
+    public bool onShoot() {
+        return (myController.Action4.WasReleased);
+    }
+
+    public bool onMelee()
+    {
+        return (myController.Action3.WasReleased);
     }
 
     public bool OnMenu() {
-        return Input.GetButtonUp(MenuButton);
+        return (myController.Command);
     }
 
-    public bool OnBack() {
-        return Input.GetButtonUp(BackButton);
-    }
+    // FOR LATER return (Input.GetButton(aimButton) || Input.GetAxis(aimTrigger) > 0.2f)
 }
+

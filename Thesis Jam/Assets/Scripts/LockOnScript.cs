@@ -5,6 +5,7 @@ using UnityEngine;
 public class LockOnScript : MonoBehaviour {
 	public GameObject newTarget;
 	public GameObject currentTarget;
+    private GameObject playerCamera;
 	Vector3 sphereLoc;
 	public float sphereRad = 10.0f;
 	// Use this for initialization
@@ -17,14 +18,19 @@ public class LockOnScript : MonoBehaviour {
 	
 	void LockOnCheck (){
 		Collider[] checkColliders = Physics.OverlapSphere (sphereLoc, sphereRad);
-		if (currentTarget == null && Input.GetButtonDown ("R3Down")) {
-			float distance = Mathf.Infinity;
-			foreach (Collider c in checkColliders) {
-				if (c.gameObject.tag == "Enemy") {
-					if (Vector3.Distance (c.gameObject.transform.position, transform.position) < distance)
-						currentTarget = c.gameObject;
-					distance = Vector3.Distance (c.gameObject.transform.position, transform.position);
-					}
+		if (currentTarget == null) {
+            float distance = Mathf.Infinity;
+            if (ControllerManager.instance.onLock()) { 
+			
+                foreach (Collider c in checkColliders)
+                 {
+                    if (c.gameObject.tag == "Enemy")
+                    {
+                        if (Vector3.Distance(c.gameObject.transform.position, transform.position) < distance)
+                            currentTarget = c.gameObject;
+                        distance = Vector3.Distance(c.gameObject.transform.position, transform.position);
+                    }
+                 }
 				}
 			}
 
@@ -33,14 +39,20 @@ public class LockOnScript : MonoBehaviour {
 	void lockOn ()
 	{
 		if (currentTarget != null) {
-			Transform target = currentTarget.transform;
-			transform.LookAt (target);
+            playerCamera = this.transform.Find("CameraPivot").gameObject;
+            Transform target = currentTarget.transform;
+            Transform cameraTarget = playerCamera.transform;
+            transform.LookAt (target);
+            transform.LookAt(cameraTarget);
 
-		}
+
+
+
+        }
 	}
 		void unlock ()
 		{
-		if (currentTarget != null && Input.GetButtonDown ("R3Down")) {
+		if (currentTarget != null && ControllerManager.instance.Unlock()) {
 						currentTarget = null;
 						}
 		}
