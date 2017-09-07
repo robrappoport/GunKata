@@ -62,11 +62,11 @@ public class ControllerManager : MonoBehaviour {
     }
 
     public bool onLock() {
-        return myController.LeftBumper.WasPressed;
+		return myController.LeftBumper.IsPressed;
     }
     public bool Unlock()
     {
-        return myController.LeftBumper.WasReleased;
+		return myController.LeftBumper.WasReleased;
     }
 
     public bool OnSprint() {

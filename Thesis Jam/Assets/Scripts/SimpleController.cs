@@ -42,7 +42,7 @@ public class SimpleController : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         MoveCharacter();
-        Shooting();
+//        Shooting();
         Meleeing();
     }
 
@@ -83,19 +83,21 @@ public class SimpleController : MonoBehaviour {
             }
 
             if (ControllerManager.instance.onLock() == true) {
+				Debug.Log ("hey dude");
                 rotationPivot.rotation = Quaternion.Slerp(rotationPivot.rotation, Quaternion.Euler(new Vector3(0, cameraPivot.transform.localEulerAngles.y + this.transform.eulerAngles.y, 0)), aimRotationSpeed * Time.deltaTime);
             }
         }
     }
 
-    private void Shooting()
-    {
-
-        if (ControllerManager.instance.onShoot() == true)
-        {
-            Debug.Log("Shoot the gun!");
-        }
-    }
+//    private void Shooting()
+//    {
+//
+//        if (ControllerManager.instance.onShoot() == true)
+//        {
+//            Debug.Log("Shoot the gun!");
+//
+//        }
+//    }
 
      private void Meleeing()
     {

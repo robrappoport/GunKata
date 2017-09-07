@@ -10,13 +10,22 @@ public class gunBehavior : MonoBehaviour {
 	}
 
 	void Update (){
-		if (Input.GetButtonDown ("Fire")) {
-			Debug.Log ("Firing!");
-			GameObject Bullet = Instantiate (prefab) as GameObject;
-			Bullet.transform.position = transform.forward * 2;
-			Rigidbody rb = Bullet.GetComponent<Rigidbody> ();
-			rb.velocity = transform.forward * 50f;
-		}
+		Shooting ();
 	
 	}
+
+	private void Shooting()
+	{
+
+		if (ControllerManager.instance.onShoot() == true)
+		{
+			Debug.Log("Shoot the gun!");
+				Debug.Log ("Firing!");
+				GameObject Bullet = Instantiate (prefab) as GameObject;
+				Bullet.transform.position = transform.forward * 2;
+				Rigidbody rb = Bullet.GetComponent<Rigidbody> ();
+				rb.velocity = transform.forward * 50f;
+			}
+		}
+
 }

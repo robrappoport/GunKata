@@ -13,7 +13,7 @@ public class LockOnScript : MonoBehaviour {
 		sphereLoc = transform.position;
 		LockOnCheck ();
 		lockOn ();
-//		unlock ();
+		unlock ();
 	}
 	
 	void LockOnCheck (){
@@ -41,9 +41,10 @@ public class LockOnScript : MonoBehaviour {
 		if (currentTarget != null) {
             playerCamera = this.transform.Find("CameraPivot").gameObject;
             Transform target = currentTarget.transform;
-            Transform cameraTarget = playerCamera.transform;
+//            Transform cameraTarget = playerCamera.transform;
             transform.LookAt (target);
-            transform.LookAt(cameraTarget);
+			playerCamera.transform.LookAt (target);
+//            transform.LookAt(cameraTarget);
 
 
 
