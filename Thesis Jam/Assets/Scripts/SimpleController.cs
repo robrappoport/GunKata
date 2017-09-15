@@ -83,7 +83,6 @@ public class SimpleController : MonoBehaviour {
             }
 
             if (ControllerManager.instance.onLock() == true) {
-				Debug.Log ("hey dude");
                 rotationPivot.rotation = Quaternion.Slerp(rotationPivot.rotation, Quaternion.Euler(new Vector3(0, cameraPivot.transform.localEulerAngles.y + this.transform.eulerAngles.y, 0)), aimRotationSpeed * Time.deltaTime);
             }
         }
