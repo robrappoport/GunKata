@@ -11,10 +11,11 @@ public class TwoDGunBehavior: MonoBehaviour
 	//Drag in the Bullet Prefab from the Component Inspector.
 	public GameObject Bullet;
 	public GameObject BigBullet;
-	[HideInInspector]
+    public ParticleSystem pSys;
+    [HideInInspector]
 	public int playerNum;
-	//Enter the Speed of the Bullet from the Component Inspector.
-	public float Bullet_Forward_Force;
+    //Enter the Speed of the Bullet from the Component Inspector.
+    public float Bullet_Forward_Force;
 //	public float Bullet_Exist_Time;
 	public float MaxBullets;
 	public float CurrentBullets;
@@ -24,14 +25,14 @@ public class TwoDGunBehavior: MonoBehaviour
 	public float maxCharge;
 
 	private bool isReloading;
-	// Use this for initialization
-	void Start ()
-	{
-		Charge = ChargeRate;
-		CurrentBullets = MaxBullets;
-		bulletManager = GetComponent<BulletManager> ();
-	}
-
+    // Use this for initialization
+    void Start()
+    {
+        Charge = ChargeRate;
+        CurrentBullets = MaxBullets;
+        bulletManager = GetComponent<BulletManager>();
+        pSys.Stop();
+    }
 	// Update is called once per frame
 	void Update ()
 	{
@@ -43,11 +44,15 @@ public class TwoDGunBehavior: MonoBehaviour
 			return;
 		}
 
-	
+        if (Charge >= maxCharge)
+        {
+            pSys.Play();
+        }
 		
 		if (TwoDCharacterController.instance.yButtonUp () == true && Charge >= maxCharge) {
 			chargeShot ();
-		} 
+            pSys.Stop();
+        } 
 
 		if (TwoDCharacterController.instance.yButtonUp () == true && Charge < maxCharge)
 		{
@@ -82,9 +87,6 @@ public class TwoDGunBehavior: MonoBehaviour
 
 		//Tell the bullet to be "pushed" forward by an amount set by Bullet_Forward_Force.
 		Temporary_RigidBody.AddForce (-transform.right * Bullet_Forward_Force);
-		Debug.Assert (bulletManager != null);
-		Debug.Assert (Temporary_Bullet_Handler != null);
-		Debug.Assert (Temporary_Bullet_Handler.GetComponent<Bullet> () != null);
 		bulletManager.AddBullet (Temporary_Bullet_Handler.GetComponent<Bullet>());
 //		//Basic Clean Up, set the Bullets to self destruct after 10 Seconds, I am being VERY generous here, normally 3 seconds is plenty.
 //		Destroy (Temporary_Bullet_Handler, Bullet_Exist_Time);
@@ -130,6 +132,7 @@ public class TwoDGunBehavior: MonoBehaviour
 //		Debug.Log (CurrentBullets);
 
 	}
+
 
 
 }

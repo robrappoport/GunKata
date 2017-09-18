@@ -5,13 +5,18 @@ using InControl;
 
 public class TwoDCharacterController : MonoBehaviour {
 	public static TwoDCharacterController instance;
-	private InputDevice myController;
-	public Vector3 moveDirection;
+    public InputDevice myController;
+    //public InputDevice myController { get; set; }
+    public Vector3 moveDirection;
 
 	public float walkSpeed = 2;
 	private float currentSpeed = 0;
 	private Quaternion previousRot;
 	private CharacterController characterCtr;
+
+
+    public PlayerAction Move;
+    public PlayerAction Shoot;
 
 //	public GameObject ringAttack;
 //	public GameObject bounceAttack;
@@ -28,6 +33,7 @@ public class TwoDCharacterController : MonoBehaviour {
 		instance = this;
 	}
 	void Start () {
+
 		characterCtr = this.GetComponent<CharacterController>();
 		previousRot = transform.rotation;
 
@@ -48,6 +54,7 @@ public class TwoDCharacterController : MonoBehaviour {
 
 	private Vector3 OnMove() {
 		return new Vector3(myController.LeftStickX, myController.LeftStickY, 0);
+        
 
 	}
 
@@ -104,7 +111,10 @@ public class TwoDCharacterController : MonoBehaviour {
 		previousRot = transform.rotation;
 
 		}
-
+    public void MyCharacterActions()
+    {
+        
+    }
 
 
 
