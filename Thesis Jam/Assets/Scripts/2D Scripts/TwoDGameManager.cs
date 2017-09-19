@@ -6,13 +6,13 @@ using InControl;
 public class TwoDGameManager : MonoBehaviour {
     const int maxPlayers = 2;
     public TwoDGunBehavior[] players;
-    List<TwoDCharacterController> playerProf = new List<TwoDCharacterController>(maxPlayers);
-    // Use this for initialization
-    void Start () {
-        //InputManager.OnDeviceDetached += OnDeviceDetached;
-        players [0].playerNum = 1;
-		players [1].playerNum = 2;
-	}
+//    List<TwoDCharacterController> playerProf = new List<TwoDCharacterController>(maxPlayers);
+//    // Use this for initialization
+//    void Start () {
+//        //InputManager.OnDeviceDetached += OnDeviceDetached;
+//        players [0].playerNum = 1;
+//		players [1].playerNum = 2;
+//	}
 	
 	// Update is called once per frame
 	//void Update () {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour {
-
+	public int BulletDmg = -50;
 	public float lifeTime = 2.0f;
 	Rigidbody r;
 	Vector3 velocity;
@@ -32,5 +32,13 @@ public class Bullet : MonoBehaviour {
 			freezeVal = RigidbodyConstraints.None;
 		}
 		r.constraints = freezeVal;
+	}
+
+	void onCollisionEnter (Collision other)
+	{
+		Debug.Log (other);
+		if (other.collider.gameObject.tag == "Player") {
+			other.gameObject.GetComponent<PlayerHealth> ().takeDamage (BulletDmg);
+		}
 	}
 }

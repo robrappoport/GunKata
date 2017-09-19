@@ -8,7 +8,7 @@ public class TwoDCharacterController : MonoBehaviour {
     public InputDevice myController;
     //public InputDevice myController { get; set; }
     public Vector3 moveDirection;
-
+	public int playerNum;
 	public float walkSpeed = 2;
 	private float currentSpeed = 0;
 	private Quaternion previousRot;
@@ -46,14 +46,15 @@ public class TwoDCharacterController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-		myController = InputManager.ActiveDevice;
+		moveDirection.y = 0;
+		myController = InputManager.Devices[playerNum];
 		MoveCharacter ();
+		MyCharacterActions ();
 
 	}
 
 	private Vector3 OnMove() {
-		return new Vector3(myController.LeftStickX, myController.LeftStickY, 0);
+		return new Vector3(myController.LeftStickX, 0, myController.LeftStickY);
         
 
 	}
@@ -106,14 +107,15 @@ public class TwoDCharacterController : MonoBehaviour {
 
 		else {
 			float angle = Mathf.Atan2 (myController.LeftStickY, myController.LeftStickX) * Mathf.Rad2Deg;
-			transform.rotation = Quaternion.Euler (new Vector3 (-angle + 90, 90, -90));
+			transform.rotation = Quaternion.Euler (new Vector3 (0, -angle + 180, 0));
 		}
 		previousRot = transform.rotation;
 
 		}
     public void MyCharacterActions()
     {
-        
+		yButton ();
+		yButtonUp ();
     }
 
 

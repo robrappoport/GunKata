@@ -1,14 +1,40 @@
-﻿//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
-//using UnityEngine.UI;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
-//public class BulletUIScript : MonoBehaviour
-//{
+public class BulletUIScript : MonoBehaviour
+{
 
-//    public Sprite[] BulletSprites;
+    public Sprite[] BulletSprites;
 
-//    public Image BulletUI;
+    public Image BulletUI;
+
+	public TwoDGunBehavior gunReference;
+
+	public void Start (){
+		if (gunReference.CurrentBullets > 0) {
+			BulletUI.sprite = BulletSprites [gunReference.CurrentBullets-1];
+			Debug.Log (gunReference.CurrentBullets);
+		} else if (gunReference.CurrentBullets == 0) {
+			BulletUI.sprite = BulletSprites[6];
+		} else{
+			BulletUI.sprite = BulletSprites[7];
+		}
+	}
+
+	public void Update(){
+		if (gunReference.CurrentBullets > 0) {
+			BulletUI.sprite = BulletSprites [gunReference.CurrentBullets-1];
+		} else if (gunReference.CurrentBullets == 0) {
+			BulletUI.sprite = BulletSprites[6];
+		} else{
+			BulletUI.sprite = BulletSprites[7];
+		}
+	}
+
+
+
 
 //    private Player bulletplayer;
 
@@ -17,7 +43,7 @@
 //    {
 //        bulletplayer = GameObject.FindGameObjectWithTag("Player").GetComponent<TwoDGunBehavior>();
 //    }
-
+//
 //    private void Update()
 //    {
 //        BulletUI.sprite = BulletSprites[bulletplayer.currentBullets];
@@ -35,4 +61,4 @@
 
 
 
-//}
+}

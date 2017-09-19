@@ -14,11 +14,12 @@ public class TwoDGunBehavior: MonoBehaviour
     public ParticleSystem pSys;
     [HideInInspector]
 	public int playerNum;
+
     //Enter the Speed of the Bullet from the Component Inspector.
     public float Bullet_Forward_Force;
 //	public float Bullet_Exist_Time;
-	public float MaxBullets;
-	public float CurrentBullets;
+	public int MaxBullets;
+	public int CurrentBullets;
 	public float ReloadTime;
 	public float ChargeRate;
 	public float Charge;
@@ -56,7 +57,6 @@ public class TwoDGunBehavior: MonoBehaviour
 
 		if (TwoDCharacterController.instance.yButtonUp () == true && Charge < maxCharge)
 		{
-			Debug.Log ("is doing things");
 			Shoot ();
 		}
 		if (TwoDCharacterController.instance.yButton () == true && CurrentBullets > 0) {
@@ -88,15 +88,15 @@ public class TwoDGunBehavior: MonoBehaviour
 		//Tell the bullet to be "pushed" forward by an amount set by Bullet_Forward_Force.
 		Temporary_RigidBody.AddForce (-transform.right * Bullet_Forward_Force);
 		bulletManager.AddBullet (Temporary_Bullet_Handler.GetComponent<Bullet>());
-//		//Basic Clean Up, set the Bullets to self destruct after 10 Seconds, I am being VERY generous here, normally 3 seconds is plenty.
+		//Basic Clean Up, set the Bullets to self destruct after 10 Seconds, I am being VERY generous here, normally 3 seconds is plenty.
 //		Destroy (Temporary_Bullet_Handler, Bullet_Exist_Time);
 
 //		Debug.Log (CurrentBullets);
 
 	}
 	IEnumerator Reload (){
-		isReloading = true;
 		Debug.Log (CurrentBullets);
+		isReloading = true;
 		if (CurrentBullets != 0) {
 			bulletManager.Freeze (true);
 		} 
@@ -111,7 +111,7 @@ public class TwoDGunBehavior: MonoBehaviour
 
 
 	void chargeShot (){
-		CurrentBullets-= 2;
+		CurrentBullets -= 2;
 		GameObject Temporary_Bullet_Handler;
 		Temporary_Bullet_Handler = Instantiate (BigBullet, Bullet_Emitter.transform.position, Bullet_Emitter.transform.rotation) as GameObject;
 

@@ -1,1 +1,1 @@
-Sample%20Bullet%20UI,2000,2000,14Sample%20Bullet%20UI%20Sprite%20Sheet,2000,2000,14
+Sample%20Bullet%20UI,2000,2000,14Sample%20Bullet%20UI%20Sprite%20Sheet,2000,2000,14healthBarMask,140,45,2
