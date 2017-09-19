@@ -8,6 +8,7 @@ public class TwoDGunBehavior: MonoBehaviour
 	[HideInInspector]
 	public BulletManager bulletManager;
 	public TwoDGameManager gameManager;
+	public TwoDCharacterController myCont;
 	//Drag in the Bullet Prefab from the Component Inspector.
 	public GameObject Bullet;
 	public GameObject BigBullet;
@@ -50,16 +51,16 @@ public class TwoDGunBehavior: MonoBehaviour
             pSys.Play();
         }
 		
-		if (TwoDCharacterController.instance.yButtonUp () == true && Charge >= maxCharge) {
+		if (myCont.yButtonUp () == true && Charge >= maxCharge) {
 			chargeShot ();
             pSys.Stop();
         } 
 
-		if (TwoDCharacterController.instance.yButtonUp () == true && Charge < maxCharge)
+		if (myCont.yButtonUp () == true && Charge < maxCharge)
 		{
 			Shoot ();
 		}
-		if (TwoDCharacterController.instance.yButton () == true && CurrentBullets > 0) {
+		if (myCont.yButton () == true && CurrentBullets > 0) {
 			Charge += Time.deltaTime;
 //			Debug.Log (Charge);
 		} else
@@ -72,7 +73,7 @@ public class TwoDGunBehavior: MonoBehaviour
 
 	void Shoot ()
 	{
-		CurrentBullets--;
+		CurrentBullets-= 2;
 		//The Bullet instantiation happens here.
 		GameObject Temporary_Bullet_Handler;
 		Temporary_Bullet_Handler = Instantiate (Bullet, Bullet_Emitter.transform.position, Bullet_Emitter.transform.rotation) as GameObject;
@@ -111,7 +112,7 @@ public class TwoDGunBehavior: MonoBehaviour
 
 
 	void chargeShot (){
-		CurrentBullets -= 2;
+		CurrentBullets -= 3;
 		GameObject Temporary_Bullet_Handler;
 		Temporary_Bullet_Handler = Instantiate (BigBullet, Bullet_Emitter.transform.position, Bullet_Emitter.transform.rotation) as GameObject;
 

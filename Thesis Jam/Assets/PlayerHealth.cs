@@ -5,8 +5,9 @@ using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour {
 	public Image HealthBar;
-	public int MaxHealth;
-	public int CurrentHealth;
+	public float MaxHealth;
+	public float CurrentHealth;
+	public GameObject playerCanvas;
 
 	// Use this for initialization
 	void Start () {
@@ -17,20 +18,20 @@ public class PlayerHealth : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
-	}
 
-	public void takeDamage (int amount)
+	public void takeDamage (float amount)
 	{
 		CurrentHealth += amount;
 		SetHealth ();
+		if (CurrentHealth <= 0f) {
+			gameObject.SetActive(false);
+			playerCanvas.gameObject.SetActive (false);
+		}
 	}
 
 	public void SetHealth ()
 	{
-		int my_health = CurrentHealth / MaxHealth;
-		HealthBar.fillAmount = CurrentHealth;
+		HealthBar.fillAmount = CurrentHealth*.01f;
 
 	}
 		

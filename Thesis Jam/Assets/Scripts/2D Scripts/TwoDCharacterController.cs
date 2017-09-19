@@ -35,6 +35,7 @@ public class TwoDCharacterController : MonoBehaviour {
 	void Start () {
 
 		characterCtr = this.GetComponent<CharacterController>();
+		myController = InputManager.Devices[playerNum];
 		previousRot = transform.rotation;
 
 		//ANIMATORS
@@ -49,7 +50,7 @@ public class TwoDCharacterController : MonoBehaviour {
 		moveDirection.y = 0;
 		myController = InputManager.Devices[playerNum];
 		MoveCharacter ();
-		MyCharacterActions ();
+//		MyCharacterActions ();
 
 	}
 
@@ -61,8 +62,6 @@ public class TwoDCharacterController : MonoBehaviour {
 
 	public bool yButton (){
 		return (myController.Action4.IsPressed);
-		//triple burst attack goes here
-
 	} 
 	public bool yButtonUp (){
 		return (myController.Action4.WasReleased);
@@ -114,8 +113,8 @@ public class TwoDCharacterController : MonoBehaviour {
 		}
     public void MyCharacterActions()
     {
-		yButton ();
-		yButtonUp ();
+//		yButton ();
+//		yButtonUp ();
     }
 
 
