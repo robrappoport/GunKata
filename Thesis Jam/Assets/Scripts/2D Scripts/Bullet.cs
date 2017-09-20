@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour {
 	public int BulletDmg;
+	public float bulletSpeed;
 	public float lifeTime = 2.0f;
 	Rigidbody r;
 	Vector3 velocity;
 	bool isFrozen;
 	RigidbodyConstraints freezeVal;
 
+
 	// Use this for initialization
 	void Start () {
 		r = GetComponent<Rigidbody> ();
+		r.velocity = transform.forward * bulletSpeed;
 		freezeVal = RigidbodyConstraints.None;
 		r.constraints = freezeVal;
 	}
@@ -21,6 +24,7 @@ public class Bullet : MonoBehaviour {
 
 	void Update(){
 		lifeTime -= Time.deltaTime;
+
 	}
 
 	public void SetFreeze(bool b){
