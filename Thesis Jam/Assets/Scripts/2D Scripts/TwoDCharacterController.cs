@@ -67,6 +67,14 @@ public class TwoDCharacterController : MonoBehaviour {
 		return (myController.Action4.WasReleased);
 	}
 
+	public bool onLock() {
+		return myController.LeftBumper.IsPressed;
+	}
+	public bool Unlock()
+	{
+		return myController.LeftBumper.WasReleased;
+	}
+
 //	public bool YAttacking (){
 //		//ring attack goes here
 //		if (YAttack == true) {
@@ -95,7 +103,7 @@ public class TwoDCharacterController : MonoBehaviour {
 
 			moveDirection = OnMove();
 
-//			moveDirection.y = 0;
+			moveDirection.y = 0;
 
 			moveDirection *= currentSpeed;
 		characterCtr.Move(moveDirection * Time.deltaTime);

@@ -19,8 +19,8 @@ public class TwoDGunBehavior: MonoBehaviour
     //Enter the Speed of the Bullet from the Component Inspector.
     public float Bullet_Forward_Force;
 	private float bulletOffsetNorm = -90f;
-	private float bulletOffsetRight = -180f;
-	private float bulletOffsetLeft = 0f;
+//	private float bulletOffsetRight = -180f;
+//	private float bulletOffsetLeft = 0f;
 //	public float Bullet_Exist_Time;
 	public int MaxBullets;
 	public int CurrentBullets;

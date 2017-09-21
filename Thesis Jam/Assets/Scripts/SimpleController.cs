@@ -71,7 +71,7 @@ public class SimpleController : MonoBehaviour {
     private void RotateCharacter(Vector3 _direction) {
         //No Aiming, Player will facing to it's movement direction;
         if (Mathf.Abs(_direction.x) > 0.1f || Mathf.Abs(_direction.z) > 0.1f) {
-            rotationDirection = playerCamera.transform.TransformDirection(new Vector3(_direction.x, 0, _direction.z));
+//            rotationDirection = playerCamera.transform.TransformDirection(new Vector3(_direction.x, 0, _direction.z));
             rotationDirection.y = 0;
             rotationDirection.Normalize();
             rotationDirection *= Time.deltaTime;
