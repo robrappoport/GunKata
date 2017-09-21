@@ -46,6 +46,8 @@ public class Bullet : MonoBehaviour {
 //		Debug.Log ("is hit");
 		if (other.gameObject.tag == "Player") {
 			other.gameObject.GetComponent<PlayerHealth> ().takeDamage (BulletDmg);
+
+			Destroy (this.gameObject);
 		}
 	}
 }
