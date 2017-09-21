@@ -13,12 +13,12 @@ public class TwoDGunBehavior: MonoBehaviour
 	public GameObject Bullet;
 	public GameObject BigBullet;
     public ParticleSystem pSys;
-    [HideInInspector]
+	[HideInInspector]
 	public int playerNum;
 
     //Enter the Speed of the Bullet from the Component Inspector.
     public float Bullet_Forward_Force;
-	private float bulletOffsetNorm = -90f;
+	private float bulletOffsetNorm = 0f;
 //	private float bulletOffsetRight = -180f;
 //	private float bulletOffsetLeft = 0f;
 //	public float Bullet_Exist_Time;
@@ -41,6 +41,7 @@ public class TwoDGunBehavior: MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		Debug.DrawRay (transform.position, transform.forward * 50, Color.red);
 		if (isReloading) {
 			return;
 		}
@@ -63,6 +64,10 @@ public class TwoDGunBehavior: MonoBehaviour
 		{
 			Shoot ();
 		}
+		if (myCont.xButtonUp () == true)
+		{
+			SingleShoot ();
+		}
 		if (myCont.yButton () == true && CurrentBullets > 0) {
 			Charge += Time.deltaTime;
 //			Debug.Log (Charge);
@@ -72,6 +77,26 @@ public class TwoDGunBehavior: MonoBehaviour
 
 
 
+	}
+	void SingleShoot()
+	{
+		CurrentBullets -= 1;
+		GameObject Temporary_Bullet_Handler = (GameObject)GameObject.Instantiate (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
+		//Sometimes bullets may appear rotated incorrectly due to the way its pivot was set from the original modeling package.
+		//This is EASILY corrected here, you might have to rotate it from a different axis and or angle based on your particular mesh.
+		Temporary_Bullet_Handler.transform.Rotate (Vector3.left);
+
+		//		//Retrieve the Rigidbody component from the instantiated Bullet and control it.
+		//		Rigidbody Temporary_RigidBody;
+		//		Temporary_RigidBody = Temporary_Bullet_Handler.GetComponent<Rigidbody> ();
+
+		//Tell the bullet to be "pushed" forward by an amount set by Bullet_Forward_Force.
+		//		Temporary_RigidBody.AddForce (-transform.right * Bullet_Forward_Force);
+		bulletManager.AddBullet (Temporary_Bullet_Handler.GetComponent<Bullet>());
+
+		//Basic Clean Up, set the Bullets to self destruct after 10 Seconds, I am being VERY generous here, normally 3 seconds is plenty.
+		//		Destroy (Temporary_Bullet_Handler, Bullet_Exist_Time);
+		//		Debug.Log (CurrentBullets);
 	}
 
 	void Shoot ()
@@ -114,7 +139,7 @@ public class TwoDGunBehavior: MonoBehaviour
 
 	}
 	IEnumerator Reload (){
-		Debug.Log (CurrentBullets);
+//		Debug.Log (CurrentBullets);
 		isReloading = true;
 		if (CurrentBullets != 0) {
 			bulletManager.Freeze (true);
@@ -122,6 +147,7 @@ public class TwoDGunBehavior: MonoBehaviour
 
 		else {
 			gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
+			Debug.Log (playerNum);
 		}
 			yield return new WaitForSeconds (ReloadTime);
 			CurrentBullets = MaxBullets;

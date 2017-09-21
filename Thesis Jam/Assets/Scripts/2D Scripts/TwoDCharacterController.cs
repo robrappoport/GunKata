@@ -6,6 +6,7 @@ using InControl;
 public class TwoDCharacterController : MonoBehaviour {
 	public static TwoDCharacterController instance;
     public InputDevice myController;
+	LockOnScript lockedOn;
     //public InputDevice myController { get; set; }
     public Vector3 moveDirection;
 	public int playerNum;
@@ -33,7 +34,7 @@ public class TwoDCharacterController : MonoBehaviour {
 		instance = this;
 	}
 	void Start () {
-
+		lockedOn = GetComponent<LockOnScript> ();
 		characterCtr = this.GetComponent<CharacterController>();
 		myController = InputManager.Devices[playerNum];
 		previousRot = transform.rotation;
@@ -47,6 +48,9 @@ public class TwoDCharacterController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (transform.position.y != .38f) {
+			transform.position = new Vector3 (transform.position.x, .38f, transform.position.z);
+		}
 		moveDirection.y = 0;
 		myController = InputManager.Devices[playerNum];
 		MoveCharacter ();
@@ -66,6 +70,9 @@ public class TwoDCharacterController : MonoBehaviour {
 	public bool yButtonUp (){
 		return (myController.Action4.WasReleased);
 	}
+	public bool xButtonUp (){
+		return (myController.Action3.WasReleased);
+	} 
 
 	public bool onLock() {
 		return myController.LeftBumper.IsPressed;
@@ -113,8 +120,11 @@ public class TwoDCharacterController : MonoBehaviour {
 		} 
 
 		else {
-			float angle = Mathf.Atan2 (myController.LeftStickY, myController.LeftStickX) * Mathf.Rad2Deg;
-			transform.rotation = Quaternion.Euler (new Vector3 (0, -angle + 180, 0));
+			if (!lockedOn.LockedOn) {
+				float angle = Mathf.Atan2 (myController.LeftStickY, myController.LeftStickX) * Mathf.Rad2Deg;
+				transform.rotation = Quaternion.Euler (new Vector3 (0, -angle + 90, 0));
+			} else {
+			}
 		}
 		previousRot = transform.rotation;
 

@@ -5,6 +5,7 @@ using UnityEngine;
 public class LockOnScript : MonoBehaviour {
 //	public GameObject newTarget;
 	public GameObject currentTarget;
+	public bool LockedOn = false;
 	public TwoDCharacterController myCont;
 //    private GameObject playerCamera;
 	Vector3 sphereLoc;
@@ -25,11 +26,13 @@ public class LockOnScript : MonoBehaviour {
 			
                 foreach (Collider c in checkColliders)
                  {
-					if (c.gameObject.tag == "Enemy")
+					if (c.gameObject.tag == "Player")
 					{
-						if (Vector3.Distance (c.gameObject.transform.position, transform.position) < distance) {
-							currentTarget = c.gameObject;
-							distance = Vector3.Distance (c.gameObject.transform.position, transform.position);
+						if (c.gameObject.GetComponent<LockOnScript> () != this) {
+							if (Vector3.Distance (c.gameObject.transform.position, transform.position) < distance) {
+								currentTarget = c.gameObject;
+								distance = Vector3.Distance (c.gameObject.transform.position, transform.position);
+							}
 						}
                     }
                  }
@@ -41,10 +44,13 @@ public class LockOnScript : MonoBehaviour {
 	void lockOn ()
 	{
 		if (currentTarget != null) {
+			LockedOn = true;
 //            playerCamera = this.transform.Find("CameraPivot").gameObject;
             Transform target = currentTarget.transform;
 //            Transform cameraTarget = playerCamera.transform;
 		transform.LookAt (target);
+			Vector3 lockDir = currentTarget.transform.position - transform.position;
+			Debug.DrawRay (transform.position, lockDir * 50, Color.yellow);
 //			playerCamera.transform.LookAt (target);
 //            transform.LookAt(cameraTarget);
 
@@ -57,6 +63,7 @@ public class LockOnScript : MonoBehaviour {
 		{
 		if (currentTarget != null && myCont.Unlock()) {
 						currentTarget = null;
+			LockedOn = false;
 			}
 		}
 

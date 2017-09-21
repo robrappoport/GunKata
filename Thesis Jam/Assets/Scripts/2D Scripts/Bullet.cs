@@ -10,13 +10,15 @@ public class Bullet : MonoBehaviour {
 	Vector3 velocity;
 	bool isFrozen;
 	RigidbodyConstraints freezeVal;
+	RigidbodyConstraints normalBehavior;
 
 
 	// Use this for initialization
 	void Start () {
 		r = GetComponent<Rigidbody> ();
-		r.velocity = transform.forward * bulletSpeed;
+
 		freezeVal = RigidbodyConstraints.None;
+		normalBehavior = RigidbodyConstraints.FreezePositionY;
 		r.constraints = freezeVal;
 	}
 
@@ -24,6 +26,7 @@ public class Bullet : MonoBehaviour {
 
 	void Update(){
 		lifeTime -= Time.deltaTime;
+		r.velocity = transform.forward * bulletSpeed;
 
 	}
 
@@ -40,7 +43,7 @@ public class Bullet : MonoBehaviour {
 
 	void OnCollisionEnter (Collision other)
 	{
-		Debug.Log ("is hit");
+//		Debug.Log ("is hit");
 		if (other.gameObject.tag == "Player") {
 			other.gameObject.GetComponent<PlayerHealth> ().takeDamage (BulletDmg);
 		}

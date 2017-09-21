@@ -17,9 +17,9 @@ public class BulletUIScript : MonoBehaviour
 			BulletUI.sprite = BulletSprites [gunReference.CurrentBullets-1];
 			Debug.Log (gunReference.CurrentBullets);
 		} else if (gunReference.CurrentBullets == 0) {
-			BulletUI.sprite = BulletSprites[6];
-		} else{
 			BulletUI.sprite = BulletSprites[7];
+		} else{
+			BulletUI.sprite = BulletSprites[8];
 		}
 	}
 
@@ -27,9 +27,9 @@ public class BulletUIScript : MonoBehaviour
 		if (gunReference.CurrentBullets > 0) {
 			BulletUI.sprite = BulletSprites [gunReference.CurrentBullets-1];
 		} else if (gunReference.CurrentBullets == 0) {
-			BulletUI.sprite = BulletSprites[6];
-		} else{
 			BulletUI.sprite = BulletSprites[7];
+		} else{
+			BulletUI.sprite = BulletSprites[8];
 		}
 	}
 
