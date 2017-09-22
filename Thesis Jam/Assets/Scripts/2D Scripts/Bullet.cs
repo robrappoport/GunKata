@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour {
 	public int BulletDmg;
+	public BulletManager BMan;
 	public float bulletSpeed;
 	public float lifeTime = 2.0f;
 	Rigidbody r;
@@ -15,10 +16,10 @@ public class Bullet : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		
 		r = GetComponent<Rigidbody> ();
 
 		freezeVal = RigidbodyConstraints.None;
-		normalBehavior = RigidbodyConstraints.FreezePositionY;
 		r.constraints = freezeVal;
 	}
 
@@ -26,7 +27,7 @@ public class Bullet : MonoBehaviour {
 
 	void Update(){
 		lifeTime -= Time.deltaTime;
-		r.velocity = transform.forward * bulletSpeed;
+		BulletMomentum ();
 
 	}
 
@@ -36,7 +37,7 @@ public class Bullet : MonoBehaviour {
 		if (isFrozen) {
 			freezeVal = RigidbodyConstraints.FreezeAll;
 		} else {
-			freezeVal = RigidbodyConstraints.None;
+			freezeVal = RigidbodyConstraints.FreezePositionY;
 		}
 		r.constraints = freezeVal;
 	}
@@ -46,8 +47,22 @@ public class Bullet : MonoBehaviour {
 //		Debug.Log ("is hit");
 		if (other.gameObject.tag == "Player") {
 			other.gameObject.GetComponent<PlayerHealth> ().takeDamage (BulletDmg);
-
-			Destroy (this.gameObject);
+			BMan.DestroyBullet (this);
 		}
+	}
+
+	void BulletMomentum(){
+		transform.Translate (Vector3.forward * Time.deltaTime * bulletSpeed);
+
+		Ray ray = new Ray (transform.position, transform.forward);
+		RaycastHit hit;
+
+		if (Physics.Raycast (ray, out hit, Time.deltaTime * bulletSpeed + .1f)) {
+			Vector3 reflectDir = Vector3.Reflect (ray.direction, hit.normal);
+			float rot = 90 - Mathf.Atan2 (reflectDir.z, reflectDir.x) * Mathf.Rad2Deg;
+			transform.eulerAngles = new Vector3 (0, rot, 0);
+		
+		}
+	
 	}
 }

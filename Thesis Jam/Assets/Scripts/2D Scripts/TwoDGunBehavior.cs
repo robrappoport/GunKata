@@ -81,61 +81,19 @@ public class TwoDGunBehavior: MonoBehaviour
 	void SingleShoot()
 	{
 		CurrentBullets -= 1;
-		GameObject Temporary_Bullet_Handler = (GameObject)GameObject.Instantiate (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
-		//Sometimes bullets may appear rotated incorrectly due to the way its pivot was set from the original modeling package.
-		//This is EASILY corrected here, you might have to rotate it from a different axis and or angle based on your particular mesh.
-		Temporary_Bullet_Handler.transform.Rotate (Vector3.left);
-
-		//		//Retrieve the Rigidbody component from the instantiated Bullet and control it.
-		//		Rigidbody Temporary_RigidBody;
-		//		Temporary_RigidBody = Temporary_Bullet_Handler.GetComponent<Rigidbody> ();
-
-		//Tell the bullet to be "pushed" forward by an amount set by Bullet_Forward_Force.
-		//		Temporary_RigidBody.AddForce (-transform.right * Bullet_Forward_Force);
-		bulletManager.AddBullet (Temporary_Bullet_Handler.GetComponent<Bullet>());
-
-		//Basic Clean Up, set the Bullets to self destruct after 10 Seconds, I am being VERY generous here, normally 3 seconds is plenty.
-		//		Destroy (Temporary_Bullet_Handler, Bullet_Exist_Time);
-		//		Debug.Log (CurrentBullets);
+		bulletManager.CreateBullet (
+			Bullet, 
+			Bullet_Emitter.transform.position, 
+			Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
 	}
 
 	void Shoot ()
 	{
-		CurrentBullets-= 2;
+		CurrentBullets-= 3;
 
-		GameObject Temporary_Bullet_Handler1 = (GameObject)GameObject.Instantiate (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
-		GameObject Temporary_Bullet_Handler2 = (GameObject)GameObject.Instantiate (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm + 10f,0)));
-		GameObject Temporary_Bullet_Handler3 = (GameObject)GameObject.Instantiate (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm -10f,0)));
-		//The Bullet instantiation happens here.
-//		GameObject Temporary_Bullet_Handler;
-//		Temporary_Bullet_Handler = Instantiate (Bullet, Bullet_Emitter.transform.position, Bullet_Emitter.transform.rotation) as GameObject;
-//		Temporary_Bullet_Handler = Instantiate (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,0,10))) as GameObject;
-//		Temporary_Bullet_Handler = Instantiate (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,0,-10))) as GameObject;
-
-		//Sometimes bullets may appear rotated incorrectly due to the way its pivot was set from the original modeling package.
-		//This is EASILY corrected here, you might have to rotate it from a different axis and or angle based on your particular mesh.
-//		Temporary_Bullet_Handler1.transform.Rotate (Vector3.left);
-//		Temporary_Bullet_Handler2.transform.Rotate (Vector3.left);
-//		Temporary_Bullet_Handler3.transform.Rotate (Vector3.left);
-
-		//Retrieve the Rigidbody component from the instantiated Bullet and control it.
-//		Rigidbody Temporary_RigidBody1;
-//		Rigidbody Temporary_RigidBody2;
-//		Rigidbody Temporary_RigidBody3;
-//		Temporary_RigidBody1 = Temporary_Bullet_Handler1.GetComponent<Rigidbody> ();
-//		Temporary_RigidBody2 = Temporary_Bullet_Handler2.GetComponent<Rigidbody> ();
-//		Temporary_RigidBody3 = Temporary_Bullet_Handler3.GetComponent<Rigidbody> ();
-//
-//		//Tell the bullet to be "pushed" forward by an amount set by Bullet_Forward_Force.
-//		Temporary_RigidBody1.AddForce (transform.forward * Bullet_Forward_Force);
-//		Temporary_RigidBody2.AddForce (transform.forward * Bullet_Forward_Force);
-//		Temporary_RigidBody3.AddForce (transform.forward * Bullet_Forward_Force);
-		bulletManager.AddBullet (Temporary_Bullet_Handler1.GetComponent<Bullet>());
-		bulletManager.AddBullet (Temporary_Bullet_Handler2.GetComponent<Bullet>());
-		bulletManager.AddBullet (Temporary_Bullet_Handler3.GetComponent<Bullet>());
-//		Destroy (Temporary_Bullet_Handler, Bullet_Exist_Time);
-
-//		Debug.Log (CurrentBullets);
+		bulletManager.CreateBullet (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
+		bulletManager.CreateBullet (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm + 10f,0)));
+		bulletManager.CreateBullet (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm -10f,0)));
 
 	}
 	IEnumerator Reload (){
@@ -156,24 +114,8 @@ public class TwoDGunBehavior: MonoBehaviour
 
 
 	void chargeShot (){
-		CurrentBullets -= 3;
-		GameObject Temporary_Bullet_Handler = (GameObject)GameObject.Instantiate (BigBullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
-
-		//Sometimes bullets may appear rotated incorrectly due to the way its pivot was set from the original modeling package.
-		//This is EASILY corrected here, you might have to rotate it from a different axis and or angle based on your particular mesh.
-		Temporary_Bullet_Handler.transform.Rotate (Vector3.left);
-
-//		//Retrieve the Rigidbody component from the instantiated Bullet and control it.
-//		Rigidbody Temporary_RigidBody;
-//		Temporary_RigidBody = Temporary_Bullet_Handler.GetComponent<Rigidbody> ();
-
-		//Tell the bullet to be "pushed" forward by an amount set by Bullet_Forward_Force.
-//		Temporary_RigidBody.AddForce (-transform.right * Bullet_Forward_Force);
-		bulletManager.AddBullet (Temporary_Bullet_Handler.GetComponent<Bullet>());
-
-		//Basic Clean Up, set the Bullets to self destruct after 10 Seconds, I am being VERY generous here, normally 3 seconds is plenty.
-//		Destroy (Temporary_Bullet_Handler, Bullet_Exist_Time);
-//		Debug.Log (CurrentBullets);
+		CurrentBullets -= 4;
+		bulletManager.CreateBullet (BigBullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
 
 	}
 

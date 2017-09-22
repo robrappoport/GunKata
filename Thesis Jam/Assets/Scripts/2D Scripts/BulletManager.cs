@@ -9,9 +9,18 @@ public class BulletManager : MonoBehaviour {
 	public List<Bullet> bulletList = new List<Bullet> ();
 	public bool freeze = false; 
 
-	public void AddBullet(Bullet b){
-		bulletList.Add(b);
+	public void CreateBullet(GameObject bulletType, Vector3 bulletPos, Quaternion bulletRot){
+		GameObject bulletObj = Instantiate (bulletType, bulletPos, bulletRot);
+		Bullet bullet = bulletObj.GetComponent<Bullet> ();
+		bulletList.Add(bullet);
+		bullet.BMan = this;
 
+	}
+
+	public void DestroyBullet(Bullet bullet)
+	{
+		Destroy (bullet.gameObject);
+		bulletList.Remove (bullet);
 	}
 
 	public void Freeze(bool x){
@@ -25,8 +34,7 @@ public class BulletManager : MonoBehaviour {
 		for (int i = bulletList.Count - 1; i >= 0; i--) {
 //			Debug.Log (bulletList [i].lifeTime);
 			if (bulletList [i].lifeTime < 0) {
-				Destroy (bulletList [i].gameObject);
-				bulletList.RemoveAt (i);
+				DestroyBullet (bulletList [i]);
 			}
 		}
 
@@ -35,6 +43,9 @@ public class BulletManager : MonoBehaviour {
 			Freeze (freeze);	
 		}
 	}
+
+
+
 
 }
 
