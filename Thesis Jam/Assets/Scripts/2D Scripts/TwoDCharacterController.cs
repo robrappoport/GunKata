@@ -6,11 +6,17 @@ using InControl;
 public class TwoDCharacterController : MonoBehaviour {
 	public static TwoDCharacterController instance;
     public InputDevice myController;
+	public TwoDGunBehavior gunBehave;
 	LockOnScript lockedOn;
     //public InputDevice myController { get; set; }
     public Vector3 moveDirection;
 	public int playerNum;
 	public float walkSpeed = 2;
+	public float maxDashTime = 1.0f;
+	public float dashSpeed = 4.0f;
+	public float dashStopSpeed = 0.1f;
+
+	public float currentDashTime;
 	private float currentSpeed = 0;
 	private Quaternion previousRot;
 	private CharacterController characterCtr;
@@ -38,6 +44,7 @@ public class TwoDCharacterController : MonoBehaviour {
 		characterCtr = this.GetComponent<CharacterController>();
 		myController = InputManager.Devices[playerNum];
 		previousRot = transform.rotation;
+		currentDashTime = maxDashTime;
 
 		//ANIMATORS
 //		XAttackAnim = GetComponent<Animator>();
@@ -73,6 +80,10 @@ public class TwoDCharacterController : MonoBehaviour {
 	public bool xButtonUp (){
 		return (myController.Action3.WasReleased);
 	} 
+
+	public bool bButtonUp (){
+		return (myController.Action2.WasReleased);
+	}
 
 	public bool onLock() {
 		return myController.LeftBumper.IsPressed;
@@ -112,8 +123,23 @@ public class TwoDCharacterController : MonoBehaviour {
 
 			moveDirection.y = 0;
 
+		if (bButtonUp ()) {
+			gunBehave.CurrentBullets--;
+			currentDashTime = 0.0f;
+		}
+
+		if (currentDashTime < maxDashTime) {
+			moveDirection = new Vector3 (moveDirection.x * dashSpeed, 0, moveDirection.z * dashSpeed);
+			currentDashTime += dashStopSpeed;
+		}
+
 			moveDirection *= currentSpeed;
 		characterCtr.Move(moveDirection * Time.deltaTime);
+
+
+//		 else {
+//			moveDirection = Vector3.zero;
+//		}
 //		RotateCharacter(moveDirection);
 		if (OnMove ().magnitude < .01f) {
 			transform.rotation = previousRot;

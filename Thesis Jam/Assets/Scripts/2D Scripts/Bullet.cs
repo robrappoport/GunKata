@@ -19,7 +19,7 @@ public class Bullet : MonoBehaviour {
 		
 		r = GetComponent<Rigidbody> ();
 
-		freezeVal = RigidbodyConstraints.None;
+		freezeVal = RigidbodyConstraints.FreezeRotation;
 		r.constraints = freezeVal;
 	}
 
@@ -35,12 +35,16 @@ public class Bullet : MonoBehaviour {
 		isFrozen = b;
 
 		if (isFrozen) {
+			Debug.Log (freezeVal);
 			freezeVal = RigidbodyConstraints.FreezeAll;
+			Debug.Log (freezeVal+"1");
 		} else {
-			freezeVal = RigidbodyConstraints.FreezePositionY;
+			freezeVal = RigidbodyConstraints.FreezeRotation;
 		}
 		r.constraints = freezeVal;
+		Debug.Log (freezeVal+"2");
 	}
+
 
 	void OnCollisionEnter (Collision other)
 	{
@@ -52,17 +56,19 @@ public class Bullet : MonoBehaviour {
 	}
 
 	void BulletMomentum(){
-		transform.Translate (Vector3.forward * Time.deltaTime * bulletSpeed);
+		
 
 		Ray ray = new Ray (transform.position, transform.forward);
 		RaycastHit hit;
 
-		if (Physics.Raycast (ray, out hit, Time.deltaTime * bulletSpeed + .2f)) {
+		if (Physics.Raycast (ray, out hit, Time.deltaTime * bulletSpeed + .3f)) {
 			Vector3 reflectDir = Vector3.Reflect (ray.direction, hit.normal);
 			float rot = 90 - Mathf.Atan2 (reflectDir.z, reflectDir.x) * Mathf.Rad2Deg;
 			transform.eulerAngles = new Vector3 (0, rot, 0);
 		
 		}
+		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
 	
 	}
 }
