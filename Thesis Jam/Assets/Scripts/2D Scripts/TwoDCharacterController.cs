@@ -18,6 +18,7 @@ public class TwoDCharacterController : MonoBehaviour {
 
 	public float currentDashTime;
 	private float currentSpeed = 0;
+	public bool isDashing;
 	private Quaternion previousRot;
 	private CharacterController characterCtr;
 
@@ -45,6 +46,7 @@ public class TwoDCharacterController : MonoBehaviour {
 		myController = InputManager.Devices[playerNum];
 		previousRot = transform.rotation;
 		currentDashTime = maxDashTime;
+		isDashing = false;
 
 		//ANIMATORS
 //		XAttackAnim = GetComponent<Animator>();
@@ -116,21 +118,24 @@ public class TwoDCharacterController : MonoBehaviour {
 //	}
 
 	private void MoveCharacter() {
+		Debug.Log (isDashing);
 		currentSpeed = walkSpeed;
 //		Debug.Log (currentSpeed);
-
+		isDashing = false;
 			moveDirection = OnMove();
 
 			moveDirection.y = 0;
 
-		if (bButtonUp ()) {
+		if (bButtonUp () && gunBehave.CurrentBullets > 0) {
 			gunBehave.CurrentBullets--;
 			currentDashTime = 0.0f;
+			isDashing = true;
 		}
 
 		if (currentDashTime < maxDashTime) {
 			moveDirection = new Vector3 (moveDirection.x * dashSpeed, 0, moveDirection.z * dashSpeed);
 			currentDashTime += dashStopSpeed;
+
 		}
 
 			moveDirection *= currentSpeed;

@@ -8,10 +8,11 @@ public class PlayerHealth : MonoBehaviour {
 	public float MaxHealth;
 	public float CurrentHealth;
 	public GameObject playerCanvas;
+	public TwoDCharacterController myCont;
+	public TwoDGunBehavior myGun;
 
 	// Use this for initialization
 	void Start () {
-
 		CurrentHealth = MaxHealth;
 		SetHealth ();
 		
@@ -21,12 +22,21 @@ public class PlayerHealth : MonoBehaviour {
 
 	public void takeDamage (float amount)
 	{
-		CurrentHealth += amount;
-		SetHealth ();
-		if (CurrentHealth <= 0f) {
-			gameObject.SetActive(false);
-			playerCanvas.gameObject.SetActive (false);
+		if (myCont.isDashing == true && myGun.CurrentBullets < myGun.MaxBullets) {
+			dashAbsorb ();
+		} else {
+			CurrentHealth += amount;
+			SetHealth ();
+			if (CurrentHealth <= 0f) {
+				gameObject.SetActive (false);
+				playerCanvas.gameObject.SetActive (false);
+			}
 		}
+	}
+		
+	public void dashAbsorb ()
+	{
+		myGun.CurrentBullets++;
 	}
 
 	public void SetHealth ()

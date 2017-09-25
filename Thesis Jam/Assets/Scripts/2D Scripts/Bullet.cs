@@ -39,16 +39,16 @@ public class Bullet : MonoBehaviour {
 		isFrozen = b;
 
 		if (isFrozen) {
-			Debug.Log (freezeVal);
+//			Debug.Log (freezeVal);
 			freezeVal = RigidbodyConstraints.FreezeAll;
-			Debug.Log (freezeVal+"1");
+//			Debug.Log (freezeVal+"1");
 			render.material = frozenBullet;
 		} else {
 			freezeVal = RigidbodyConstraints.FreezeRotation;
 			render.material = normBullet;
 		}
 		r.constraints = freezeVal;
-		Debug.Log (freezeVal+"2");
+//		Debug.Log (freezeVal+"2");
 	}
 
 
