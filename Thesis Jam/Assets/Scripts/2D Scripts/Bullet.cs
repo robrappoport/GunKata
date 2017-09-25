@@ -8,17 +8,21 @@ public class Bullet : MonoBehaviour {
 	public float bulletSpeed;
 	public float lifeTime = 2.0f;
 	Rigidbody r;
+	Renderer render;
 	Vector3 velocity;
 	bool isFrozen;
 	RigidbodyConstraints freezeVal;
 	RigidbodyConstraints normalBehavior;
 
+	public Material normBullet;
+	public Material frozenBullet;
+
 
 	// Use this for initialization
 	void Start () {
-		
+		render = GetComponent<Renderer> ();
 		r = GetComponent<Rigidbody> ();
-
+		render.material = normBullet;
 		freezeVal = RigidbodyConstraints.FreezeRotation;
 		r.constraints = freezeVal;
 	}
@@ -38,8 +42,10 @@ public class Bullet : MonoBehaviour {
 			Debug.Log (freezeVal);
 			freezeVal = RigidbodyConstraints.FreezeAll;
 			Debug.Log (freezeVal+"1");
+			render.material = frozenBullet;
 		} else {
 			freezeVal = RigidbodyConstraints.FreezeRotation;
+			render.material = normBullet;
 		}
 		r.constraints = freezeVal;
 		Debug.Log (freezeVal+"2");
