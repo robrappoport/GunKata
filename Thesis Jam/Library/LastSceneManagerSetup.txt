@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/GunKata.unity
+- path: Assets/2DTest.unity
   isLoaded: 1
   isActive: 1

@@ -118,10 +118,9 @@ public class TwoDCharacterController : MonoBehaviour {
 //	}
 
 	private void MoveCharacter() {
-		Debug.Log (isDashing);
+//		Debug.Log (isDashing);
 		currentSpeed = walkSpeed;
 //		Debug.Log (currentSpeed);
-		isDashing = false;
 			moveDirection = OnMove();
 
 			moveDirection.y = 0;
@@ -129,13 +128,16 @@ public class TwoDCharacterController : MonoBehaviour {
 		if (bButtonUp () && gunBehave.CurrentBullets > 0) {
 			gunBehave.CurrentBullets--;
 			currentDashTime = 0.0f;
-			isDashing = true;
 		}
 
 		if (currentDashTime < maxDashTime) {
+			isDashing = true;
+			Debug.Log (isDashing + "Isdashing in the thing");
 			moveDirection = new Vector3 (moveDirection.x * dashSpeed, 0, moveDirection.z * dashSpeed);
 			currentDashTime += dashStopSpeed;
 
+		} else {
+			isDashing = false;
 		}
 
 			moveDirection *= currentSpeed;
@@ -158,6 +160,8 @@ public class TwoDCharacterController : MonoBehaviour {
 			}
 		}
 		previousRot = transform.rotation;
+		Debug.Log (isDashing+"is dashing outside of the thing");
+
 
 		}
     public void MyCharacterActions()
