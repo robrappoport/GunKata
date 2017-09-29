@@ -16,6 +16,7 @@ public class Bullet : MonoBehaviour {
 
 	public Material normBullet;
 	public Material frozenBullet;
+	Vector3 prevVel;
 
 
 	// Use this for initialization
@@ -31,7 +32,9 @@ public class Bullet : MonoBehaviour {
 
 	void Update(){
 		lifeTime -= Time.deltaTime;
-		BulletMomentum ();
+		if (!isFrozen) {
+			BulletMomentum ();
+		}
 
 	}
 
@@ -40,14 +43,19 @@ public class Bullet : MonoBehaviour {
 
 		if (isFrozen) {
 //			Debug.Log (freezeVal);
-			freezeVal = RigidbodyConstraints.FreezeAll;
+			freezeVal = RigidbodyConstraints.FreezePosition;
+			prevVel = GetComponent<Rigidbody> ().velocity;
+			GetComponent<Rigidbody> ().velocity = Vector3.zero;//isKinematic = true;
+
 //			Debug.Log (freezeVal+"1");
 			render.material = frozenBullet;
 		} else {
 			freezeVal = RigidbodyConstraints.FreezeRotation;
 			render.material = normBullet;
+			GetComponent<Rigidbody> ().velocity = prevVel;//.isKinematic = false;
+
 		}
-		r.constraints = freezeVal;
+		//r.constraints = freezeVal;
 //		Debug.Log (freezeVal+"2");
 	}
 
@@ -67,7 +75,7 @@ public class Bullet : MonoBehaviour {
 		Ray ray = new Ray (transform.position, transform.forward);
 		RaycastHit hit;
 
-		if (Physics.Raycast (ray, out hit, Time.deltaTime * bulletSpeed + .3f)) {
+		if (Physics.Raycast (ray, out hit, Time.deltaTime * bulletSpeed + .1f)) {
 			Vector3 reflectDir = Vector3.Reflect (ray.direction, hit.normal);
 			float rot = 90 - Mathf.Atan2 (reflectDir.z, reflectDir.x) * Mathf.Rad2Deg;
 			transform.eulerAngles = new Vector3 (0, rot, 0);

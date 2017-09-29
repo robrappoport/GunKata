@@ -20,12 +20,16 @@ public class TwoDCharacterController : MonoBehaviour {
 	private float currentSpeed = 0;
 	public bool isDashing;
 	private Quaternion previousRot;
-	private CharacterController characterCtr;
+	private Rigidbody characterCtr;
 
 
     public PlayerAction Move;
     public PlayerAction Shoot;
-
+	public float moveForce;
+	public float dashForce;
+	public float dragForce;
+	public float dashDrag;
+	public float stopForce;
 //	public GameObject ringAttack;
 //	public GameObject bounceAttack;
 //	public GameObject StraightAttack;
@@ -42,7 +46,7 @@ public class TwoDCharacterController : MonoBehaviour {
 	}
 	void Start () {
 		lockedOn = GetComponent<LockOnScript> ();
-		characterCtr = this.GetComponent<CharacterController>();
+		characterCtr = this.GetComponent<Rigidbody>();
 		myController = InputManager.Devices[playerNum];
 		previousRot = transform.rotation;
 		currentDashTime = maxDashTime;
@@ -56,7 +60,7 @@ public class TwoDCharacterController : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 		if (transform.position.y != .38f) {
 			transform.position = new Vector3 (transform.position.x, .38f, transform.position.z);
 		}
@@ -120,10 +124,12 @@ public class TwoDCharacterController : MonoBehaviour {
 	private void MoveCharacter() {
 //		Debug.Log (isDashing);
 		currentSpeed = walkSpeed;
+		float curForce = moveForce;
+		float curDrag = dragForce;
 //		Debug.Log (currentSpeed);
-			moveDirection = OnMove();
+		moveDirection = OnMove();
 
-			moveDirection.y = 0;
+		moveDirection.y = 0;
 
 		if (bButtonUp () && gunBehave.CurrentBullets > 0) {
 			gunBehave.CurrentBullets--;
@@ -132,16 +138,30 @@ public class TwoDCharacterController : MonoBehaviour {
 
 		if (currentDashTime < maxDashTime) {
 			isDashing = true;
-			Debug.Log (isDashing + "Isdashing in the thing");
-			moveDirection = new Vector3 (moveDirection.x * dashSpeed, 0, moveDirection.z * dashSpeed);
+			//Debug.Log (isDashing + "Isdashing in the thing");
+			//moveDirection = new Vector3 (moveDirection.x * dashSpeed, 0, moveDirection.z * dashSpeed);
 			currentDashTime += dashStopSpeed;
+			curForce = dashForce;
+			curDrag = dashDrag;
 
 		} else {
 			isDashing = false;
 		}
 
-			moveDirection *= currentSpeed;
-		characterCtr.Move(moveDirection * Time.deltaTime);
+		//moveDirection *= currentSpeed;
+
+		if (moveDirection.magnitude < .25f) {
+			//if (characterCtr.velocity.magnitude > 5f) {
+			//characterCtr.AddForce (-characterCtr.velocity.normalized * stopForce);
+			//}
+		} else {
+			moveDirection = moveDirection.normalized;
+
+			characterCtr.AddForce(moveDirection * Time.deltaTime * curForce);
+		}
+
+
+		characterCtr.AddForce (-characterCtr.velocity.normalized * curDrag * characterCtr.velocity.sqrMagnitude);
 
 
 //		 else {
@@ -149,17 +169,19 @@ public class TwoDCharacterController : MonoBehaviour {
 //		}
 //		RotateCharacter(moveDirection);
 		if (OnMove ().magnitude < .01f) {
-			transform.rotation = previousRot;
+			//transform.rotation = previousRot;
+			characterCtr.MoveRotation(previousRot);
 		} 
 
 		else {
 			if (!lockedOn.LockedOn) {
 				float angle = Mathf.Atan2 (myController.LeftStickY, myController.LeftStickX) * Mathf.Rad2Deg;
-				transform.rotation = Quaternion.Euler (new Vector3 (0, -angle + 90, 0));
+				previousRot = Quaternion.Euler (new Vector3 (0, -angle + 90, 0));
+
+				characterCtr.MoveRotation(Quaternion.Euler (new Vector3 (0, -angle + 90, 0)));
 			} else {
 			}
 		}
-		previousRot = transform.rotation;
 		Debug.Log (isDashing+"is dashing outside of the thing");
 
 
