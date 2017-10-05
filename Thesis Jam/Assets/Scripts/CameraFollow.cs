@@ -14,10 +14,6 @@ public class CameraFollow : MonoBehaviour {
 	public float camDistanceXToPlayer;
 	public float camDistanceYToPlayer;
 	public float camDistanceZToPlayer;
-	public float mouseX;
-	public float mouseY;
-	public float finalInputX;
-	public float finalInputZ;
 	public float smoothX;
 	public float smoothY;
 	private float rotY = 0.0f;
@@ -27,8 +23,6 @@ public class CameraFollow : MonoBehaviour {
 		Vector3 rot = transform.localRotation.eulerAngles;
 		rotY = rot.y;
 		rotX = rot.x;
-		Cursor.lockState = CursorLockMode.Locked;
-		Cursor.visible = false;
 	}
 
 	// Update is called once per frame
@@ -37,13 +31,9 @@ public class CameraFollow : MonoBehaviour {
 
 		float inputX = Input.GetAxis ("RightStickHorizontal");
 		float inputZ = Input.GetAxis ("RightStickVertical");
-		mouseX = Input.GetAxis ("Mouse X");
-		mouseY = Input.GetAxis ("Mouse Y");
-		finalInputX = inputX + mouseX;
-		finalInputZ = inputZ + mouseY;
 
-		rotY += finalInputX * inputSensitivity * Time.deltaTime;
-		rotX += finalInputZ * inputSensitivity * Time.deltaTime;
+		rotY += inputX * inputSensitivity * Time.deltaTime;
+		rotX += inputZ * inputSensitivity * Time.deltaTime;
 
 		rotX = Mathf.Clamp (rotX, -clampAngle, clampAngle);
 
