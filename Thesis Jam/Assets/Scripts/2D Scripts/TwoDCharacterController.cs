@@ -5,39 +5,45 @@ using InControl;
 
 public class TwoDCharacterController : MonoBehaviour {
 	public static TwoDCharacterController instance;
-    public InputDevice myController;
+	public InputDevice myController;
 	public TwoDGunBehavior gunBehave;
 	LockOnScript lockedOn;
-    //public InputDevice myController { get; set; }
-    public Vector3 moveDirection;
+	//public InputDevice myController { get; set; }
+	//    public Vector3 moveDirection;
+	public Vector3 moveDirForward;
+	public Vector3 moveDirSides;
+//	private Vector3 storeDir;
+	private Vector3 directionPos;
+//	public Transform cameraTrans;
 	public int playerNum;
-	public float walkSpeed = 2;
+	public float turnSpeed = 4f;
+//	public float walkSpeed = 2;
 	public float maxDashTime = 1.0f;
 	public float dashSpeed = 4.0f;
 	public float dashStopSpeed = 0.1f;
 
 	public float currentDashTime;
-	private float currentSpeed = 0;
+//	private float currentSpeed = 0;
 	public bool isDashing;
 	private Quaternion previousRot;
 	private Rigidbody characterCtr;
 
 
-    public PlayerAction Move;
-    public PlayerAction Shoot;
+	public PlayerAction Move;
+	public PlayerAction Shoot;
 	public float moveForce;
 	public float dashForce;
-	public float dragForce;
-	public float dashDrag;
-	public float stopForce;
-//	public GameObject ringAttack;
-//	public GameObject bounceAttack;
-//	public GameObject StraightAttack;
+//	public float dragForce;
+//	public float dashDrag;
+//	public float stopForce;
+	//	public GameObject ringAttack;
+	//	public GameObject bounceAttack;
+	//	public GameObject StraightAttack;
 
 	//ANIMATORS
-//	public Animator XAttackAnim;
-//	public Animator YAttackAnim;
-//	public Animator BAttackAnim;
+	//	public Animator XAttackAnim;
+	//	public Animator YAttackAnim;
+	//	public Animator BAttackAnim;
 	// Use this for initialization
 
 	void Awake (){
@@ -53,29 +59,33 @@ public class TwoDCharacterController : MonoBehaviour {
 		isDashing = false;
 
 		//ANIMATORS
-//		XAttackAnim = GetComponent<Animator>();
-//		YAttackAnim = GetComponent<Animator>();
-//		BAttackAnim = GetComponent<Animator>();
+		//		XAttackAnim = GetComponent<Animator>();
+		//		YAttackAnim = GetComponent<Animator>();
+		//		BAttackAnim = GetComponent<Animator>();
 
 	}
-	
+
 	// Update is called once per frame
 	void FixedUpdate () {
 		if (transform.position.y != .38f) {
 			transform.position = new Vector3 (transform.position.x, .38f, transform.position.z);
 		}
-		moveDirection.y = 0;
+		//		moveDirection.y = 0;
 		myController = InputManager.Devices[playerNum];
 		MoveCharacter ();
-//		MyCharacterActions ();
+//		storeDir = cameraTrans.right;
+		//		MyCharacterActions ();
 
 	}
 
 	private Vector3 OnMove() {
 		return new Vector3(myController.LeftStickX, 0, myController.LeftStickY);
-        
 
 	}
+
+//	public Vector3 CameraMove (){
+//		return new Vector3 (myController.RightStickX, 0, myController.RightStickY); 
+//	}
 
 	public bool yButton (){
 		return (myController.Action4.IsPressed);
@@ -99,37 +109,40 @@ public class TwoDCharacterController : MonoBehaviour {
 		return myController.LeftBumper.WasReleased;
 	}
 
-//	public bool YAttacking (){
-//		//ring attack goes here
-//		if (YAttack == true) {
-//			GameObject Temporary_Attack_Handler;
-//			Temporary_Attack_Handler = Instantiate(ringAttack,transform.position,transform.rotation) as GameObject;
-//			YAttackAnim.Play("RingExpansionAttack");
-//		}
-//	}
+	//	public bool YAttacking (){
+	//		//ring attack goes here
+	//		if (YAttack == true) {
+	//			GameObject Temporary_Attack_Handler;
+	//			Temporary_Attack_Handler = Instantiate(ringAttack,transform.position,transform.rotation) as GameObject;
+	//			YAttackAnim.Play("RingExpansionAttack");
+	//		}
+	//	}
 
-//	public bool BAttacking (){
-//		//charge shot goes here
-//		if (BAttack == true) {
-//			BAttackAnim.Play ("nameHere");
-//		}
-//	}
+	//	public bool BAttacking (){
+	//		//charge shot goes here
+	//		if (BAttack == true) {
+	//			BAttackAnim.Play ("nameHere");
+	//		}
+	//	}
 
-//	public bool Dodge (){
-//		if (Dodging == true) {
-//			//dodge scripting goes here
-//		}
-//	}
+	//	public bool Dodge (){
+	//		if (Dodging == true) {
+	//			//dodge scripting goes here
+	//		}
+	//	}
 
 	private void MoveCharacter() {
-//		Debug.Log (isDashing);
-		currentSpeed = walkSpeed;
+		//		Debug.Log (isDashing);
+//		currentSpeed = walkSpeed;
 		float curForce = moveForce;
-		float curDrag = dragForce;
-//		Debug.Log (currentSpeed);
-		moveDirection = OnMove();
+//		float curDrag = dragForce;
+		//		Debug.Log (currentSpeed);
+		//		moveDirection = OnMove();
+		moveDirForward = new Vector3 (OnMove ().x, 0, 0);
+//		moveDirForward = storeDir * OnMove ().x;
+		moveDirSides = new Vector3 (0,0,OnMove ().z);//cameraTrans.forward
 
-		moveDirection.y = 0;
+		//		moveDirection.y = 0;
 
 		if (bButtonUp () && gunBehave.CurrentBullets > 0) {
 			gunBehave.CurrentBullets--;
@@ -142,7 +155,7 @@ public class TwoDCharacterController : MonoBehaviour {
 			//moveDirection = new Vector3 (moveDirection.x * dashSpeed, 0, moveDirection.z * dashSpeed);
 			currentDashTime += dashStopSpeed;
 			curForce = dashForce;
-			curDrag = dashDrag;
+//			curDrag = dashDrag;
 
 		} else {
 			isDashing = false;
@@ -150,64 +163,50 @@ public class TwoDCharacterController : MonoBehaviour {
 
 		//moveDirection *= currentSpeed;
 
-		if (moveDirection.magnitude < .25f) {
-			//if (characterCtr.velocity.magnitude > 5f) {
-			//characterCtr.AddForce (-characterCtr.velocity.normalized * stopForce);
-			//}
-		} else {
-			moveDirection = moveDirection.normalized;
+		//		if (moveDirection.magnitude < .25f) {
+		//			//if (characterCtr.velocity.magnitude > 5f) {
+		//			//characterCtr.AddForce (-characterCtr.velocity.normalized * stopForce);
+		//			//}
+		//		} else {
+		//			moveDirection = moveDirection.normalized;
 
-			characterCtr.AddForce(moveDirection * Time.deltaTime * curForce);
-		}
+		characterCtr.AddForce((moveDirForward + moveDirSides).normalized * curForce/ Time.deltaTime);
+		//		}
+		directionPos = transform.position + (OnMove());
+//		directionPos = transform.position + (storeDir * OnMove().x) + (cameraTrans.forward * OnMove().z);
+		Vector3 dir = directionPos - transform.position;
+
+		dir.y = 0;
+
+//		characterCtr.AddForce (-characterCtr.velocity.normalized * curDrag * characterCtr.velocity.sqrMagnitude);
 
 
-		characterCtr.AddForce (-characterCtr.velocity.normalized * curDrag * characterCtr.velocity.sqrMagnitude);
-
-
-//		 else {
-//			moveDirection = Vector3.zero;
-//		}
-//		RotateCharacter(moveDirection);
+		//		 else {
+		//			moveDirection = Vector3.zero;
+		//		}
+		//		RotateCharacter(moveDirection);
 		if (OnMove ().magnitude < .01f) {
-			//transform.rotation = previousRot;
-			characterCtr.MoveRotation(previousRot);
+			//			transform.rotation = previousRot;
+			//			characterCtr.MoveRotation(previousRot);
 		} 
 
 		else {
 			if (!lockedOn.LockedOn) {
-				float angle = Mathf.Atan2 (myController.LeftStickY, myController.LeftStickX) * Mathf.Rad2Deg;
-				previousRot = Quaternion.Euler (new Vector3 (0, -angle + 90, 0));
-
-				characterCtr.MoveRotation(Quaternion.Euler (new Vector3 (0, -angle + 90, 0)));
+				//				float angle = Mathf.Atan2 (myController.LeftStickY, myController.LeftStickX) * Mathf.Rad2Deg;
+				//				previousRot = Quaternion.Euler (new Vector3 (0, -angle + 90, 0));
+				//
+				//				characterCtr.MoveRotation(Quaternion.Euler (new Vector3 (0, -angle + 90, 0)));
+				characterCtr.rotation = Quaternion.Slerp(transform.rotation,
+					Quaternion.LookRotation(dir), turnSpeed * Time.deltaTime);
 			} else {
 			}
 		}
-		Debug.Log (isDashing+"is dashing outside of the thing");
+		//		Debug.Log (isDashing+"is dashing outside of the thing");
 
 
-		}
-    public void MyCharacterActions()
-    {
-//		yButton ();
-//		yButtonUp ();
-    }
+	}
 
 
 
-//
-//	private void buttonDowns(){
-//		if (myController.Action1.WasPressed) {
-//			XAttack = true;
-//		}
-//		if (myController.Action2.WasPressed) {
-//			YAttack = true;
-//		}
-//		if (myController.Action3.WasPressed) {
-//			BAttack = true;
-//		}
-//		if (myController.Action4.WasPressed) {
-//			Dodging = true;
-//		}
-//	}
 }
 

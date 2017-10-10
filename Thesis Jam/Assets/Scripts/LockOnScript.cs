@@ -65,7 +65,7 @@ public class LockOnScript : MonoBehaviour {
 			Vector2 WorldObject_ScreenPosition=new Vector2(
 				((ViewportPosition.x * CanvasRect.sizeDelta.x)-(CanvasRect.sizeDelta.x*0.5f)),
 				((ViewportPosition.y * CanvasRect.sizeDelta.y)-(CanvasRect.sizeDelta.y*0.5f)));
-			Vector2 pos = reticle.transform.parent.InverseTransformPoint (currentTarget.transform.position);//Camera.main.WorldToScreenPoint (currentTarget.transform.position);*/
+			Vector2 pos = reticle.transform.parent.InverseTransformPoint (currentTarget.transform.position);Camera.main.WorldToScreenPoint (currentTarget.transform.position);*/
 			Vector3 pos = currentTarget.transform.position;//Camera.main.ScreenToWorldPoint (Camera.main.WorldToScreenPoint (currentTarget.transform.position));
 			reticle.gameObject.SetActive (true);
 			reticle.transform.position = new Vector3(pos.x, reticle.transform.position.y, pos.z);//WorldObject_ScreenPosition;
