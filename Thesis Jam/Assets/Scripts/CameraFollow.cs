@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour {
 
+	public TwoDCharacterController myCont;
 	public float CameraMoveSpeed = 120.0f;
 	public GameObject CameraFollowObj;
 	Vector3 FollowPOS;
@@ -11,9 +12,6 @@ public class CameraFollow : MonoBehaviour {
 	public float inputSensitivity = 150.0f;
 	public GameObject CameraObj;
 	public GameObject PlayerObj;
-	public float camDistanceXToPlayer;
-	public float camDistanceYToPlayer;
-	public float camDistanceZToPlayer;
 	public float smoothX;
 	public float smoothY;
 	private float rotY = 0.0f;
@@ -29,16 +27,16 @@ public class CameraFollow : MonoBehaviour {
 	void Update () {
 		//Here we set up the rotation of the sticks
 
-		float inputX = Input.GetAxis ("RightStickHorizontal");
-		float inputZ = Input.GetAxis ("RightStickVertical");
+//		float inputX = myCont.CameraMove ().x;
+//		float inputZ = myCont.CameraMove ().z;
 
-		rotY += inputX * inputSensitivity * Time.deltaTime;
-		rotX += inputZ * inputSensitivity * Time.deltaTime;
+//		rotY += inputX * inputSensitivity * Time.deltaTime;
+//		rotX += inputZ * inputSensitivity * Time.deltaTime;
 
-		rotX = Mathf.Clamp (rotX, -clampAngle, clampAngle);
-
-		Quaternion localRotation = Quaternion.Euler (rotX, rotY, 0.0f);
-		transform.rotation = localRotation;
+//		rotX = Mathf.Clamp (rotX, -clampAngle, clampAngle);
+//
+//		Quaternion localRotation = Quaternion.Euler (rotX, rotY, 0.0f);
+//		transform.rotation = localRotation;
 
 	}
 

@@ -11,6 +11,8 @@ public class BulletManager : MonoBehaviour {
 
 	public void CreateBullet(GameObject bulletType, Vector3 bulletPos, Quaternion bulletRot){
 		GameObject bulletObj = Instantiate (bulletType, bulletPos, bulletRot);
+		Rigidbody bulletRigid = bulletObj.GetComponent<Rigidbody> ();
+		bulletRigid.velocity = this.gameObject.GetComponent<Rigidbody> ().velocity;
 		Bullet bullet = bulletObj.GetComponent<Bullet> ();
 		bulletList.Add(bullet);
 		bullet.BMan = this;
