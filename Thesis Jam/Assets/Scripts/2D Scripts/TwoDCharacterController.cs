@@ -67,8 +67,8 @@ public class TwoDCharacterController : MonoBehaviour {
 
 	// Update is called once per frame
 	void FixedUpdate () {
-		if (transform.position.y != .38f) {
-			transform.position = new Vector3 (transform.position.x, .38f, transform.position.z);
+		if (transform.position.y != 6f) {
+			transform.position = new Vector3 (transform.position.x, 6f, transform.position.z);
 		}
 		//		moveDirection.y = 0;
 		myController = InputManager.Devices[playerNum];

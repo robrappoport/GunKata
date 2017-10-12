@@ -12,8 +12,10 @@ public class BulletManager : MonoBehaviour {
 	public void CreateBullet(GameObject bulletType, Vector3 bulletPos, Quaternion bulletRot){
 		GameObject bulletObj = Instantiate (bulletType, bulletPos, bulletRot);
 		Rigidbody bulletRigid = bulletObj.GetComponent<Rigidbody> ();
-		bulletRigid.velocity = this.gameObject.GetComponent<Rigidbody> ().velocity;
+		//bulletRigid.velocity = this.gameObject.GetComponent<Rigidbody> ().velocity;
 		Bullet bullet = bulletObj.GetComponent<Bullet> ();
+		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+		bullet.bulletSpeed += Mathf.Max(Vector3.Dot (new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)), this.gameObject.GetComponent<Rigidbody> ().velocity), 0);
 		bulletList.Add(bullet);
 		bullet.BMan = this;
 
