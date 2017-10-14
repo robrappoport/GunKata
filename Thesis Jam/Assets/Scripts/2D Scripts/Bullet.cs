@@ -16,6 +16,7 @@ public class Bullet : MonoBehaviour {
 
 	public Material normBullet;
 	public Material frozenBullet;
+	public bool isDestroyedOnHit = true;
 	Vector3 prevVel;
 
 	// Use this for initialization
@@ -60,11 +61,12 @@ public class Bullet : MonoBehaviour {
 
 
 	void OnCollisionEnter (Collision other)
-	{
-		Debug.Log ("is hit");
-		if (other.gameObject.tag == "Player") {
-			other.gameObject.GetComponent<PlayerHealth> ().takeDamage (BulletDmg);
-			BMan.DestroyBullet (this);
+	{	
+		if (isDestroyedOnHit) {
+			if (other.gameObject.tag == "Player") {
+				other.gameObject.GetComponent<PlayerHealth> ().takeDamage (BulletDmg);
+				BMan.DestroyBullet (this);
+			}
 		}
 	}
 

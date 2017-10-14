@@ -105,7 +105,12 @@ public class TwoDGunBehavior: MonoBehaviour
 		case Loadout.Heavy:
 			bulletManager.CreateBullet (
 				HeavyBulletPrimary, 
-				Bullet_Emitter.transform.position + (transform.forward) * 4, 
+				Bullet_Emitter.transform.position + transform.forward,
+				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
+			);
+			bulletManager.CreateBullet (
+				HeavyBulletPrimary, 
+				Bullet_Emitter.transform.position + transform.forward,
 				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
 			);
 			break;
@@ -127,7 +132,12 @@ public class TwoDGunBehavior: MonoBehaviour
 			CurrentBullets -= 3;
 			bulletManager.CreateBullet (
 				HeavyBulletSecondary, 
-				Bullet_Emitter.transform.position + (transform.forward), 
+				Bullet_Emitter.transform.position + (transform.forward) * 4 + transform.right * 3, 
+				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
+			);
+			bulletManager.CreateBullet (
+				HeavyBulletSecondary, 
+				Bullet_Emitter.transform.position + (transform.forward) * 4 - transform.right * 3, 
 				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
 			);
 			break;
