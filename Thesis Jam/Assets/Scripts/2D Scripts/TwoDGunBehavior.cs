@@ -33,6 +33,7 @@ public class TwoDGunBehavior: MonoBehaviour
 	public Loadout currentWeapon;
 
 	private bool isReloading;
+	private int weaponSwitchCounter = 0;
     // Use this for initialization
     void Start()
     {
@@ -40,6 +41,7 @@ public class TwoDGunBehavior: MonoBehaviour
         CurrentBullets = MaxBullets;
         bulletManager = GetComponent<BulletManager>();
         pSys.Stop();
+		currentWeapon = loadout [0];
     }
 	// Update is called once per frame
 	void Update ()
@@ -72,7 +74,7 @@ public class TwoDGunBehavior: MonoBehaviour
 			PrimaryFire ();
 		}
 		if (myCont.rightBumperPressed()) {
-			print ("Switching weapons");
+			currentWeapon = loadout [(weaponSwitchCounter + 1) % 2];
 		}
 		if (myCont.yButton () == true && CurrentBullets > 0) {
 			Charge += Time.deltaTime;
@@ -115,6 +117,8 @@ public class TwoDGunBehavior: MonoBehaviour
 			break;
 		}
 	}
+
+
 	IEnumerator Reload (){
 //		Debug.Log (CurrentBullets);
 		isReloading = true;
