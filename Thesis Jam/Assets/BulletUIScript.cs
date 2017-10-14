@@ -11,7 +11,7 @@ public class BulletUIScript : MonoBehaviour
     public Image BulletUI;
 
 	public TwoDGunBehavior gunReference;
-
+	public Text weaponLabel;
 	public void Start (){
 		if (gunReference.CurrentBullets > 0) {
 			BulletUI.sprite = BulletSprites [gunReference.CurrentBullets-1];
@@ -21,6 +21,7 @@ public class BulletUIScript : MonoBehaviour
 		} else{
 			BulletUI.sprite = BulletSprites[8];
 		}
+		weaponLabel.text = gunReference.weaponLabel;
 	}
 
 	public void Update(){

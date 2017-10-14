@@ -10,7 +10,7 @@ public class TwoDGunBehavior: MonoBehaviour
 	public TwoDGameManager gameManager;
 	public TwoDCharacterController myCont;
 	//Drag in the Bullet Prefab from the Component Inspector.
-	public GameObject Bullet;
+	public GameObject RyuBullet, HeavyBullet;
 	public GameObject BigBullet;
     public ParticleSystem pSys;
 	[HideInInspector]
@@ -27,6 +27,7 @@ public class TwoDGunBehavior: MonoBehaviour
 	public float ChargeRate;
 	public float Charge;
 	public float maxCharge;
+	public string weaponLabel;
 
 	public enum Loadout {Ryu, Heavy};
 	public Loadout[] loadout;
@@ -42,6 +43,7 @@ public class TwoDGunBehavior: MonoBehaviour
         bulletManager = GetComponent<BulletManager>();
         pSys.Stop();
 		currentWeapon = loadout [0];
+		weaponLabel = loadout [0].ToString () + " Gun";
     }
 	// Update is called once per frame
 	void Update ()
@@ -74,7 +76,7 @@ public class TwoDGunBehavior: MonoBehaviour
 			PrimaryFire ();
 		}
 		if (myCont.rightBumperPressed()) {
-			currentWeapon = loadout [(weaponSwitchCounter + 1) % 2];
+			SwitchWeapons ();
 		}
 		if (myCont.yButton () == true && CurrentBullets > 0) {
 			Charge += Time.deltaTime;
@@ -82,21 +84,30 @@ public class TwoDGunBehavior: MonoBehaviour
 		} else
 			Charge = ChargeRate;
 
+	}
+	void SwitchWeapons(){
+		weaponSwitchCounter += 1;
+		currentWeapon = loadout [weaponSwitchCounter  % 2];
 
+		weaponLabel = currentWeapon.ToString () + " Gun";
 	}
 	void PrimaryFire(){
+		CurrentBullets -= 1;
 		switch(currentWeapon)
 		{
 		case Loadout.Ryu:
-			CurrentBullets -= 1;
 			bulletManager.CreateBullet (
-				Bullet, 
+				RyuBullet, 
 				Bullet_Emitter.transform.position, 
 				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
 			);
 			break;
 		case Loadout.Heavy:
-			print ("Firing Primary Heavy Weapon");
+			bulletManager.CreateBullet (
+				HeavyBullet, 
+				Bullet_Emitter.transform.position, 
+				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
+			);
 			break;
 		}
 
@@ -108,9 +119,9 @@ public class TwoDGunBehavior: MonoBehaviour
 		case Loadout.Ryu:
 			CurrentBullets -= 3;
 
-			bulletManager.CreateBullet (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
-			bulletManager.CreateBullet (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm + 10f, 0)));
-			bulletManager.CreateBullet (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 10f, 0)));
+			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
+			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm + 10f, 0)));
+			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 10f, 0)));
 			break;
 		case Loadout.Heavy:
 			print ("Firing Secondary Heavy Weapon");
