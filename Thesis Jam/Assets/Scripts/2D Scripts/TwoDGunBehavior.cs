@@ -10,7 +10,7 @@ public class TwoDGunBehavior: MonoBehaviour
 	public TwoDGameManager gameManager;
 	public TwoDCharacterController myCont;
 	//Drag in the Bullet Prefab from the Component Inspector.
-	public GameObject RyuBullet, HeavyBullet;
+	public GameObject RyuBullet, HeavyBulletPrimary, HeavyBulletSecondary;
 	public GameObject BigBullet;
     public ParticleSystem pSys;
 	[HideInInspector]
@@ -104,8 +104,8 @@ public class TwoDGunBehavior: MonoBehaviour
 			break;
 		case Loadout.Heavy:
 			bulletManager.CreateBullet (
-				HeavyBullet, 
-				Bullet_Emitter.transform.position, 
+				HeavyBulletPrimary, 
+				Bullet_Emitter.transform.position + (transform.forward) * 4, 
 				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
 			);
 			break;
@@ -124,7 +124,12 @@ public class TwoDGunBehavior: MonoBehaviour
 			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 10f, 0)));
 			break;
 		case Loadout.Heavy:
-			print ("Firing Secondary Heavy Weapon");
+			CurrentBullets -= 3;
+			bulletManager.CreateBullet (
+				HeavyBulletSecondary, 
+				Bullet_Emitter.transform.position + (transform.forward), 
+				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
+			);
 			break;
 		}
 	}

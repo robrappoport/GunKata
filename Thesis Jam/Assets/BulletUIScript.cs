@@ -32,6 +32,8 @@ public class BulletUIScript : MonoBehaviour
 		} else{
 			BulletUI.sprite = BulletSprites[8];
 		}
+		weaponLabel.text = gunReference.weaponLabel;
+
 	}
 
 
