@@ -109,6 +109,17 @@ public class TwoDCharacterController : MonoBehaviour {
 		return myController.LeftBumper.WasReleased;
 	}
 
+	public bool rightTriggerDown(){
+		return myController.RightTrigger.IsPressed;
+	}
+
+	public bool leftTriggerDown(){
+		return myController.LeftTrigger.IsPressed;
+	}
+
+	public bool rightBumperPressed(){
+		return myController.RightBumper.WasReleased;
+	}
 	//	public bool YAttacking (){
 	//		//ring attack goes here
 	//		if (YAttack == true) {

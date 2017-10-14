@@ -15,7 +15,6 @@ public class TwoDGunBehavior: MonoBehaviour
     public ParticleSystem pSys;
 	[HideInInspector]
 	public int playerNum;
-
     //Enter the Speed of the Bullet from the Component Inspector.
     public float Bullet_Forward_Force;
 	private float bulletOffsetNorm = 0f;
@@ -28,6 +27,10 @@ public class TwoDGunBehavior: MonoBehaviour
 	public float ChargeRate;
 	public float Charge;
 	public float maxCharge;
+
+	public enum Loadout {Ryu, Heavy};
+	public Loadout[] loadout;
+	public Loadout currentWeapon;
 
 	private bool isReloading;
     // Use this for initialization
@@ -50,7 +53,7 @@ public class TwoDGunBehavior: MonoBehaviour
 			return;
 		}
 
-        if (Charge >= maxCharge)
+		if (Charge >= maxCharge)
         {
             pSys.Play();
         }
@@ -62,39 +65,55 @@ public class TwoDGunBehavior: MonoBehaviour
 
 		if (myCont.yButtonUp () == true && Charge < maxCharge)
 		{
-			Shoot ();
+			SecondaryFire ();
 		}
 		if (myCont.xButtonUp () == true)
 		{
-			SingleShoot ();
+			PrimaryFire ();
+		}
+		if (myCont.rightBumperPressed()) {
+			print ("Switching weapons");
 		}
 		if (myCont.yButton () == true && CurrentBullets > 0) {
 			Charge += Time.deltaTime;
 //			Debug.Log (Charge);
 		} else
 			Charge = ChargeRate;
-			
-
 
 
 	}
-	void SingleShoot()
-	{
-		CurrentBullets -= 1;
-		bulletManager.CreateBullet (
-			Bullet, 
-			Bullet_Emitter.transform.position, 
-			Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
+	void PrimaryFire(){
+		switch(currentWeapon)
+		{
+		case Loadout.Ryu:
+			CurrentBullets -= 1;
+			bulletManager.CreateBullet (
+				Bullet, 
+				Bullet_Emitter.transform.position, 
+				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
+			);
+			break;
+		case Loadout.Heavy:
+			print ("Firing Primary Heavy Weapon");
+			break;
+		}
+
 	}
 
-	void Shoot ()
-	{
-		CurrentBullets-= 3;
+	void SecondaryFire (){
+		switch (currentWeapon) 
+		{
+		case Loadout.Ryu:
+			CurrentBullets -= 3;
 
-		bulletManager.CreateBullet (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
-		bulletManager.CreateBullet (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm + 10f,0)));
-		bulletManager.CreateBullet (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm -10f,0)));
-
+			bulletManager.CreateBullet (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
+			bulletManager.CreateBullet (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm + 10f, 0)));
+			bulletManager.CreateBullet (Bullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 10f, 0)));
+			break;
+		case Loadout.Heavy:
+			print ("Firing Secondary Heavy Weapon");
+			break;
+		}
 	}
 	IEnumerator Reload (){
 //		Debug.Log (CurrentBullets);
