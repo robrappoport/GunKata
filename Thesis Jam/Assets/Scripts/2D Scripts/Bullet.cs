@@ -6,6 +6,8 @@ public class Bullet : MonoBehaviour {
 	public int BulletDmg;
 	public BulletManager BMan;
 	public float bulletSpeed;
+	public float prevSpeed;
+	public float fastBulletSpeed;
 	public float lifeTime = 2.0f;
 	Rigidbody r;
 	Renderer render;
@@ -21,11 +23,13 @@ public class Bullet : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		prevSpeed = bulletSpeed;
 		render = GetComponent<Renderer> ();
 		r = GetComponent<Rigidbody> ();
 		render.material = normBullet;
 		freezeVal = RigidbodyConstraints.FreezeRotation;
 		r.constraints = freezeVal;
+
 	}
 
 	// Update is called once per frame
@@ -43,17 +47,19 @@ public class Bullet : MonoBehaviour {
 
 		if (isFrozen) {
 //			Debug.Log (freezeVal);
-			freezeVal = RigidbodyConstraints.FreezePosition;
-			prevVel = GetComponent<Rigidbody> ().velocity;
-			GetComponent<Rigidbody> ().velocity = Vector3.zero;//isKinematic = true;
+//			freezeVal = RigidbodyConstraints.FreezePosition;
+			prevVel = r.velocity;
+			prevSpeed = bulletSpeed;
+			bulletSpeed = fastBulletSpeed;
+//			GetComponent<Rigidbody> ().velocity = Vector3.zero;//isKinematic = true;
 
 //			Debug.Log (freezeVal+"1");
 			render.material = frozenBullet;
 		} else {
-			freezeVal = RigidbodyConstraints.FreezeRotation;
+//			freezeVal = RigidbodyConstraints.FreezeRotation;
 			render.material = normBullet;
-			GetComponent<Rigidbody> ().velocity = prevVel;//.isKinematic = false;
-
+			r.velocity = prevVel;//.isKinematic = false;
+			bulletSpeed = prevSpeed;
 		}
 		//r.constraints = freezeVal;
 //		Debug.Log (freezeVal+"2");
