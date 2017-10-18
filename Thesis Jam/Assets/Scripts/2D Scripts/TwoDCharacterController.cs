@@ -90,11 +90,11 @@ public class TwoDCharacterController : MonoBehaviour {
 	public bool yButton (){
 		return (myController.Action4.IsPressed);
 	} 
-	public bool yButtonUp (){
-		return (myController.Action4.WasReleased);
+	public bool secondaryFire (){
+		return (myController.LeftTrigger.WasReleased);
 	}
-	public bool xButtonUp (){
-		return (myController.Action3.WasReleased);
+	public bool primaryFire (){
+		return (myController.RightTrigger.WasReleased);
 	} 
 
 	public bool bButtonUp (){

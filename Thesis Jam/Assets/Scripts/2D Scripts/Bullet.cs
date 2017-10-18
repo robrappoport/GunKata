@@ -28,7 +28,8 @@ public class Bullet : MonoBehaviour {
 		r = GetComponent<Rigidbody> ();
 		render.material = normBullet;
 		freezeVal = RigidbodyConstraints.FreezeRotation;
-		r.constraints = freezeVal;
+		normalBehavior = RigidbodyConstraints.FreezePositionY;
+		r.constraints = normalBehavior | freezeVal;
 
 	}
 
@@ -36,9 +37,8 @@ public class Bullet : MonoBehaviour {
 
 	void Update(){
 		lifeTime -= Time.deltaTime;
-		if (!isFrozen) {
 			BulletMomentum ();
-		}
+		
 
 	}
 
@@ -51,6 +51,7 @@ public class Bullet : MonoBehaviour {
 			prevVel = r.velocity;
 			prevSpeed = bulletSpeed;
 			bulletSpeed = fastBulletSpeed;
+//			Debug.Log (bulletSpeed);
 //			GetComponent<Rigidbody> ().velocity = Vector3.zero;//isKinematic = true;
 
 //			Debug.Log (freezeVal+"1");
@@ -60,6 +61,7 @@ public class Bullet : MonoBehaviour {
 			render.material = normBullet;
 			r.velocity = prevVel;//.isKinematic = false;
 			bulletSpeed = prevSpeed;
+//			Debug.Log (bulletSpeed);
 		}
 		//r.constraints = freezeVal;
 //		Debug.Log (freezeVal+"2");
@@ -90,6 +92,7 @@ public class Bullet : MonoBehaviour {
 		}
 		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
+//		Debug.Log (bulletSpeed);
 	
 	}
 }

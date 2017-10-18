@@ -68,7 +68,7 @@ public class LockOnScript : MonoBehaviour {
 			Vector2 pos = reticle.transform.parent.InverseTransformPoint (currentTarget.transform.position);Camera.main.WorldToScreenPoint (currentTarget.transform.position);*/
 			Vector3 pos = currentTarget.transform.position;//Camera.main.ScreenToWorldPoint (Camera.main.WorldToScreenPoint (currentTarget.transform.position));
 			reticle.gameObject.SetActive (true);
-			reticle.transform.position = new Vector3(pos.x, reticle.transform.position.y, pos.z);//WorldObject_ScreenPosition;
+			reticle.transform.position = new Vector3(pos.x, pos.y+2f, pos.z);//WorldObject_ScreenPosition;
         }
 	}
 		void unlock ()

@@ -15,7 +15,9 @@ public class BulletManager : MonoBehaviour {
 		//bulletRigid.velocity = this.gameObject.GetComponent<Rigidbody> ().velocity;
 		Bullet bullet = bulletObj.GetComponent<Bullet> ();
 		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-		bullet.bulletSpeed += Mathf.Max(Vector3.Dot (new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)), this.gameObject.GetComponent<Rigidbody> ().velocity), 0);
+		float velocityOffset = Mathf.Max(Vector3.Dot (new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)), this.gameObject.GetComponent<Rigidbody> ().velocity), 0);
+		bullet.bulletSpeed += velocityOffset;
+//		Debug.Log (velocityOffset);
 		bulletList.Add(bullet);
 		bullet.BMan = this;
 
@@ -27,9 +29,9 @@ public class BulletManager : MonoBehaviour {
 		bulletList.Remove (bullet);
 	}
 
-	public void Freeze(bool x){
+	public void Freeze(bool setFreeze){
 		foreach (Bullet b in bulletList) {
-			b.SetFreeze (b);
+			b.SetFreeze (setFreeze);
 		}
 	}
 

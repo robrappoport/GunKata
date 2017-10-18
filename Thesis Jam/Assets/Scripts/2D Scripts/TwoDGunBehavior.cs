@@ -52,26 +52,22 @@ public class TwoDGunBehavior: MonoBehaviour
 		if (isReloading) {
 			return;
 		}
-		if (CurrentBullets <= 0){
-			StartCoroutine (Reload ());
-			return;
-		}
 
 		if (Charge >= maxCharge)
         {
             pSys.Play();
         }
 		
-		if (myCont.yButtonUp () == true && Charge >= maxCharge) {
+		if (myCont.secondaryFire () == true && Charge >= maxCharge) {
 			chargeShot ();
             pSys.Stop();
         } 
 
-		if (myCont.yButtonUp () == true && Charge < maxCharge)
+		if (myCont.secondaryFire () == true && Charge < maxCharge)
 		{
 			SecondaryFire ();
 		}
-		if (myCont.xButtonUp () == true)
+		if (myCont.primaryFire () == true)
 		{
 			PrimaryFire ();
 		}
@@ -93,6 +89,10 @@ public class TwoDGunBehavior: MonoBehaviour
 	}
 	void PrimaryFire(){
 		CurrentBullets -= 1;
+		if (CurrentBullets <= 0){
+			StartCoroutine (NormalReload ());
+			return;
+		}
 		switch(currentWeapon)
 		{
 		case Loadout.Ryu:
@@ -122,14 +122,23 @@ public class TwoDGunBehavior: MonoBehaviour
 		switch (currentWeapon) 
 		{
 		case Loadout.Ryu:
+			
 			CurrentBullets -= 3;
-
+			if (CurrentBullets <= 0){
+				StartCoroutine (SpecialReload ());
+				return;
+			}
 			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
 			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm + 10f, 0)));
 			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 10f, 0)));
 			break;
+
 		case Loadout.Heavy:
 			CurrentBullets -= 3;
+			if (CurrentBullets <= 0){
+				StartCoroutine (SpecialReload ());
+				return;
+			}
 			bulletManager.CreateBullet (
 				HeavyBulletSecondary, 
 				Bullet_Emitter.transform.position + (transform.forward) * 4 + transform.right * 3, 
@@ -144,8 +153,14 @@ public class TwoDGunBehavior: MonoBehaviour
 		}
 	}
 
+	IEnumerator NormalReload(){
+		isReloading = true;
+		yield return new WaitForSeconds (ReloadTime);
+		CurrentBullets = MaxBullets;
+		isReloading = false;
+	}
 
-	IEnumerator Reload (){
+	IEnumerator SpecialReload (){
 //		Debug.Log (CurrentBullets);
 		isReloading = true;
 		if (CurrentBullets != 0) {
@@ -154,11 +169,12 @@ public class TwoDGunBehavior: MonoBehaviour
 
 		else {
 			gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
-			Debug.Log (playerNum);
+			Debug.Log (playerNum+"player");
 		}
 			yield return new WaitForSeconds (ReloadTime);
 			CurrentBullets = MaxBullets;
 		isReloading = false;
+		bulletManager.Freeze (false);
 		}
 
 
