@@ -38,6 +38,7 @@ public class TwoDGunBehavior: MonoBehaviour
     // Use this for initialization
     void Start()
     {
+		Debug.Log ("Player Number"+playerNum);
         Charge = ChargeRate;
         CurrentBullets = MaxBullets;
         bulletManager = GetComponent<BulletManager>();
@@ -164,10 +165,11 @@ public class TwoDGunBehavior: MonoBehaviour
 //		Debug.Log (CurrentBullets);
 		isReloading = true;
 		if (CurrentBullets != 0) {
-			bulletManager.Freeze (true);
+			bulletManager.Freeze (false);
 		} 
 
 		else {
+			Debug.Log (playerNum+"player");
 			gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
 			Debug.Log (playerNum+"player");
 		}

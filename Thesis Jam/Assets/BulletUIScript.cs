@@ -35,33 +35,5 @@ public class BulletUIScript : MonoBehaviour
 		weaponLabel.text = gunReference.weaponLabel;
 
 	}
-
-
-
-
-//    private Player bulletplayer;
-
-
-//    private void Start()
-//    {
-//        bulletplayer = GameObject.FindGameObjectWithTag("Player").GetComponent<TwoDGunBehavior>();
-//    }
-//
-//    private void Update()
-//    {
-//        BulletUI.sprite = BulletSprites[bulletplayer.currentBullets];
-//    } 
-
-
-
-
-
-
-
-
-
-
-
-
-
+		
 }
