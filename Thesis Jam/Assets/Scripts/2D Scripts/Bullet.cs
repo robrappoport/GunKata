@@ -8,6 +8,7 @@ public class Bullet : MonoBehaviour {
 	public float bulletSpeed;
 	public float prevSpeed;
 	public float fastBulletSpeed;
+	public float inactiveTime = .2f;
 	public float lifeTime = 2.0f;
 	Rigidbody r;
 	Renderer render;
@@ -37,9 +38,19 @@ public class Bullet : MonoBehaviour {
 
 	void Update(){
 		lifeTime -= Time.deltaTime;
+		inactiveTime -= Time.deltaTime;
 			BulletMomentum ();
+		InactiveBullet ();
 		
 
+	}
+
+	public void InactiveBullet ()
+	{
+		if (inactiveTime > 0f) {
+			Physics.IgnoreCollision (this.gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), true);
+		} else
+			Physics.IgnoreCollision (this.gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), false);
 	}
 
 	public void SetFreeze(bool b){

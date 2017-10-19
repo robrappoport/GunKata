@@ -5,6 +5,8 @@ public class TwoDGunBehavior: MonoBehaviour
 {
 	//Drag in the Bullet Emitter from the Component Inspector.
 	public GameObject Bullet_Emitter;
+	public GameObject left_Side_Emitter;
+	public GameObject right_Side_Emitter;
 	[HideInInspector]
 	public BulletManager bulletManager;
 	public TwoDGameManager gameManager;
@@ -100,7 +102,12 @@ public class TwoDGunBehavior: MonoBehaviour
 			bulletManager.CreateBullet (
 				RyuBullet, 
 				Bullet_Emitter.transform.position, 
-				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
+				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm + 2f, 0))
+			);
+			bulletManager.CreateBullet (
+				RyuBullet, 
+				Bullet_Emitter.transform.position, 
+				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 2f, 0))
 			);
 			break;
 		case Loadout.Heavy:
@@ -109,11 +116,11 @@ public class TwoDGunBehavior: MonoBehaviour
 				Bullet_Emitter.transform.position + transform.forward,
 				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
 			);
-			bulletManager.CreateBullet (
-				HeavyBulletPrimary, 
-				Bullet_Emitter.transform.position + transform.forward,
-				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
-			);
+//			bulletManager.CreateBullet (
+//				HeavyBulletPrimary, 
+//				Bullet_Emitter.transform.position + transform.forward,
+//				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
+//			);
 			break;
 		}
 
@@ -142,12 +149,12 @@ public class TwoDGunBehavior: MonoBehaviour
 			}
 			bulletManager.CreateBullet (
 				HeavyBulletSecondary, 
-				Bullet_Emitter.transform.position + (transform.forward) * 4 + transform.right * 3, 
+				left_Side_Emitter.transform.position /* + (transform.forward) * 4 + transform.right * 3 */, 
 				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
 			);
 			bulletManager.CreateBullet (
 				HeavyBulletSecondary, 
-				Bullet_Emitter.transform.position + (transform.forward) * 4 - transform.right * 3, 
+				right_Side_Emitter.transform.position /*+ (transform.forward) * 4 - transform.right * 3*/, 
 				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
 			);
 			break;

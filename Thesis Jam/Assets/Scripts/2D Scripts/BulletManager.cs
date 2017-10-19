@@ -15,8 +15,8 @@ public class BulletManager : MonoBehaviour {
 		//bulletRigid.velocity = this.gameObject.GetComponent<Rigidbody> ().velocity;
 		Bullet bullet = bulletObj.GetComponent<Bullet> ();
 		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-		float velocityOffset = Mathf.Max(Vector3.Dot (new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)), this.gameObject.GetComponent<Rigidbody> ().velocity), 0);
-		bullet.bulletSpeed += velocityOffset;
+//		float velocityOffset = Mathf.Max(Vector3.Dot (new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)), this.gameObject.GetComponent<Rigidbody> ().velocity), 0);
+//		bullet.bulletSpeed += velocityOffset;
 //		Debug.Log (velocityOffset);
 		bulletList.Add(bullet);
 		bullet.BMan = this;
