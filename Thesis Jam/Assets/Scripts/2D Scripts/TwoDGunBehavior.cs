@@ -15,7 +15,7 @@ public class TwoDGunBehavior: MonoBehaviour
 	public GameObject RyuBullet, HeavyBulletPrimary, HeavyBulletSecondary;
 	public GameObject BigBullet;
     public ParticleSystem pSys;
-	[HideInInspector]
+//	[HideInInspector]
 	public int playerNum;
     //Enter the Speed of the Bullet from the Component Inspector.
     public float Bullet_Forward_Force;
@@ -31,7 +31,7 @@ public class TwoDGunBehavior: MonoBehaviour
 	public float maxCharge;
 	public string weaponLabel;
 
-	public enum Loadout {Ryu, Heavy};
+	public enum Loadout {spray, heavy};
 	public Loadout[] loadout;
 	public Loadout currentWeapon;
 
@@ -46,7 +46,7 @@ public class TwoDGunBehavior: MonoBehaviour
         bulletManager = GetComponent<BulletManager>();
         pSys.Stop();
 		currentWeapon = loadout [0];
-		weaponLabel = loadout [0].ToString () + " Gun";
+		weaponLabel = loadout [0].ToString ();
     }
 	// Update is called once per frame
 	void Update ()
@@ -88,7 +88,7 @@ public class TwoDGunBehavior: MonoBehaviour
 		weaponSwitchCounter += 1;
 		currentWeapon = loadout [weaponSwitchCounter  % 2];
 
-		weaponLabel = currentWeapon.ToString () + " Gun";
+		weaponLabel = currentWeapon.ToString ();
 	}
 	void PrimaryFire(){
 		CurrentBullets -= 1;
@@ -98,7 +98,7 @@ public class TwoDGunBehavior: MonoBehaviour
 		}
 		switch(currentWeapon)
 		{
-		case Loadout.Ryu:
+		case Loadout.spray:
 			bulletManager.CreateBullet (
 				RyuBullet, 
 				Bullet_Emitter.transform.position, 
@@ -110,7 +110,7 @@ public class TwoDGunBehavior: MonoBehaviour
 				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 2f, 0))
 			);
 			break;
-		case Loadout.Heavy:
+		case Loadout.heavy:
 			bulletManager.CreateBullet (
 				HeavyBulletPrimary, 
 				Bullet_Emitter.transform.position + transform.forward,
@@ -129,7 +129,7 @@ public class TwoDGunBehavior: MonoBehaviour
 	void SecondaryFire (){
 		switch (currentWeapon) 
 		{
-		case Loadout.Ryu:
+		case Loadout.spray:
 			
 			CurrentBullets -= 3;
 			if (CurrentBullets <= 0){
@@ -141,7 +141,7 @@ public class TwoDGunBehavior: MonoBehaviour
 			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 10f, 0)));
 			break;
 
-		case Loadout.Heavy:
+		case Loadout.heavy:
 			CurrentBullets -= 3;
 			if (CurrentBullets <= 0){
 				StartCoroutine (SpecialReload ());
@@ -163,23 +163,34 @@ public class TwoDGunBehavior: MonoBehaviour
 
 	IEnumerator NormalReload(){
 		isReloading = true;
+		gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
 		yield return new WaitForSeconds (ReloadTime);
 		CurrentBullets = MaxBullets;
 		isReloading = false;
+		bulletManager.Freeze (false);
 	}
 
 	IEnumerator SpecialReload (){
 //		Debug.Log (CurrentBullets);
-		isReloading = true;
-		if (CurrentBullets != 0) {
-			bulletManager.Freeze (false);
-		} 
-
-		else {
-			Debug.Log (playerNum+"player");
-			gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
-			Debug.Log (playerNum+"player");
-		}
+//		int invert = 0;
+//		if (playerNum == 1) {
+//			invert = 0;
+//		} else {
+//			invert = 1;
+//		}
+//		isReloading = true;
+//		if (CurrentBullets != 0) {
+////			bulletManager.Freeze (false);
+//
+//
+//			gameManager.players [(invert)].bulletManager.Freeze (true);
+//		}
+//		else {
+//			Debug.Log (playerNum+"player");
+//			gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
+//			Debug.Log (playerNum+"player");
+//		}
+		gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
 			yield return new WaitForSeconds (ReloadTime);
 			CurrentBullets = MaxBullets;
 		isReloading = false;

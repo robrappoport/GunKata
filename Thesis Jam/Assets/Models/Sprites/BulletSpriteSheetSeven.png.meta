@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: b0005904b30504385b9eb6eff696c971
-timeCreated: 1506010574
+timeCreated: 1508448536
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -21,6 +21,8 @@ TextureImporter:
     linearTexture: 0
     fadeOut: 0
     borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
     mipMapFadeDistanceStart: 1
     mipMapFadeDistanceEnd: 3
   bumpmap:
@@ -36,10 +38,13 @@ TextureImporter:
   textureFormat: 1
   maxTextureSize: 2048
   textureSettings:
+    serializedVersion: 2
     filterMode: -1
     aniso: 16
     mipBias: -1
-    wrapMode: -1
+    wrapU: -1
+    wrapV: -1
+    wrapW: -1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -95,87 +100,94 @@ TextureImporter:
         width: 357
         height: 151
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: BulletSpriteSheetSeven_1
       rect:
         serializedVersion: 2
-        x: 394
+        x: 442
         y: 873
-        width: 357
+        width: 309
         height: 151
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: BulletSpriteSheetSeven_2
       rect:
         serializedVersion: 2
-        x: 14
+        x: 115
         y: 723
-        width: 357
+        width: 256
         height: 150
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: BulletSpriteSheetSeven_3
       rect:
         serializedVersion: 2
-        x: 394
+        x: 547
         y: 723
-        width: 357
+        width: 204
         height: 150
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: BulletSpriteSheetSeven_4
       rect:
         serializedVersion: 2
-        x: 13
+        x: 218
         y: 573
-        width: 357
+        width: 152
         height: 151
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: BulletSpriteSheetSeven_5
       rect:
         serializedVersion: 2
-        x: 394
+        x: 650
         y: 573
-        width: 357
+        width: 101
         height: 151
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: BulletSpriteSheetSeven_6
       rect:
         serializedVersion: 2
-        x: 14
+        x: 319
         y: 423
-        width: 356
+        width: 51
         height: 150
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: BulletSpriteSheetSeven_7
@@ -186,9 +198,10 @@ TextureImporter:
         width: 357
         height: 151
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: BulletSpriteSheetSeven_8
@@ -199,11 +212,13 @@ TextureImporter:
         width: 357
         height: 151
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: 0
     outline: []
+    physicsShape: []
   spritePackingTag: 
   userData: 
   assetBundleName: 

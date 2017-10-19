@@ -24,7 +24,7 @@ public class SmashCamScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-//		Players.Add (LevelFocus.gameObject);
+		Players.Add (LevelFocus.gameObject);
 	}
 	
 	// Update is called once per frame
