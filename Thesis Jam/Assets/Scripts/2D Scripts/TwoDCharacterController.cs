@@ -33,6 +33,8 @@ public class TwoDCharacterController : MonoBehaviour {
 	public PlayerAction Shoot;
 	public float moveForce;
 	public float dashForce;
+	float stuckTimer;
+	public float stuckTime = .1f;
 //	public float dragForce;
 //	public float dashDrag;
 //	public float stopForce;
@@ -65,6 +67,10 @@ public class TwoDCharacterController : MonoBehaviour {
 
 	}
 
+	public void OnShot(){
+		stuckTimer = stuckTime;
+	}
+
 	// Update is called once per frame
 	void FixedUpdate () {
 		if (transform.position.y != 6f) {
@@ -72,10 +78,14 @@ public class TwoDCharacterController : MonoBehaviour {
 		}
 		//		moveDirection.y = 0;
 		myController = InputManager.Devices[playerNum];
-		MoveCharacter ();
+		if (stuckTimer <= 0) {
+			MoveCharacter ();
+		} else {
+			characterCtr.velocity = Vector3.zero;
+		}
 //		storeDir = cameraTrans.right;
 		//		MyCharacterActions ();
-
+		stuckTimer -= Time.deltaTime;
 	}
 
 	private Vector3 OnMove() {
@@ -83,9 +93,9 @@ public class TwoDCharacterController : MonoBehaviour {
 
 	}
 
-//	public Vector3 CameraMove (){
-//		return new Vector3 (myController.RightStickX, 0, myController.RightStickY); 
-//	}
+	public Vector3 CameraMove (){
+		return new Vector3 (myController.RightStickX, 0, myController.RightStickY); 
+	}
 
 	public bool yButton (){
 		return (myController.Action4.IsPressed);
@@ -183,7 +193,7 @@ public class TwoDCharacterController : MonoBehaviour {
 
 		characterCtr.AddForce((moveDirForward + moveDirSides).normalized * curForce/ Time.deltaTime);
 		//		}
-		directionPos = transform.position + (OnMove());
+		directionPos = transform.position + (CameraMove());
 //		directionPos = transform.position + (storeDir * OnMove().x) + (cameraTrans.forward * OnMove().z);
 		Vector3 dir = directionPos - transform.position;
 
@@ -196,7 +206,7 @@ public class TwoDCharacterController : MonoBehaviour {
 		//			moveDirection = Vector3.zero;
 		//		}
 		//		RotateCharacter(moveDirection);
-		if (OnMove ().magnitude < .01f) {
+		if (CameraMove().magnitude < .01f) {
 			//			transform.rotation = previousRot;
 			//			characterCtr.MoveRotation(previousRot);
 		} 

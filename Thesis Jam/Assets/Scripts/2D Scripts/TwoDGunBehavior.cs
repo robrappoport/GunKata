@@ -91,6 +91,7 @@ public class TwoDGunBehavior: MonoBehaviour
 		weaponLabel = currentWeapon.ToString ();
 	}
 	void PrimaryFire(){
+		myCont.OnShot ();
 		CurrentBullets -= 1;
 		if (CurrentBullets <= 0){
 			StartCoroutine (NormalReload ());

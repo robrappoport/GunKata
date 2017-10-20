@@ -48,7 +48,7 @@ public class SmashCamScript : MonoBehaviour {
 		Vector3 localEulerAngles = gameObject.transform.localEulerAngles;
 		if (localEulerAngles.z != CameraEulerZ) 
 		{
-			Vector3 targetEulerAngles = new Vector3 (CameraEulerZ, localEulerAngles.y, localEulerAngles.z);
+			Vector3 targetEulerAngles = new Vector3 (localEulerAngles.x, localEulerAngles.y, CameraEulerZ);
 			gameObject.transform.localEulerAngles = Vector3.MoveTowards (localEulerAngles, targetEulerAngles, AngleUpdateSpeed * Time.deltaTime);
 		}
 	}
