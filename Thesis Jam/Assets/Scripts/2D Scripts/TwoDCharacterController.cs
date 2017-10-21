@@ -12,18 +12,18 @@ public class TwoDCharacterController : MonoBehaviour {
 	//    public Vector3 moveDirection;
 	public Vector3 moveDirForward;
 	public Vector3 moveDirSides;
-//	private Vector3 storeDir;
+	//	private Vector3 storeDir;
 	private Vector3 directionPos;
-//	public Transform cameraTrans;
+	//	public Transform cameraTrans;
 	public int playerNum;
 	public float turnSpeed = 4f;
-//	public float walkSpeed = 2;
+	//	public float walkSpeed = 2;
 	public float maxDashTime = 1.0f;
 	public float dashSpeed = 4.0f;
 	public float dashStopSpeed = 0.1f;
 
 	public float currentDashTime;
-//	private float currentSpeed = 0;
+	//	private float currentSpeed = 0;
 	public bool isDashing;
 	private Quaternion previousRot;
 	private Rigidbody characterCtr;
@@ -35,9 +35,9 @@ public class TwoDCharacterController : MonoBehaviour {
 	public float dashForce;
 	float stuckTimer;
 	public float stuckTime = .1f;
-//	public float dragForce;
-//	public float dashDrag;
-//	public float stopForce;
+	//	public float dragForce;
+	//	public float dashDrag;
+	//	public float stopForce;
 	//	public GameObject ringAttack;
 	//	public GameObject bounceAttack;
 	//	public GameObject StraightAttack;
@@ -83,7 +83,7 @@ public class TwoDCharacterController : MonoBehaviour {
 		} else {
 			characterCtr.velocity = Vector3.zero;
 		}
-//		storeDir = cameraTrans.right;
+		//		storeDir = cameraTrans.right;
 		//		MyCharacterActions ();
 		stuckTimer -= Time.deltaTime;
 	}
@@ -154,13 +154,13 @@ public class TwoDCharacterController : MonoBehaviour {
 
 	private void MoveCharacter() {
 		//		Debug.Log (isDashing);
-//		currentSpeed = walkSpeed;
+		//		currentSpeed = walkSpeed;
 		float curForce = moveForce;
-//		float curDrag = dragForce;
+		//		float curDrag = dragForce;
 		//		Debug.Log (currentSpeed);
 		//		moveDirection = OnMove();
 		moveDirForward = new Vector3 (OnMove ().x, 0, 0);
-//		moveDirForward = storeDir * OnMove ().x;
+		//		moveDirForward = storeDir * OnMove ().x;
 		moveDirSides = new Vector3 (0,0,OnMove ().z);//cameraTrans.forward
 
 		//		moveDirection.y = 0;
@@ -176,7 +176,7 @@ public class TwoDCharacterController : MonoBehaviour {
 			//moveDirection = new Vector3 (moveDirection.x * dashSpeed, 0, moveDirection.z * dashSpeed);
 			currentDashTime += dashStopSpeed;
 			curForce = dashForce;
-//			curDrag = dashDrag;
+			//			curDrag = dashDrag;
 
 		} else {
 			isDashing = false;
@@ -193,13 +193,15 @@ public class TwoDCharacterController : MonoBehaviour {
 
 		characterCtr.AddForce((moveDirForward + moveDirSides).normalized * curForce/ Time.deltaTime);
 		//		}
+		directionPos = transform.position + (OnMove());
 		directionPos = transform.position + (CameraMove());
-//		directionPos = transform.position + (storeDir * OnMove().x) + (cameraTrans.forward * OnMove().z);
+
+		//		directionPos = transform.position + (storeDir * OnMove().x) + (cameraTrans.forward * OnMove().z);
 		Vector3 dir = directionPos - transform.position;
 
 		dir.y = 0;
 
-//		characterCtr.AddForce (-characterCtr.velocity.normalized * curDrag * characterCtr.velocity.sqrMagnitude);
+		//		characterCtr.AddForce (-characterCtr.velocity.normalized * curDrag * characterCtr.velocity.sqrMagnitude);
 
 
 		//		 else {
@@ -217,8 +219,10 @@ public class TwoDCharacterController : MonoBehaviour {
 				//				previousRot = Quaternion.Euler (new Vector3 (0, -angle + 90, 0));
 				//
 				//				characterCtr.MoveRotation(Quaternion.Euler (new Vector3 (0, -angle + 90, 0)));
-				characterCtr.rotation = Quaternion.Slerp(transform.rotation,
-					Quaternion.LookRotation(dir), turnSpeed * Time.deltaTime);
+				characterCtr.rotation = 
+					Quaternion.Slerp(transform.rotation,
+						Quaternion.LookRotation(dir), 
+						turnSpeed * Time.deltaTime);
 			} else {
 			}
 		}
