@@ -193,11 +193,13 @@ public class TwoDCharacterController : MonoBehaviour {
 
 		characterCtr.AddForce((moveDirForward + moveDirSides).normalized * curForce/ Time.deltaTime);
 		//		}
-		directionPos = transform.position + (OnMove());
+
 		directionPos = transform.position + (CameraMove());
+
 
 		//		directionPos = transform.position + (storeDir * OnMove().x) + (cameraTrans.forward * OnMove().z);
 		Vector3 dir = directionPos - transform.position;
+		Debug.Log (dir + "checking initial");
 
 		dir.y = 0;
 
@@ -208,9 +210,17 @@ public class TwoDCharacterController : MonoBehaviour {
 		//			moveDirection = Vector3.zero;
 		//		}
 		//		RotateCharacter(moveDirection);
+
+//		Debug.Log (CameraMove ().magnitude);
 		if (CameraMove().magnitude < .01f) {
-			//			transform.rotation = previousRot;
-			//			characterCtr.MoveRotation(previousRot);
+			directionPos = transform.position + (OnMove());
+			dir = directionPos - transform.position;
+			Debug.Log (dir + "checking secondary");
+			characterCtr.rotation = 
+				Quaternion.Slerp(transform.rotation,
+					Quaternion.LookRotation(dir), 
+					turnSpeed * Time.deltaTime);
+			return;
 		} 
 
 		else {
