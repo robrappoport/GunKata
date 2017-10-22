@@ -93,7 +93,7 @@ public class TwoDCharacterController : MonoBehaviour {
 
 	}
 
-	public Vector3 CameraMove (){
+	public Vector3 RightStickMove (){
 		return new Vector3 (myController.RightStickX, 0, myController.RightStickY); 
 	}
 
@@ -194,12 +194,12 @@ public class TwoDCharacterController : MonoBehaviour {
 		characterCtr.AddForce((moveDirForward + moveDirSides).normalized * curForce/ Time.deltaTime);
 		//		}
 
-		directionPos = transform.position + (CameraMove());
+		directionPos = transform.position + (RightStickMove());
 
 
 		//		directionPos = transform.position + (storeDir * OnMove().x) + (cameraTrans.forward * OnMove().z);
 		Vector3 dir = directionPos - transform.position;
-		Debug.Log (dir + "checking initial");
+		//		Debug.Log (dir + "checking initial");
 
 		dir.y = 0;
 
@@ -211,16 +211,19 @@ public class TwoDCharacterController : MonoBehaviour {
 		//		}
 		//		RotateCharacter(moveDirection);
 
-//		Debug.Log (CameraMove ().magnitude);
-		if (CameraMove().magnitude < .01f) {
+		//		Debug.Log (CameraMove ().magnitude);
+		if (RightStickMove().magnitude < .01f) {
 			directionPos = transform.position + (OnMove());
 			dir = directionPos - transform.position;
-			Debug.Log (dir + "checking secondary");
-			characterCtr.rotation = 
-				Quaternion.Slerp(transform.rotation,
-					Quaternion.LookRotation(dir), 
-					turnSpeed * Time.deltaTime);
+			//			Debug.Log (dir + "checking secondary");
+			if (OnMove ().magnitude > .01f) {
+				characterCtr.rotation = 
+					Quaternion.Slerp (transform.rotation,
+						Quaternion.LookRotation (dir), 
+						turnSpeed * Time.deltaTime);
+			}
 			return;
+			//
 		} 
 
 		else {
@@ -244,4 +247,3 @@ public class TwoDCharacterController : MonoBehaviour {
 
 
 }
-
