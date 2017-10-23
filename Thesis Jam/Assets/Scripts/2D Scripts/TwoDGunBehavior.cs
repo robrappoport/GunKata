@@ -14,7 +14,7 @@ public class TwoDGunBehavior: MonoBehaviour
 	//Drag in the Bullet Prefab from the Component Inspector.
 	public GameObject RyuBullet, HeavyBulletPrimary, HeavyBulletSecondary;
 	public GameObject BigBullet;
-    public ParticleSystem pSys;
+//    public ParticleSystem pSys;
 //	[HideInInspector]
 	public int playerNum;
     //Enter the Speed of the Bullet from the Component Inspector.
@@ -44,7 +44,7 @@ public class TwoDGunBehavior: MonoBehaviour
         Charge = ChargeRate;
         CurrentBullets = MaxBullets;
         bulletManager = GetComponent<BulletManager>();
-        pSys.Stop();
+//        pSys.Stop();
 		currentWeapon = loadout [0];
 		weaponLabel = loadout [0].ToString ();
     }
@@ -58,12 +58,12 @@ public class TwoDGunBehavior: MonoBehaviour
 
 		if (Charge >= maxCharge)
         {
-            pSys.Play();
+//            pSys.Play();
         }
 		
 		if (myCont.secondaryFire () == true && Charge >= maxCharge) {
 			chargeShot ();
-            pSys.Stop();
+//            pSys.Stop();
         } 
 
 		if (myCont.secondaryFire () == true && Charge < maxCharge)
