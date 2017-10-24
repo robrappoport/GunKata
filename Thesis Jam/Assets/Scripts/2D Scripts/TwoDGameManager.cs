@@ -5,7 +5,6 @@ using InControl;
 using UnityEngine.SceneManagement;
 
 public class TwoDGameManager : MonoBehaviour {
-	public PlayerHealth playerHealth;
     const int maxPlayers = 2;
     public TwoDGunBehavior[] players;
 
