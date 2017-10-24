@@ -77,7 +77,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 		if (myCont.rightBumperPressed()) {
 			SwitchWeapons ();
 		}
-		if (myCont.xButtonUp ()) {
+		if (myCont.xButtonUp () || (CurrentBullets <= 0 && !isReloading)){
 			Reload ();
 		}
 //		if (myCont.yButton () == true && CurrentBullets > 0) {
@@ -91,7 +91,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	}
 
 	void Reload(){
-		if (CurrentBullets != MaxBullets) {
+		if (CurrentBullets != MaxBullets ) {
 			myCont.OnShot ();
 			if ((MaxBullets - CurrentBullets) % specialBulletPeriod == specialBulletPeriod - 1) {
 
@@ -193,7 +193,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	}
 
 	IEnumerator NormalReload(){
-
+		print ("reloading");
 		isReloading = true;
 		//gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
 		yield return new WaitForSeconds (ReloadTime);
