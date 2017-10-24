@@ -193,7 +193,6 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	}
 
 	IEnumerator NormalReload(){
-		print ("reloading");
 		isReloading = true;
 		//gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
 		yield return new WaitForSeconds (ReloadTime);
