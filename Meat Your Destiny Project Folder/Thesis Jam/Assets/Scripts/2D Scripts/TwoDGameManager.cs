@@ -13,8 +13,8 @@ public class TwoDGameManager : MonoBehaviour {
 void Update ()
 	{
 		if (Input.GetKeyDown ("space")) {
-			Debug.Log ("test");
-			SceneManager.LoadScene("2DTest");
+//			Debug.Log ("test");
+			SceneManager.LoadScene("2DBigClipTest");
 		}
 }
 

@@ -7,6 +7,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	public GameObject Bullet_Emitter;
 	public GameObject left_Side_Emitter;
 	public GameObject right_Side_Emitter;
+	public Behaviour haloBehave;
 	[HideInInspector]
 	public BulletManager bulletManager;
 	public TwoDGameManager gameManager;
@@ -14,7 +15,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	//Drag in the Bullet Prefab from the Component Inspector.
 	public GameObject RyuBullet, HeavyBulletPrimary, HeavyBulletSecondary;
 //	public GameObject BigBullet;
-    public ParticleSystem pSys;
+//    public ParticleSystem pSys;
 //	[HideInInspector]
 	public int playerNum;
     //Enter the Speed of the Bullet from the Component Inspector.
@@ -27,9 +28,6 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	public int CurrentBullets;
 	public int specialBulletPeriod = 2;
 	public float ReloadTime;
-//	public float ChargeRate;
-//	public float Charge;
-//	public float maxCharge;
 	public string weaponLabel;
 
 	public enum Loadout {spray, heavy};
@@ -42,30 +40,33 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
     void Start()
     {
 		Debug.Log ("Player Number"+playerNum);
-//        Charge = ChargeRate;
         CurrentBullets = MaxBullets;
         bulletManager = GetComponent<BulletManager>();
-        pSys.Stop();
+//        pSys.Stop();
 		currentWeapon = loadout [0];
 		weaponLabel = loadout [0].ToString ();
+		Debug.Log ("junk junk junk");
+
     }
 	// Update is called once per frame
 	void Update ()
 	{
+
+		if ((MaxBullets - CurrentBullets) % specialBulletPeriod == specialBulletPeriod - 1) {
+			Behaviour halo =(Behaviour)haloBehave.gameObject.GetComponent ("Halo");
+			halo.enabled = true;
+			Debug.Log (haloBehave.gameObject.name);
+		} else {
+			Debug.Log ("turning off");
+			Behaviour haloOff =(Behaviour)haloBehave.gameObject.GetComponent ("Halo");
+			haloOff.enabled = false;
+		}
+			haloBehave.enabled = false;
 		Debug.DrawRay (transform.position, transform.forward * 50, Color.red);
 		if (isReloading) {
 			return;
 		}
-
-//		if (Charge >= maxCharge)
-//        {
-//            pSys.Play();
-//        }
-		
-//		if (myCont.secondaryFire () == true && Charge >= maxCharge) {
-//			chargeShot ();
-//            pSys.Stop();
-//        } 
+			
 		if (CurrentBullets > 0) {
 			if (myCont.secondaryFire () == true) {
 				SecondaryFire ();
@@ -77,21 +78,14 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 		if (myCont.rightBumperPressed()) {
 			SwitchWeapons ();
 		}
-		if (myCont.xButtonUp () || (CurrentBullets <= 0 && !isReloading)){
+		if (myCont.xButtonUp ()) {
 			Reload ();
 		}
-//		if (myCont.yButton () == true && CurrentBullets > 0) {
-//			Charge += Time.deltaTime;
-////			Debug.Log (Charge);
-//		} else
-//			Charge = ChargeRate;
-
-
 
 	}
 
 	void Reload(){
-		if (CurrentBullets != MaxBullets ) {
+		if (CurrentBullets != MaxBullets) {
 			myCont.OnShot ();
 			if ((MaxBullets - CurrentBullets) % specialBulletPeriod == specialBulletPeriod - 1) {
 
@@ -193,6 +187,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	}
 
 	IEnumerator NormalReload(){
+
 		isReloading = true;
 		//gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
 		yield return new WaitForSeconds (ReloadTime);
@@ -227,14 +222,6 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 		isReloading = false;
 		bulletManager.Freeze (false);
 		}
-
-
-//	void chargeShot (){
-//		CurrentBullets -= 4;
-//		bulletManager.CreateBullet (BigBullet, Bullet_Emitter.transform.position, Quaternion.Euler(new Vector3(0,Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
-//
-//	}
-
 
 
 }
