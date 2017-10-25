@@ -7,7 +7,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	public GameObject Bullet_Emitter;
 	public GameObject left_Side_Emitter;
 	public GameObject right_Side_Emitter;
-	public Behaviour haloBehave;
+//	public Behaviour haloBehave;
 	[HideInInspector]
 	public BulletManager bulletManager;
 	public TwoDGameManager gameManager;
@@ -15,7 +15,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	//Drag in the Bullet Prefab from the Component Inspector.
 	public GameObject RyuBullet, HeavyBulletPrimary, HeavyBulletSecondary;
 //	public GameObject BigBullet;
-//    public ParticleSystem pSys;
+    public ParticleSystem pSys;
 //	[HideInInspector]
 	public int playerNum;
     //Enter the Speed of the Bullet from the Component Inspector.
@@ -50,17 +50,18 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-
+		Debug.Log (specialBulletPeriod-1);
+		Debug.Log (specialBulletPeriod);
+		Debug.Log((MaxBullets - CurrentBullets) % specialBulletPeriod);
 		if ((MaxBullets - CurrentBullets) % specialBulletPeriod == specialBulletPeriod - 1) {
-			Behaviour halo =(Behaviour)haloBehave.gameObject.GetComponent ("Halo");
-			halo.enabled = true;
-			Debug.Log (haloBehave.gameObject.name);
-		} else {
-			Debug.Log ("turning off");
-			Behaviour haloOff =(Behaviour)haloBehave.gameObject.GetComponent ("Halo");
-			haloOff.enabled = false;
+			Debug.Log ("playing");
+			pSys.Play ();
+		} else if (pSys.isPlaying){
+			Debug.Log ("stopping");
+			pSys.Stop ();
 		}
-			haloBehave.enabled = false;
+
+			
 		Debug.DrawRay (transform.position, transform.forward * 50, Color.red);
 		if (isReloading) {
 			return;
