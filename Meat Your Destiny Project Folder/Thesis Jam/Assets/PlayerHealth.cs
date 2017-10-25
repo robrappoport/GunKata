@@ -11,17 +11,20 @@ public class PlayerHealth : MonoBehaviour {
 	public GameObject playerCanvas;
 	public TwoDCharacterController myCont;
 	public TwoDGunBehaviorBigClip myGun;
-	public Renderer[] renderers;
+	public Renderer render;
 	public float damageTime;
 	public Material damagedColor;
 	public Material normalColor;
+	public Material playerColor;
 	public int flashNum;
 
 	// Use this for initialization
 	void Start () {
+		render = GetComponent<Renderer>();
 		CurrentHealth = MaxHealth;
 		SetHealth ();
-		renderers = GetComponentsInChildren <Renderer> (); 
+		render.material = playerColor;
+		playerColor = normalColor;
 		takingDamage = false;
 
 
@@ -29,10 +32,10 @@ public class PlayerHealth : MonoBehaviour {
 	}
 
 
-	public void takeDamage (float amount)
+	public void takeDamage (int amount)
 	{
 		if (myCont.isDashing == true && myGun.CurrentBullets <= myGun.MaxBullets) {
-			dashAbsorb ();
+			dashAbsorb (amount);
 		} else {
 			
 			takingDamage = true;
@@ -49,10 +52,11 @@ public class PlayerHealth : MonoBehaviour {
 		}
 	}
 		
-	public void dashAbsorb ()
+	public void dashAbsorb (int amount)
 	{
 //		Debug.Log ("Is absorbing");
-		myGun.CurrentBullets += 2;
+		CurrentHealth += amount;
+		SetHealth ();
 	}
 
 	public void SetHealth ()
@@ -63,20 +67,15 @@ public class PlayerHealth : MonoBehaviour {
 
 	private IEnumerator colorChange()
 	{
-		for (int i = 0; i < flashNum; i++) {
-			
-			foreach (Renderer render in renderers) {
-				render.material = damagedColor;
-			}
+		
+			playerColor = damagedColor;
+
 			yield return new WaitForSeconds (damageTime);
 
-			foreach (Renderer render in renderers) {
+			playerColor = normalColor;
 
-				render.material = normalColor;
-			}
 			yield return new WaitForSeconds (damageTime);
 
-		}
 
 	}
 

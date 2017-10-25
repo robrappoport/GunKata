@@ -26,6 +26,9 @@ public class Bullet : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		Physics.IgnoreCollision (this.gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), true);
+
+
 		if (BMan.gameObject.GetComponent<TwoDGunBehaviorBigClip> ().playerNum == 0) {
 			normBullet = playerOneBullet;
 		}
@@ -48,17 +51,16 @@ public class Bullet : MonoBehaviour {
 		lifeTime -= Time.deltaTime;
 		inactiveTime -= Time.deltaTime;
 			BulletMomentum ();
-		InactiveBullet ();
+			InactiveBullet ();
 		
 
 	}
 
 	public void InactiveBullet ()
 	{
-		if (inactiveTime > 0f) {
-			Physics.IgnoreCollision (this.gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), true);
-		} else
+		if (inactiveTime <= 0f) {
 			Physics.IgnoreCollision (this.gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), false);
+		}
 	}
 
 	public void SetFreeze(bool b){

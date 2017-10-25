@@ -7,13 +7,12 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	public GameObject Bullet_Emitter;
 	public GameObject left_Side_Emitter;
 	public GameObject right_Side_Emitter;
-//	public Behaviour haloBehave;
 	[HideInInspector]
 	public BulletManager bulletManager;
 	public TwoDGameManager gameManager;
 	public TwoDCharacterController myCont;
 	//Drag in the Bullet Prefab from the Component Inspector.
-	public GameObject RyuBullet, HeavyBulletPrimary, HeavyBulletSecondary;
+	public GameObject RyuBullet, HeavyBulletPrimary, HeavyBulletSecondary, FastBullet;
 //	public GameObject BigBullet;
     public ParticleSystem pSys;
 //	[HideInInspector]
@@ -50,9 +49,6 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		Debug.Log (specialBulletPeriod-1);
-		Debug.Log (specialBulletPeriod);
-		Debug.Log((MaxBullets - CurrentBullets) % specialBulletPeriod);
 		if ((MaxBullets - CurrentBullets) % specialBulletPeriod == specialBulletPeriod - 1) {
 			Debug.Log ("playing");
 			pSys.Play ();
@@ -114,12 +110,12 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 			bulletManager.CreateBullet (
 				RyuBullet, 
 				Bullet_Emitter.transform.position, 
-				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm + 2f, 0))
+				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm + 5f, 0))
 			);
 			bulletManager.CreateBullet (
 				RyuBullet, 
 				Bullet_Emitter.transform.position, 
-				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 2f, 0))
+				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 5f, 0))
 			);
 			break;
 		case Loadout.heavy:
@@ -154,9 +150,9 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 //				StartCoroutine (NormalReload ());
 //				return;
 //			}
-			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
-			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm + 10f, 0)));
-			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 10f, 0)));
+			bulletManager.CreateBullet (FastBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
+//			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm + 10f, 0)));
+//			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 10f, 0)));
 			break;
 
 		case Loadout.heavy:
