@@ -45,7 +45,6 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 //        pSys.Stop();
 		currentWeapon = loadout [0];
 		weaponLabel = loadout [0].ToString ();
-		Debug.Log ("junk junk junk");
 
     }
 	// Update is called once per frame
@@ -78,7 +77,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 		if (myCont.rightBumperPressed()) {
 			SwitchWeapons ();
 		}
-		if (myCont.xButtonUp ()) {
+		if (myCont.xButtonUp () || (CurrentBullets <= 0 && !isReloading)){
 			Reload ();
 		}
 
