@@ -17,6 +17,8 @@ public class Bullet : MonoBehaviour {
 	RigidbodyConstraints freezeVal;
 	RigidbodyConstraints normalBehavior;
 
+	public Material playerOneBullet;
+	public Material playerTwoBullet;
 	public Material normBullet;
 	public Material frozenBullet;
 	public bool isDestroyedOnHit = true;
@@ -24,6 +26,12 @@ public class Bullet : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		if (BMan.gameObject.GetComponent<TwoDGunBehaviorBigClip> ().playerNum == 0) {
+			normBullet = playerOneBullet;
+		}
+		if (BMan.gameObject.GetComponent<TwoDGunBehaviorBigClip> ().playerNum == 1) {
+			normBullet = playerTwoBullet;
+		}
 		prevSpeed = bulletSpeed;
 		render = GetComponent<Renderer> ();
 		r = GetComponent<Rigidbody> ();
@@ -106,4 +114,5 @@ public class Bullet : MonoBehaviour {
 //		Debug.Log (bulletSpeed);
 	
 	}
+		
 }

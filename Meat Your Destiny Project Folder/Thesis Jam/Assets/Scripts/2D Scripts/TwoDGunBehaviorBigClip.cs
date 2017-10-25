@@ -42,7 +42,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 		Debug.Log ("Player Number"+playerNum);
         CurrentBullets = MaxBullets;
         bulletManager = GetComponent<BulletManager>();
-//        pSys.Stop();
+        pSys.Stop();
 		currentWeapon = loadout [0];
 		weaponLabel = loadout [0].ToString ();
 
