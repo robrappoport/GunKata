@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using InControl;
+using UnityEngine.SceneManagement;
 
 public class TwoDCharacterController : MonoBehaviour {
 	public static TwoDCharacterController instance;
@@ -27,10 +28,6 @@ public class TwoDCharacterController : MonoBehaviour {
 	public bool isDashing;
 	private Quaternion previousRot;
 	private Rigidbody characterCtr;
-
-
-	public PlayerAction Move;
-	public PlayerAction Shoot;
 	public float moveForce;
 	public float dashForce;
 	float stuckTimer;
@@ -86,54 +83,63 @@ public class TwoDCharacterController : MonoBehaviour {
 		//		storeDir = cameraTrans.right;
 		//		MyCharacterActions ();
 		stuckTimer -= Time.deltaTime;
+		if (startButton())
+		{
+				SceneManager.LoadScene("2DBigClipTest");
+		}
 	}
+
 
 	private Vector3 OnMove() {
 		return new Vector3(myController.LeftStickX, 0, myController.LeftStickY);
 
 	}
-
 	public Vector3 RightStickMove (){
 		return new Vector3 (myController.RightStickX, 0, myController.RightStickY); 
 		print (myController.RightStickX);
 	}
 
+	public bool startButton ()
+	{
+		return (myController.CommandWasPressed);
+	}
+
 	public bool yButton (){
-		return (myController.Action4.IsPressed);
+		return (myController.Action4.WasPressed);
 	}
 	public bool xButton (){
-			return (myController.Action3.IsPressed);
+		return (myController.Action3.WasPressed);
 	} 
 
 	public bool xButtonUp (){
-		return (myController.Action3.WasReleased);
+		return (myController.Action3.WasPressed);
 	} 
 	public bool secondaryFire (){
-		return (myController.LeftTrigger.WasReleased);
+		return (myController.LeftTrigger.WasPressed);
 	}
 	public bool primaryFire (){
-		return (myController.RightTrigger.WasReleased);
+		return (myController.RightTrigger.IsPressed);
 	} 
 
 	public bool bButtonUp (){
-		return (myController.Action2.WasReleased);
+		return (myController.Action2.WasPressed);
 	}
 
 	public bool onLock() {
-		return myController.LeftBumper.IsPressed;
+		return myController.LeftBumper.WasPressed;
 	}
 	public bool Unlock()
 	{
 		return myController.LeftBumper.WasReleased;
 	}
 
-	public bool rightTriggerDown(){
-		return myController.RightTrigger.IsPressed;
-	}
-
-	public bool leftTriggerDown(){
-		return myController.LeftTrigger.IsPressed;
-	}
+//	public bool rightTriggerDown(){
+//		return myController.RightTrigger.IsPressed;
+//	}
+//
+//	public bool leftTriggerDown(){
+//		return myController.LeftTrigger.IsPressed;
+//	}
 
 	public bool rightBumperPressed(){
 		return myController.RightBumper.WasReleased;

@@ -11,24 +11,30 @@ public class PlayerHealth : MonoBehaviour {
 	public GameObject playerCanvas;
 	public TwoDCharacterController myCont;
 	public TwoDGunBehaviorBigClip myGun;
-	public Renderer render;
 	public float damageTime;
+	public Renderer render;
+	public Material playerColor;
 	public Material damagedColor;
 	public Material normalColor;
-	public Material playerColor;
+
 	public int flashNum;
 
 	// Use this for initialization
 	void Start () {
-		render = GetComponent<Renderer>();
+		render.material = playerColor;
+		Debug.Log (render.material);
+		playerColor = normalColor;
 		CurrentHealth = MaxHealth;
 		SetHealth ();
-		render.material = playerColor;
-		playerColor = normalColor;
 		takingDamage = false;
 
 
 		
+	}
+
+	void Update ()
+	{
+		render.material = playerColor;
 	}
 
 
@@ -67,15 +73,20 @@ public class PlayerHealth : MonoBehaviour {
 
 	private IEnumerator colorChange()
 	{
-		
+		for (int i = 0; i < flashNum; i++) {
+			
+
 			playerColor = damagedColor;
 
 			yield return new WaitForSeconds (damageTime);
+
+
 
 			playerColor = normalColor;
 
 			yield return new WaitForSeconds (damageTime);
 
+		}
 
 	}
 

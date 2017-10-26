@@ -27,7 +27,11 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	public int CurrentBullets;
 	public int specialBulletPeriod = 2;
 	public float ReloadTime;
+	public float initShootTime;
+	public float shootTime;
 	public string weaponLabel;
+	private bool isFiring;
+	public bool autoReloadEnabled;
 
 	public enum Loadout {spray, heavy};
 	public Loadout[] loadout;
@@ -38,6 +42,8 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
     // Use this for initialization
     void Start()
     {
+		isFiring = false;
+		shootTime = 0;
 		Debug.Log ("Player Number"+playerNum);
         CurrentBullets = MaxBullets;
         bulletManager = GetComponent<BulletManager>();
@@ -49,11 +55,15 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		if (shootTime > 0) {
+			shootTime -= Time.deltaTime;
+			isFiring = false;
+		}
 		if ((MaxBullets - CurrentBullets) % specialBulletPeriod == specialBulletPeriod - 1) {
-			Debug.Log ("playing");
+//			Debug.Log ("playing");
 			pSys.Play ();
 		} else if (pSys.isPlaying){
-			Debug.Log ("stopping");
+//			Debug.Log ("stopping");
 			pSys.Stop ();
 		}
 
@@ -68,13 +78,17 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 				SecondaryFire ();
 			}
 			if (myCont.primaryFire () == true) {
-				PrimaryFire ();
+				if (shootTime <= 0) {
+					isFiring = true;
+					shootTime = initShootTime;
+					PrimaryFire ();
+				}
 			}
 		}
 		if (myCont.rightBumperPressed()) {
 			SwitchWeapons ();
 		}
-		if (myCont.xButtonUp () || (CurrentBullets <= 0 && !isReloading)){
+		if (myCont.xButtonUp () || (CurrentBullets <= 0 && !isReloading && autoReloadEnabled == true)){
 			Reload ();
 		}
 
@@ -110,13 +124,14 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 			bulletManager.CreateBullet (
 				RyuBullet, 
 				Bullet_Emitter.transform.position, 
-				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm + 5f, 0))
+				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
 			);
-			bulletManager.CreateBullet (
-				RyuBullet, 
-				Bullet_Emitter.transform.position, 
-				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 5f, 0))
-			);
+//			bulletManager.CreateBullet (
+//				RyuBullet, 
+//				Bullet_Emitter.transform.position, 
+//				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 5f, 0))
+//			);
+
 			break;
 		case Loadout.heavy:
 			bulletManager.CreateBullet (
@@ -129,8 +144,10 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 //				Bullet_Emitter.transform.position + transform.forward,
 //				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
 //			);
+
 			break;
 		}
+
 
 	}
 
@@ -142,7 +159,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 		{
 		case Loadout.spray:
 			
-			CurrentBullets -= 3;
+			CurrentBullets -= 10;
 			
 //			if (CurrentBullets <= 0){
 //				print ("reloading");
@@ -170,14 +187,19 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 //			}
 			bulletManager.CreateBullet (
 				HeavyBulletSecondary, 
-				left_Side_Emitter.transform.position /* + (transform.forward) * 4 + transform.right * 3 */, 
+				Bullet_Emitter.transform.position + transform.forward,
 				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
 			);
-			bulletManager.CreateBullet (
-				HeavyBulletSecondary, 
-				right_Side_Emitter.transform.position /*+ (transform.forward) * 4 - transform.right * 3*/, 
-				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
-			);
+//			bulletManager.CreateBullet (
+//				HeavyBulletSecondary, 
+//				left_Side_Emitter.transform.position /* + (transform.forward) * 4 + transform.right * 3 */, 
+//				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
+//			);
+//			bulletManager.CreateBullet (
+//				HeavyBulletSecondary, 
+//				right_Side_Emitter.transform.position /*+ (transform.forward) * 4 - transform.right * 3*/, 
+//				Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
+//			);
 			break;
 		}
 	}
