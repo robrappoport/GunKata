@@ -16,6 +16,8 @@ public class PlayerHealth : MonoBehaviour {
 	public Material playerColor;
 	public Material damagedColor;
 	public Material normalColor;
+	public AudioSource playerAudio;
+	public AudioClip hurtSound;
 
 	public int flashNum;
 
@@ -43,7 +45,10 @@ public class PlayerHealth : MonoBehaviour {
 		if (myCont.isDashing == true && myGun.CurrentBullets <= myGun.MaxBullets) {
 			dashAbsorb (amount);
 		} else {
-			
+			if (!playerAudio.isPlaying) {
+				playerAudio.clip = hurtSound;
+				playerAudio.Play ();
+			}
 			takingDamage = true;
 			CurrentHealth += amount;
 			SetHealth ();

@@ -33,12 +33,16 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	private bool isFiring;
 	public bool autoReloadEnabled;
 
-	public enum Loadout {spray, heavy};
+	public enum Loadout {spray, shield};
 	public Loadout[] loadout;
 	public Loadout currentWeapon;
 
 	private bool isReloading;
 	private int weaponSwitchCounter = 0;
+
+
+	public AudioSource playerAudio;
+	public AudioClip [] playerNoises;
     // Use this for initialization
     void Start()
     {
@@ -76,12 +80,17 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 		if (CurrentBullets > 0) {
 			if (myCont.secondaryFire () == true) {
 				SecondaryFire ();
+				playerAudio.clip = playerNoises [0];
+				playerAudio.Play ();
 			}
 			if (myCont.primaryFire () == true) {
 				if (shootTime <= 0) {
 					isFiring = true;
 					shootTime = initShootTime;
 					PrimaryFire ();
+					playerAudio.clip = playerNoises [0];
+					playerAudio.Play ();
+
 				}
 			}
 		}
@@ -133,7 +142,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 //			);
 
 			break;
-		case Loadout.heavy:
+		case Loadout.shield:
 			bulletManager.CreateBullet (
 				HeavyBulletPrimary, 
 				Bullet_Emitter.transform.position + transform.forward,
@@ -172,7 +181,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 //			bulletManager.CreateBullet (RyuBullet, Bullet_Emitter.transform.position, Quaternion.Euler (new Vector3 (0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm - 10f, 0)));
 			break;
 
-		case Loadout.heavy:
+		case Loadout.shield:
 			CurrentBullets -= 3;
 //			if ((MaxBullets - CurrentBullets)% specialBulletPeriod == 0){
 //				StartCoroutine (Special ());
@@ -212,6 +221,9 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 		CurrentBullets = MaxBullets;
 		isReloading = false;
 		bulletManager.Freeze (false);
+		playerAudio.clip = playerNoises [1];
+		playerAudio.Play ();
+
 	}
 
 	IEnumerator Special (){
@@ -235,6 +247,8 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 //			gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
 //			Debug.Log (playerNum+"player");
 //		}
+		playerAudio.clip = playerNoises [1];
+		playerAudio.Play();
 		gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
 			yield return new WaitForSeconds (ReloadTime);
 		isReloading = false;
