@@ -27,6 +27,11 @@ public class Bullet : MonoBehaviour {
 	public AudioSource bulletNoise;
 
 	// Use this for initialization
+	void Awake(){
+		r = GetComponent<Rigidbody> ();
+		render = GetComponent<Renderer> ();
+
+	}
 	void Start () {
 		Physics.IgnoreCollision (this.gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), true);
 
@@ -38,8 +43,7 @@ public class Bullet : MonoBehaviour {
 			normBullet = playerTwoBullet;
 		}
 		prevSpeed = bulletSpeed;
-		render = GetComponent<Renderer> ();
-		r = GetComponent<Rigidbody> ();
+
 		render.material = normBullet;
 		freezeVal = RigidbodyConstraints.FreezeRotation;
 		normalBehavior = RigidbodyConstraints.FreezePositionY;
