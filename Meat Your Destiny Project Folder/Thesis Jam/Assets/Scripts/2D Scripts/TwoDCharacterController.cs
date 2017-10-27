@@ -28,6 +28,7 @@ public class TwoDCharacterController : MonoBehaviour {
 	public bool isDashing;
 	private Quaternion previousRot;
 	private Rigidbody characterCtr;
+	public float curForce;
 	public float moveForce;
 	public float dashForce;
 	float stuckTimer;
@@ -169,7 +170,9 @@ public class TwoDCharacterController : MonoBehaviour {
 	private void MoveCharacter() {
 		//		Debug.Log (isDashing);
 		//		currentSpeed = walkSpeed;
-		float curForce = moveForce;
+		if (!isDashing) {
+			curForce = moveForce;
+		}
 		//		float curDrag = dragForce;
 		//		Debug.Log (currentSpeed);
 		//		moveDirection = OnMove();
@@ -190,10 +193,9 @@ public class TwoDCharacterController : MonoBehaviour {
 			//moveDirection = new Vector3 (moveDirection.x * dashSpeed, 0, moveDirection.z * dashSpeed);
 			currentDashTime += dashStopSpeed;
 			curForce = dashForce;
+			isDashing = false;
 			//			curDrag = dashDrag;
 
-		} else {
-			isDashing = false;
 		}
 
 		//moveDirection *= currentSpeed;
@@ -204,6 +206,7 @@ public class TwoDCharacterController : MonoBehaviour {
 		//			//}
 		//		} else {
 		//			moveDirection = moveDirection.normalized;
+
 
 		characterCtr.AddForce((moveDirForward + moveDirSides).normalized * curForce/ Time.deltaTime);
 		//		}

@@ -228,33 +228,21 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 
 	IEnumerator Special (){
 
-//		Debug.Log (CurrentBullets);
-//		int invert = 0;
-//		if (playerNum == 1) {
-//			invert = 0;
-//		} else {
-//			invert = 1;
-//		}
-
-//		if (CurrentBullets != 0) {
-////			bulletManager.Freeze (false);
-//
-//
-//			gameManager.players [(invert)].bulletManager.Freeze (true);
-//		}
-//		else {
-//			Debug.Log (playerNum+"player");
-//			gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
-//			Debug.Log (playerNum+"player");
-//		}
 		var main = pSys.main;
 		main.startColor = new Color(255, 0, 0, 255);
+//		Vector3 originalScale = pSys.gameObject.transform.localScale;
+//		Vector3 targetScale = originalScale + new Vector3 (30f, 30f, 30f);
+//		float lerpTime = 2f;
+//		pSys.gameObject.transform.localScale = Vector3.Lerp (originalScale, targetScale, lerpTime*Time.deltaTime);
 		playerAudio.clip = playerNoises [1];
 		playerAudio.Play();
 		isReloading = true;
 		gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
+		myCont.isDashing = true;
+		myCont.curForce = myCont.dashForce;
 
 			yield return new WaitForSeconds (ReloadTime);
+		myCont.isDashing = false;
 		main = pSys.main;
 		main.startColor = Color.yellow;
 		pSys.Stop ();
