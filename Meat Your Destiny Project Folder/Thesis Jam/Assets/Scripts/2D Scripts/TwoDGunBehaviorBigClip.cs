@@ -247,11 +247,17 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 //			gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
 //			Debug.Log (playerNum+"player");
 //		}
+		var main = pSys.main;
+		main.startColor = new Color(255, 0, 0, 255);
 		playerAudio.clip = playerNoises [1];
 		playerAudio.Play();
 		isReloading = true;
 		gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
+
 			yield return new WaitForSeconds (ReloadTime);
+		main = pSys.main;
+		main.startColor = Color.yellow;
+		pSys.Stop ();
 		isReloading = false;
 		bulletManager.Freeze (false);
 		}
