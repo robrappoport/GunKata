@@ -6,7 +6,7 @@ public class Bullet : MonoBehaviour {
 	public int BulletDmg;
 	public BulletManager BMan;
 	public float bulletSpeed;
-	public float prevSpeed;
+	private float prevSpeed = 20f;
 	public float fastBulletSpeed;
 	public float inactiveTime = .2f;
 	public float lifeTime = 2.0f;
@@ -23,7 +23,7 @@ public class Bullet : MonoBehaviour {
 	public Material normBullet;
 	public Material frozenBullet;
 	public bool isDestroyedOnHit = true;
-	Vector3 prevVel;
+//	Vector3 prevVel;
 	public AudioSource bulletNoise;
 
 	// Use this for initialization
@@ -35,14 +35,15 @@ public class Bullet : MonoBehaviour {
 	void Start () {
 		Physics.IgnoreCollision (this.gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), true);
 
-
+		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
 		if (BMan.gameObject.GetComponent<TwoDGunBehaviorBigClip> ().playerNum == 0) {
 			normBullet = playerOneBullet;
 		}
 		if (BMan.gameObject.GetComponent<TwoDGunBehaviorBigClip> ().playerNum == 1) {
 			normBullet = playerTwoBullet;
 		}
-		prevSpeed = bulletSpeed;
+		prevSpeed = 20f;
 
 		render.material = normBullet;
 		freezeVal = RigidbodyConstraints.FreezeRotation;
@@ -76,19 +77,24 @@ public class Bullet : MonoBehaviour {
 		if (isFrozen) {
 //			Debug.Log (freezeVal);
 //			freezeVal = RigidbodyConstraints.FreezePosition;
-			prevVel = r.velocity;
-			prevSpeed = bulletSpeed;
+			render.material = frozenBullet;
+//			prevVel = r.velocity;
+//			prevSpeed = bulletSpeed;
 			bulletSpeed = fastBulletSpeed;
+			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
 //			Debug.Log (bulletSpeed);
 //			GetComponent<Rigidbody> ().velocity = Vector3.zero;//isKinematic = true;
 
 //			Debug.Log (freezeVal+"1");
-			render.material = frozenBullet;
+
 		} else {
 //			freezeVal = RigidbodyConstraints.FreezeRotation;
 			render.material = normBullet;
-			r.velocity = prevVel;//.isKinematic = false;
+//			r.velocity = prevVel;//.isKinematic = false;
 			bulletSpeed = prevSpeed;
+			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
 //			Debug.Log (bulletSpeed);
 		}
 		//r.constraints = freezeVal;
@@ -109,19 +115,19 @@ public class Bullet : MonoBehaviour {
 	void BulletMomentum(){
 		
 
-		Ray ray = new Ray (transform.position, transform.forward);
-		RaycastHit hit;
-
-		if (Physics.Raycast (ray, out hit, Time.deltaTime * bulletSpeed + rayDist)) {
-					bulletNoise.Play ();
-					//				Debug.Log (bulletNoise.isPlaying);
-					Vector3 reflectDir = Vector3.Reflect (ray.direction, hit.normal);
-					float rot = 90 - Mathf.Atan2 (reflectDir.z, reflectDir.x) * Mathf.Rad2Deg;
-					transform.eulerAngles = new Vector3 (0, rot, 0);
-			
-		}
-		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
+//		Ray ray = new Ray (transform.position, transform.forward);
+//		RaycastHit hit;
+//
+//		if (Physics.Raycast (ray, out hit, Time.deltaTime * bulletSpeed + rayDist)) {
+//					bulletNoise.Play ();
+//					//				Debug.Log (bulletNoise.isPlaying);
+//					Vector3 reflectDir = Vector3.Reflect (ray.direction, hit.normal);
+//					float rot = 90 - Mathf.Atan2 (reflectDir.z, reflectDir.x) * Mathf.Rad2Deg;
+//					transform.eulerAngles = new Vector3 (0, rot, 0);
+//			
+//		}
+//		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+//		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
 //		Debug.Log (bulletSpeed);
 		}
 	}

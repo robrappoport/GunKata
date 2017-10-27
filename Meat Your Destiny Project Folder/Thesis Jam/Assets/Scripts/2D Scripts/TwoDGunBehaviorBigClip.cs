@@ -98,7 +98,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 			SwitchWeapons ();
 		}
 		if (myCont.xButtonUp () || (CurrentBullets <= 0 && !isReloading && autoReloadEnabled == true)){
-			Reload ();
+			Invoke ("Reload", .2f);
 		}
 
 	}
@@ -121,8 +121,8 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 		weaponLabel = currentWeapon.ToString ();
 	}
 	void PrimaryFire(){
-		myCont.OnShot ();
 		CurrentBullets -= 1;
+		myCont.OnShot ();
 //		if (CurrentBullets <= 0){
 //			StartCoroutine (NormalReload ());
 //			return;
@@ -235,7 +235,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 //		} else {
 //			invert = 1;
 //		}
-//		isReloading = true;
+
 //		if (CurrentBullets != 0) {
 ////			bulletManager.Freeze (false);
 //
@@ -249,6 +249,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 //		}
 		playerAudio.clip = playerNoises [1];
 		playerAudio.Play();
+		isReloading = true;
 		gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
 			yield return new WaitForSeconds (ReloadTime);
 		isReloading = false;
