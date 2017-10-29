@@ -10,6 +10,7 @@ public class auraGunBehavior: MonoBehaviour
 	public AuraCharacterController myCont;
 	//Drag in the Bullet Prefab from the Component Inspector.
 	public GameObject RyuBullet;
+	public GameObject AuraObj;
 	public int playerNum;
 	private float bulletOffsetNorm = 0f;
 	public int MaxBullets;
@@ -23,9 +24,15 @@ public class auraGunBehavior: MonoBehaviour
 	private bool buttonReload;
 
 	private bool isReloading;
+	public Vector3 auraInitScale;
+	public Vector3 auraBaseScale;
+	public float timeElapsed = 0f;
+	public float duration = 3f;
 
 	void Start()
 	{
+		auraBaseScale = AuraObj.transform.localScale;
+		auraInitScale = auraBaseScale;
 		isFiring = false;
 		shootTime = 0;
 		Debug.Log ("Player Number"+playerNum);
@@ -57,11 +64,13 @@ public class auraGunBehavior: MonoBehaviour
 		if (isReloading) {
 			return;
 		}
-
+		if (myCont.secondaryFire ()) {
+			auraProject ();
+		} else if (auraInitScale != auraBaseScale)
+		{
+			auraContract ();
+		}
 		if (CurrentBullets > 0) {
-			if (myCont.secondaryFire () == true) {
-				auraProject ();
-			}
 			if (myCont.primaryFire () == true) {
 				Debug.Log ("is pressing button");
 				if (shootTime <= 0) {
@@ -98,7 +107,32 @@ public class auraGunBehavior: MonoBehaviour
 
 	void auraProject ()
 	{
-		//aura goes here
+		if (myCont.secondaryFireDown ()) {
+			AuraObj.SetActive (true);
+			timeElapsed = 0f;
+			auraInitScale = AuraObj.transform.localScale;
+		} 
+		if (myCont.secondaryFire ()) {
+			{
+				timeElapsed += Time.deltaTime;
+				AuraObj.transform.localScale = Vector3.Lerp (auraInitScale, auraBaseScale * 10, timeElapsed / duration);
+			}
+			auraInitScale = AuraObj.transform.localScale;
+		}
+	}
+
+	void auraContract ()
+	{
+		if (myCont.secondaryFireUp ()) {
+			timeElapsed = 0f;
+			auraInitScale = AuraObj.transform.localScale;
+		} else {
+			timeElapsed += Time.deltaTime;
+			AuraObj.transform.localScale = Vector3.Lerp (auraInitScale, auraBaseScale, timeElapsed / duration);
+			if (timeElapsed >= duration) {
+				AuraObj.SetActive (false);
+			}
+		}
 	}
 		
 

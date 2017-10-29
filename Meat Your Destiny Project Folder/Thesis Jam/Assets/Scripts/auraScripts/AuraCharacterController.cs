@@ -116,7 +116,14 @@ public class AuraCharacterController : MonoBehaviour {
 		return (myController.Action3.WasPressed);
 	} 
 	public bool secondaryFire (){
+		return (myController.LeftTrigger.IsPressed);
+	}
+
+	public bool secondaryFireDown (){
 		return (myController.LeftTrigger.WasPressed);
+	}
+	public bool secondaryFireUp (){
+		return (myController.LeftTrigger.WasReleased);
 	}
 	public bool primaryFire (){
 		return (myController.RightTrigger.IsPressed);
