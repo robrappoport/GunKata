@@ -37,10 +37,10 @@ public class Bullet : MonoBehaviour {
 
 		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
-		if (BMan.gameObject.GetComponent<TwoDGunBehaviorBigClip> ().playerNum == 0) {
+		if (BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 0) {
 			normBullet = playerOneBullet;
 		}
-		if (BMan.gameObject.GetComponent<TwoDGunBehaviorBigClip> ().playerNum == 1) {
+		if (BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 1) {
 			normBullet = playerTwoBullet;
 		}
 		prevSpeed = 20f;
@@ -57,7 +57,6 @@ public class Bullet : MonoBehaviour {
 	void Update(){
 		lifeTime -= Time.deltaTime;
 		inactiveTime -= Time.deltaTime;
-			BulletMomentum ();
 			InactiveBullet ();
 		
 
@@ -111,23 +110,4 @@ public class Bullet : MonoBehaviour {
 			}
 		}
 	}
-
-	void BulletMomentum(){
-		
-
-//		Ray ray = new Ray (transform.position, transform.forward);
-//		RaycastHit hit;
-//
-//		if (Physics.Raycast (ray, out hit, Time.deltaTime * bulletSpeed + rayDist)) {
-//					bulletNoise.Play ();
-//					//				Debug.Log (bulletNoise.isPlaying);
-//					Vector3 reflectDir = Vector3.Reflect (ray.direction, hit.normal);
-//					float rot = 90 - Mathf.Atan2 (reflectDir.z, reflectDir.x) * Mathf.Rad2Deg;
-//					transform.eulerAngles = new Vector3 (0, rot, 0);
-//			
-//		}
-//		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-//		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
-//		Debug.Log (bulletSpeed);
-		}
 	}

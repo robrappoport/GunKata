@@ -9,4 +9,5 @@ public class dontdestroyscript : MonoBehaviour {
 		DontDestroyOnLoad(this.gameObject);
 	}
 
+
 }

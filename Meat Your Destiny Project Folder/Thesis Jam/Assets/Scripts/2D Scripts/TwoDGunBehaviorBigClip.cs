@@ -32,6 +32,8 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	public string weaponLabel;
 	private bool isFiring;
 	public bool autoReloadEnabled;
+	private bool autoReload;
+	private bool buttonReload;
 
 	public enum Loadout {spray, shield};
 	public Loadout[] loadout;
@@ -73,6 +75,17 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 
 			
 		Debug.DrawRay (transform.position, transform.forward * 50, Color.red);
+		if (myCont.xButtonUp () && CurrentBullets < MaxBullets) {
+			isReloading = true;
+			buttonReload = true;
+			Invoke ("Reload", .001f);
+		} else {
+		}
+
+		if (CurrentBullets <= 0 && !isReloading && autoReloadEnabled == true) {
+			isReloading = true;
+			Invoke ("Reload", .001f);
+		}
 		if (isReloading) {
 			return;
 		}
@@ -97,21 +110,22 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 		if (myCont.rightBumperPressed()) {
 			SwitchWeapons ();
 		}
-		if (myCont.xButtonUp () || (CurrentBullets <= 0 && !isReloading && autoReloadEnabled == true)){
-			Invoke ("Reload", .2f);
-		}
-
+			
 	}
 
 	void Reload(){
 		if (CurrentBullets != MaxBullets) {
 			myCont.OnShot ();
-			if ((MaxBullets - CurrentBullets) % specialBulletPeriod == specialBulletPeriod - 1) {
-
+			if (autoReloadEnabled == true && buttonReload != true) {
+				autoReload = true;
+			}
+			if ((MaxBullets - CurrentBullets) % specialBulletPeriod == specialBulletPeriod - 1 || autoReload == true) {
+				autoReload = false;
+				buttonReload = false;
 				StartCoroutine (Special ());
 			}
 			StartCoroutine (NormalReload ());
-	
+		
 		}
 	}
 	void SwitchWeapons(){
@@ -214,15 +228,14 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 	}
 
 	IEnumerator NormalReload(){
-
-		isReloading = true;
+		playerAudio.clip = playerNoises [1];
+		playerAudio.Play ();
 		//gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
 		yield return new WaitForSeconds (ReloadTime);
 		CurrentBullets = MaxBullets;
 		isReloading = false;
 		bulletManager.Freeze (false);
-		playerAudio.clip = playerNoises [1];
-		playerAudio.Play ();
+
 
 	}
 
@@ -236,7 +249,6 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 //		pSys.gameObject.transform.localScale = Vector3.Lerp (originalScale, targetScale, lerpTime*Time.deltaTime);
 		playerAudio.clip = playerNoises [1];
 		playerAudio.Play();
-		isReloading = true;
 		gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
 		myCont.isDashing = true;
 		myCont.curForce = myCont.dashForce;

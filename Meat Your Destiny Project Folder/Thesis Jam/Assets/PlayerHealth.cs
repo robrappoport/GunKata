@@ -45,7 +45,6 @@ public class PlayerHealth : MonoBehaviour {
 		if (myCont.isDashing == true && myGun.CurrentBullets <= myGun.MaxBullets) {
 			dashAbsorb (amount);
 		} else {
-			if (!playerAudio.isPlaying) {
 				playerAudio.clip = hurtSound;
 				playerAudio.Play ();
 			}
@@ -61,7 +60,6 @@ public class PlayerHealth : MonoBehaviour {
 				playerCanvas.gameObject.SetActive (false);
 			}
 		}
-	}
 		
 	public void dashAbsorb (int amount)
 	{
