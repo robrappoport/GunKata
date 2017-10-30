@@ -274,9 +274,8 @@ public class AuraCharacterController : MonoBehaviour {
 //		Debug.Log ("test1");
 		GameObject otherObj = other.gameObject;
 		GameObject otherParent = other.transform.root.gameObject;
-		if (other.gameObject.tag == "Player") {
+		if (otherObj.tag == "player1Aura" || otherObj.tag == "player2Aura") {
 			if (otherParent.GetComponent<AuraCharacterController> ().playerNum != this.playerNum) {
-//			Debug.Log ("test2");
 				characterCtr.AddForce ((moveDirForward + moveDirSides).normalized * -slowForce / Time.deltaTime);
 			}
 		} else {
