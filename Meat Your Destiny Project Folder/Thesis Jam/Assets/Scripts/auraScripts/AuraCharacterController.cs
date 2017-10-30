@@ -271,19 +271,22 @@ public class AuraCharacterController : MonoBehaviour {
 
 	void OnTriggerStay (Collider other)
 	{
-		Debug.Log ("test1");
+//		Debug.Log ("test1");
 		GameObject otherObj = other.gameObject;
 		GameObject otherParent = other.transform.root.gameObject;
-		if (otherParent.GetComponent<AuraCharacterController> ().playerNum != this.playerNum) 
-		{
-			Debug.Log ("test2");
-			characterCtr.AddForce((moveDirForward + moveDirSides).normalized * -slowForce/ Time.deltaTime);
+		if (other.gameObject.tag == "Player") {
+			if (otherParent.GetComponent<AuraCharacterController> ().playerNum != this.playerNum) {
+//			Debug.Log ("test2");
+				characterCtr.AddForce ((moveDirForward + moveDirSides).normalized * -slowForce / Time.deltaTime);
+			}
+		} else {
+			return;
 		}
 	}
 
 	void OnTriggerExit (Collider other)
 	{
-		Debug.Log ("test3");
+//		Debug.Log ("test3");
 		curForce = moveForce;
 	}
 

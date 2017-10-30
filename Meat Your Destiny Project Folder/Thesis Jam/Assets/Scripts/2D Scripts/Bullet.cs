@@ -172,7 +172,7 @@ public class Bullet : MonoBehaviour {
 
 	void auraStop ()
 	{
-		Debug.Log ("you in here?");
+		render.material = frozenBullet;
 			bulletSpeed = stopBulletSpeed;
 			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)) * bulletSpeed;

@@ -26,6 +26,7 @@ public class auraGunBehavior: MonoBehaviour
 	private bool isReloading;
 	public Vector3 auraInitScale;
 	public Vector3 auraBaseScale;
+	public float auraMultiplier;
 	public float timeElapsed = 0f;
 	public float duration = 3f;
 	public float staminaRate = 1f;
@@ -130,7 +131,7 @@ public class auraGunBehavior: MonoBehaviour
 				curStamina -= staminaRate;
 				timeElapsed += Time.deltaTime;
 				SetStamina ();
-				AuraObj.transform.localScale = Vector3.Lerp (auraInitScale, auraBaseScale * 10, timeElapsed / duration);
+				AuraObj.transform.localScale = Vector3.Lerp (auraInitScale, auraBaseScale * auraMultiplier, timeElapsed / duration);
 
 			}
 			auraInitScale = AuraObj.transform.localScale;
@@ -155,15 +156,15 @@ public class auraGunBehavior: MonoBehaviour
 		
 	IEnumerator auraRecharge ()
 	{
-		Debug.Log ("test");
+//		Debug.Log ("test");
 		while (curStamina != staminaTotal) {
 			yield return new WaitForSeconds (.0005f);
-			Debug.Log ("In while");
+//			Debug.Log ("In while");
 			curStamina += staminaRate;
 			SetStamina ();
 		}
 		if (curStamina == staminaTotal) {
-			Debug.Log ("while is done");
+//			Debug.Log ("while is done");
 			isRecharging = false;
 		}
 	}
