@@ -31,6 +31,7 @@ public class AuraCharacterController : MonoBehaviour {
 	public float curForce;
 	public float moveForce;
 	public float dashForce;
+	public float slowForce;
 	float stuckTimer;
 	public float stuckTime = .1f;
 	//	public float dragForce;
@@ -268,7 +269,23 @@ public class AuraCharacterController : MonoBehaviour {
 
 	}
 
+	void OnTriggerStay (Collider other)
+	{
+		Debug.Log ("test1");
+		GameObject otherObj = other.gameObject;
+		GameObject otherParent = other.transform.root.gameObject;
+		if (otherParent.GetComponent<AuraCharacterController> ().playerNum != this.playerNum) 
+		{
+			Debug.Log ("test2");
+			characterCtr.AddForce((moveDirForward + moveDirSides).normalized * -slowForce/ Time.deltaTime);
+		}
+	}
 
+	void OnTriggerExit (Collider other)
+	{
+		Debug.Log ("test3");
+		curForce = moveForce;
+	}
 
 }
 

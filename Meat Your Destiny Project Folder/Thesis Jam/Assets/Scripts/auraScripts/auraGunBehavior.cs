@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using UnityEngine.UI;
 public class auraGunBehavior: MonoBehaviour
 {
 	//Drag in the Bullet Emitter from the Component Inspector.
@@ -28,14 +28,19 @@ public class auraGunBehavior: MonoBehaviour
 	public Vector3 auraBaseScale;
 	public float timeElapsed = 0f;
 	public float duration = 3f;
-
+	public float staminaRate = 1f;
+	public float staminaTotal;
+	public float curStamina;
+	public Image staminaBar;
+	private bool isRecharging;
 	void Start()
 	{
+		curStamina = staminaTotal;
 		auraBaseScale = AuraObj.transform.localScale;
 		auraInitScale = auraBaseScale;
 		isFiring = false;
 		shootTime = 0;
-		Debug.Log ("Player Number"+playerNum);
+//		Debug.Log ("Player Number"+playerNum);
 		CurrentBullets = MaxBullets;
 		bulletManager = GetComponent<BulletManager>();
 
@@ -44,7 +49,7 @@ public class auraGunBehavior: MonoBehaviour
 	void Update ()
 	{
 		if (shootTime > 0) {
-			Debug.Log ("test shootime");
+//			Debug.Log ("test shootime");
 			shootTime -= Time.deltaTime;
 			isFiring = false;
 		}
@@ -64,17 +69,19 @@ public class auraGunBehavior: MonoBehaviour
 		if (isReloading) {
 			return;
 		}
-		if (myCont.secondaryFire ()) {
+		if (myCont.secondaryFire () && !isRecharging) {
 			auraProject ();
-		} else if (auraInitScale != auraBaseScale)
+		} else if (auraInitScale != auraBaseScale && !isRecharging)
 		{
 			auraContract ();
 		}
+			
+				
 		if (CurrentBullets > 0) {
 			if (myCont.primaryFire () == true) {
-				Debug.Log ("is pressing button");
+//				Debug.Log ("is pressing button");
 				if (shootTime <= 0) {
-					Debug.Log ("is shooting");
+//					Debug.Log ("is shooting");
 					isFiring = true;
 					shootTime = initShootTime;
 					PrimaryFire ();
@@ -114,8 +121,17 @@ public class auraGunBehavior: MonoBehaviour
 		} 
 		if (myCont.secondaryFire ()) {
 			{
+				while (curStamina <= 0f || isRecharging) 
+				{	isRecharging = true;
+					StartCoroutine (auraRecharge ());
+					AuraObj.SetActive (false);
+					return;
+				}
+				curStamina -= staminaRate;
 				timeElapsed += Time.deltaTime;
+				SetStamina ();
 				AuraObj.transform.localScale = Vector3.Lerp (auraInitScale, auraBaseScale * 10, timeElapsed / duration);
+
 			}
 			auraInitScale = AuraObj.transform.localScale;
 		}
@@ -128,6 +144,8 @@ public class auraGunBehavior: MonoBehaviour
 			auraInitScale = AuraObj.transform.localScale;
 		} else {
 			timeElapsed += Time.deltaTime;
+			curStamina += staminaRate;
+			SetStamina ();
 			AuraObj.transform.localScale = Vector3.Lerp (auraInitScale, auraBaseScale, timeElapsed / duration);
 			if (timeElapsed >= duration) {
 				AuraObj.SetActive (false);
@@ -135,6 +153,20 @@ public class auraGunBehavior: MonoBehaviour
 		}
 	}
 		
+	IEnumerator auraRecharge ()
+	{
+		Debug.Log ("test");
+		while (curStamina != staminaTotal) {
+			yield return new WaitForSeconds (.0005f);
+			Debug.Log ("In while");
+			curStamina += staminaRate;
+			SetStamina ();
+		}
+		if (curStamina == staminaTotal) {
+			Debug.Log ("while is done");
+			isRecharging = false;
+		}
+	}
 
 	IEnumerator NormalReload(){
 		yield return new WaitForSeconds (ReloadTime);
@@ -142,6 +174,17 @@ public class auraGunBehavior: MonoBehaviour
 		isReloading = false;
 		bulletManager.Freeze (false);
 
+
+	}
+
+	public void SetStamina ()
+	{
+		staminaBar.fillAmount = curStamina*.01f;
+
+		if (curStamina > staminaTotal) 
+		{
+			curStamina = staminaTotal;
+		}
 
 	}
 }

@@ -6,8 +6,11 @@ public class Bullet : MonoBehaviour {
 	public int BulletDmg;
 	public BulletManager BMan;
 	public float bulletSpeed;
-	private float prevSpeed = 20f;
+	public float slowBulletSpeed;
+	public float bulletStartSpeed;
+	public float prevSpeed;
 	public float fastBulletSpeed;
+	public float stopBulletSpeed;
 	public float inactiveTime = .2f;
 	public float lifeTime = 2.0f;
 	public float rayDist;
@@ -26,6 +29,10 @@ public class Bullet : MonoBehaviour {
 //	Vector3 prevVel;
 	public AudioSource bulletNoise;
 
+
+	public bool player1AuraTriggered;
+	public bool player2AuraTriggered;
+
 	// Use this for initialization
 	void Awake(){
 		r = GetComponent<Rigidbody> ();
@@ -33,8 +40,10 @@ public class Bullet : MonoBehaviour {
 
 	}
 	void Start () {
+		
 		Physics.IgnoreCollision (this.gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), true);
 
+		bulletSpeed = bulletStartSpeed;
 		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
 		if (BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 0) {
@@ -43,7 +52,6 @@ public class Bullet : MonoBehaviour {
 		if (BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 1) {
 			normBullet = playerTwoBullet;
 		}
-		prevSpeed = 20f;
 
 		render.material = normBullet;
 		freezeVal = RigidbodyConstraints.FreezeRotation;
@@ -58,7 +66,6 @@ public class Bullet : MonoBehaviour {
 		lifeTime -= Time.deltaTime;
 		inactiveTime -= Time.deltaTime;
 			InactiveBullet ();
-		
 
 	}
 
@@ -105,9 +112,69 @@ public class Bullet : MonoBehaviour {
 	{	
 		if (isDestroyedOnHit) {
 			if (other.gameObject.tag == "Player") {
-				other.gameObject.GetComponent<PlayerHealth> ().takeDamage (BulletDmg);
+				other.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (BulletDmg);
 				BMan.DestroyBullet (this);
 			}
 		}
 	}
+		
+	void OnTriggerStay (Collider other)
+	{
+		if (player1AuraTriggered && player2AuraTriggered) 
+		{
+			auraStop ();
+			return;
+		}
+		if (other.gameObject.tag == "player1Aura") 
+		{
+			player1AuraTriggered = true;
+			auraPlayerOneSlow ();
+		}
+
+		if (other.gameObject.tag == "player2Aura") 
+		{
+			player2AuraTriggered = true;
+			auraPlayerTwoSlow ();
+		}
+
+
+
+
 	}
+
+	void OnTriggerExit (Collider other)
+	{
+			bulletSpeed = bulletStartSpeed;
+			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
+
+		if (player1AuraTriggered) {
+			player1AuraTriggered = false;
+		}
+		if (player2AuraTriggered) {
+			player2AuraTriggered = false;
+		}
+	}
+
+	void auraPlayerOneSlow ()
+	{
+			bulletSpeed = slowBulletSpeed;
+			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)) * bulletSpeed;
+	}
+
+	void auraPlayerTwoSlow ()
+	{
+			bulletSpeed = slowBulletSpeed;
+			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)) * bulletSpeed;
+	}
+
+	void auraStop ()
+	{
+		Debug.Log ("you in here?");
+			bulletSpeed = stopBulletSpeed;
+			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)) * bulletSpeed;
+	}
+}
