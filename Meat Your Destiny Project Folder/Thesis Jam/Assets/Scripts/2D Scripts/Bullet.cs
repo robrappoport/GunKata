@@ -26,16 +26,21 @@ public class Bullet : MonoBehaviour {
 	public Material normBullet;
 	public Material frozenBullet;
 	public bool isDestroyedOnHit = true;
-//	Vector3 prevVel;
-	public AudioSource bulletNoise;
+	public float time = 1.0f;
+	private TrailRenderer tr;
+
 
 
 	public bool player1AuraTriggered;
 	public bool player2AuraTriggered;
 
+	private float timeInAura;
+	public float auraIntensity;
+
 	// Use this for initialization
 	void Awake(){
 		r = GetComponent<Rigidbody> ();
+		tr = GetComponent<TrailRenderer> ();
 		render = GetComponent<Renderer> ();
 
 	}
@@ -63,6 +68,7 @@ public class Bullet : MonoBehaviour {
 	// Update is called once per frame
 
 	void Update(){
+		tr.time = time;
 		lifeTime -= Time.deltaTime;
 		inactiveTime -= Time.deltaTime;
 			InactiveBullet ();
@@ -120,6 +126,9 @@ public class Bullet : MonoBehaviour {
 		
 	void OnTriggerStay (Collider other)
 	{
+		timeInAura += Time.deltaTime;
+		Debug.Log ("enter time" + timeInAura);
+		Debug.Log("enter bullet speed" + bulletSpeed);
 		if (player1AuraTriggered && player2AuraTriggered) 
 		{
 			auraStop ();
@@ -144,7 +153,11 @@ public class Bullet : MonoBehaviour {
 
 	void OnTriggerExit (Collider other)
 	{
-			bulletSpeed = bulletStartSpeed;
+		tr.time += (time + timeInAura + auraIntensity);
+		Debug.Log (tr.time);
+		Debug.Log ("exit time" + timeInAura);
+		bulletSpeed = bulletStartSpeed * (timeInAura + auraIntensity);
+		Debug.Log ("exit bullet speed" + bulletSpeed);
 			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
 
