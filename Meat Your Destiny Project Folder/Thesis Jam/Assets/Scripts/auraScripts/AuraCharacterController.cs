@@ -87,7 +87,7 @@ public class AuraCharacterController : MonoBehaviour {
 		stuckTimer -= Time.deltaTime;
 		if (startButton())
 		{
-			SceneManager.LoadScene("2DBigClipTest");
+			SceneManager.LoadScene("AuraVersion");
 		}
 	}
 
