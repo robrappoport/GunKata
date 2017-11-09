@@ -33,10 +33,11 @@ public class Bullet : MonoBehaviour {
 
 	public bool player1AuraTriggered;
 	public bool player2AuraTriggered;
+	public bool prevPlayer1Triggered;
+	public bool prevPlayer2Triggered;
 
 	private float timeInAura;
 	public float auraIntensity;
-
 	// Use this for initialization
 	void Awake(){
 		r = GetComponent<Rigidbody> ();
@@ -80,6 +81,19 @@ public class Bullet : MonoBehaviour {
 			Physics.IgnoreCollision (this.gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), false);
 			render.enabled = true;
 		}
+	}
+	void FixedUpdate(){
+		if ((!player1AuraTriggered && prevPlayer1Triggered) || (!player2AuraTriggered && prevPlayer2Triggered)) {
+			if (!(BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 0 && prevPlayer1Triggered) && !(BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 1 && prevPlayer2Triggered)) {
+				r.velocity *= -1f;
+			}
+			r.velocity = r.velocity.normalized * fastBulletSpeed;
+		}
+
+		prevPlayer1Triggered = player1AuraTriggered;
+		prevPlayer2Triggered = player2AuraTriggered;
+		player1AuraTriggered = false;
+		player2AuraTriggered = false;
 	}
 
 	public void SetFreeze(bool b){
@@ -157,36 +171,38 @@ public class Bullet : MonoBehaviour {
 	void OnTriggerExit (Collider other)
 	{
 //		this.gameObject.GetComponent<Collider> ().material.bounciness = 1f;
-		if (player1AuraTriggered) {
+		if (prevPlayer1Triggered) {
 			player1AuraTriggered = false;
+			prevPlayer1Triggered = false;
 		}
-		if (player2AuraTriggered) {
+		if (prevPlayer2Triggered) {
 			player2AuraTriggered = false;
+			prevPlayer2Triggered = false;
 		}
 		tr.time += (time + timeInAura + auraIntensity);
 //		Debug.Log (tr.time);
 //		Debug.Log ("exit time" + timeInAura);
 		bulletSpeed = bulletStartSpeed * (timeInAura + auraIntensity);
 //		Debug.Log ("exit bullet speed" + bulletSpeed);
-			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
+			//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+		r.velocity = r.velocity.normalized * bulletSpeed;
 
 
 	}
 
 	void auraPlayerOneSlow ()
 	{
-			bulletSpeed = slowBulletSpeed;
-			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)) * bulletSpeed;
+		bulletSpeed = slowBulletSpeed;
+		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+		r.velocity = r.velocity.normalized * bulletSpeed;
 		Debug.Log ("bullet speed is" + ""+ r.velocity);
 	}
 
 	void auraPlayerTwoSlow ()
 	{
-			bulletSpeed = slowBulletSpeed;
-			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)) * bulletSpeed;
+		bulletSpeed = slowBulletSpeed;
+		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+		r.velocity = r.velocity.normalized * bulletSpeed;//new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)) * bulletSpeed;
 		Debug.Log ("bullet speed is" + ""+ r.velocity);
 	}
 
