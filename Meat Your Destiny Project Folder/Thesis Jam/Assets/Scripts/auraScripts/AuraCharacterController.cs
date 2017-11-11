@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class AuraCharacterController : MonoBehaviour {
 	public static AuraCharacterController instance;
 	public InputDevice myController;
-	public auraGunBehavior gunBehave;
+
 //	LockOnScript lockedOn;
 	//public InputDevice myController { get; set; }
 	//    public Vector3 moveDirection;
@@ -34,6 +34,8 @@ public class AuraCharacterController : MonoBehaviour {
 	public float slowForce;
 	float stuckTimer;
 	public float stuckTime = .1f;
+
+	private auraGunBehavior gunBehave;
 	//	public float dragForce;
 	//	public float dashDrag;
 	//	public float stopForce;
@@ -52,6 +54,7 @@ public class AuraCharacterController : MonoBehaviour {
 		instance = this;
 	}
 	void Start () {
+		gunBehave = GetComponent<auraGunBehavior> ();
 //		lockedOn = GetComponent<LockOnScript> ();
 		characterCtr = this.GetComponent<Rigidbody>();
 		myController = InputManager.Devices[playerNum];
