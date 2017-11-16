@@ -6,8 +6,8 @@ public class auraGunBehavior: MonoBehaviour
 	//Drag in the Bullet Emitter from the Component Inspector.
 	public GameObject Bullet_Emitter;
 	public BulletManager bulletManager;
-	public TwoDGameManager gameManager;
-	public AuraCharacterController myCont;
+
+
 	//Drag in the Bullet Prefab from the Component Inspector.
 	public GameObject RyuBullet;
 	public GameObject AuraObj;
@@ -34,8 +34,16 @@ public class auraGunBehavior: MonoBehaviour
 	public float curStamina;
 	public Image staminaBar;
 	private bool isRecharging;
-	void Start()
-	{
+
+	private TwoDGameManager gameManager;
+	private AuraCharacterController myCont;
+
+	void Start(){
+		//find all its own components and static objects 	
+		gameManager = FindObjectOfType<TwoDGameManager> ();
+		myCont = GetComponent<AuraCharacterController> ();
+		bulletManager = GetComponent<BulletManager>();
+
 		curStamina = staminaTotal;
 		auraBaseScale = AuraObj.transform.localScale;
 		auraInitScale = auraBaseScale;
@@ -43,7 +51,7 @@ public class auraGunBehavior: MonoBehaviour
 		shootTime = 0;
 //		Debug.Log ("Player Number"+playerNum);
 		CurrentBullets = MaxBullets;
-		bulletManager = GetComponent<BulletManager>();
+	
 
 	}
 	// Update is called once per frame
