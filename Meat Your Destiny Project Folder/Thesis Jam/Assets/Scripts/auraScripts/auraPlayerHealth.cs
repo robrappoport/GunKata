@@ -11,6 +11,7 @@ public class auraPlayerHealth : MonoBehaviour {
 	public GameObject playerCanvas;
 	public float damageTime;
 	public Renderer render;
+	public bool invincibilityFramesActive;
 	public Material playerColor;
 	public Material damagedColor;
 	public Material normalColor;
@@ -38,16 +39,18 @@ public class auraPlayerHealth : MonoBehaviour {
 
 	public void takeDamage (int amount)
 	{
-		takingDamage = true;
-		CurrentHealth += amount;
-		SetHealth ();
+		if (!invincibilityFramesActive) {
+			takingDamage = true;
+			CurrentHealth += amount;
+			SetHealth ();
+			invincibilityFramesActive = true;
+			StartCoroutine (colorChange ());
 
-		StartCoroutine (colorChange ());
 
-
-		if (CurrentHealth <= 0f) {
-			gameObject.SetActive (false);
-			playerCanvas.gameObject.SetActive (false);
+			if (CurrentHealth <= 0f) {
+				gameObject.SetActive (false);
+				playerCanvas.gameObject.SetActive (false);
+			}
 		}
 	}
 
@@ -56,6 +59,7 @@ public class auraPlayerHealth : MonoBehaviour {
 		HealthBar.fillAmount = CurrentHealth*.01f;
 
 	}
+
 
 	private IEnumerator colorChange()
 	{
@@ -73,7 +77,7 @@ public class auraPlayerHealth : MonoBehaviour {
 			yield return new WaitForSeconds (damageTime);
 
 		}
-
+		invincibilityFramesActive = false;
 	}
 
 

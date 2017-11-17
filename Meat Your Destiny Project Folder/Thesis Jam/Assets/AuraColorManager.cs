@@ -19,6 +19,5 @@ public class AuraColorManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		r.material.color = Color.Lerp (startColor, endColor, Mathf.Abs(1-player.curStamina / player.staminaTotal));
-		print (player.curStamina / player.staminaTotal);
 	}
 }

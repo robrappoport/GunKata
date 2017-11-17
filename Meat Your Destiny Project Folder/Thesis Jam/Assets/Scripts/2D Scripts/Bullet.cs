@@ -89,11 +89,21 @@ public class Bullet : MonoBehaviour {
 			}
 			r.velocity = r.velocity.normalized * fastBulletSpeed;
 		}
+	
 
+		if (player1AuraTriggered && player2AuraTriggered) 
+		{
+			//			this.gameObject.GetComponent<Collider> ().material.bounciness = 0f;
+			auraStop ();
+			player1AuraTriggered = false;
+			player2AuraTriggered = false;
+			return;
+		}
 		prevPlayer1Triggered = player1AuraTriggered;
 		prevPlayer2Triggered = player2AuraTriggered;
 		player1AuraTriggered = false;
 		player2AuraTriggered = false;
+
 	}
 
 	public void SetFreeze(bool b){
@@ -143,12 +153,7 @@ public class Bullet : MonoBehaviour {
 		timeInAura += Time.deltaTime;
 //		Debug.Log ("enter time" + timeInAura);
 //		Debug.Log("enter bullet speed" + bulletSpeed);
-		if (player1AuraTriggered && player2AuraTriggered) 
-		{
-//			this.gameObject.GetComponent<Collider> ().material.bounciness = 0f;
-			auraStop ();
-			return;
-		}
+
 		if (other.gameObject.tag == "player1Aura") 
 		{
 			
