@@ -37,7 +37,7 @@ public class Bullet : MonoBehaviour {
 	public bool prevPlayer2Triggered;
 
 	private float timeInAura;
-	public float auraIntensity;
+	public float auraBulletSpeedIncrease;
 	// Use this for initialization
 	void Awake(){
 		r = GetComponent<Rigidbody> ();
@@ -184,10 +184,10 @@ public class Bullet : MonoBehaviour {
 			player2AuraTriggered = false;
 			prevPlayer2Triggered = false;
 		}
-		tr.time += (time + timeInAura + auraIntensity);
+        tr.time += (time + timeInAura + auraBulletSpeedIncrease);
 //		Debug.Log (tr.time);
 //		Debug.Log ("exit time" + timeInAura);
-		bulletSpeed = bulletStartSpeed * (timeInAura + auraIntensity);
+		bulletSpeed = bulletStartSpeed * (timeInAura + auraBulletSpeedIncrease);
 //		Debug.Log ("exit bullet speed" + bulletSpeed);
 			//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 		r.velocity = r.velocity.normalized * bulletSpeed;

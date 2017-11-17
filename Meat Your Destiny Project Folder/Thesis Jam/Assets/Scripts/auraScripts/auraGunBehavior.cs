@@ -152,7 +152,7 @@ public class auraGunBehavior: MonoBehaviour
             if (isProjecting && !isExhausted)
             {
                 curStamina -= staminaRate;
-                timeElapsed += Time.deltaTime;
+                timeElapsed += Time.deltaTime * 5;
                 SetStamina();
                 if (curStamina <=0){
                     curStamina = 0;

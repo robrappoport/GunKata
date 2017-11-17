@@ -131,7 +131,7 @@ public class CameraMultitarget : MonoBehaviour {
 		currentPosAt = posAt;
 		currentLookAt = lookAt;
 
-		orbitRotation = Quaternion.identity.eulerAngles;
+		//orbitRotation = Quaternion.identity.eulerAngles;
 	}
 	
 	private Bounds GetElementsBounds()
