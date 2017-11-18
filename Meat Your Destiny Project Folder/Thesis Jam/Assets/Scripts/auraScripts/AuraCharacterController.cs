@@ -34,7 +34,9 @@ public class AuraCharacterController : PlayControl {
 	public float slowForce;
 	float stuckTimer;
 	public float stuckTime = .1f;
-	public enum ControlType {Keyboard, Controller, NONE};
+	public enum ControlType {Keyboard, Controller, NONE};/// <summary>
+	/// Keyboard controls are as follows: WASD to move, YGHJ to rotate, V to shoot, left shift to project aura.
+	/// </summary>
 	ControlType controlType;
 
 	private auraGunBehavior gunBehave;
@@ -50,6 +52,7 @@ public class AuraCharacterController : PlayControl {
 	//	public Animator YAttackAnim;
 	//	public Animator BAttackAnim;
 	// Use this for initialization
+
 
 	void Awake (){
 
