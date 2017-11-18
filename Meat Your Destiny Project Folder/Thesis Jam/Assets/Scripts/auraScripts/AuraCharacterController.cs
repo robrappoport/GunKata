@@ -4,8 +4,8 @@ using UnityEngine;
 using InControl;
 using UnityEngine.SceneManagement;
 
-public class AuraCharacterController : MonoBehaviour {
-	public static AuraCharacterController instance;
+public class AuraCharacterController : PlayControl {
+	public static PlayControl instance;
 	public InputDevice myController;
 
 //	LockOnScript lockedOn;
@@ -34,6 +34,8 @@ public class AuraCharacterController : MonoBehaviour {
 	public float slowForce;
 	float stuckTimer;
 	public float stuckTime = .1f;
+	public enum ControlType {Keyboard, Controller, NONE};
+	ControlType controlType;
 
 	private auraGunBehavior gunBehave;
 	//	public float dragForce;
@@ -57,7 +59,13 @@ public class AuraCharacterController : MonoBehaviour {
 		gunBehave = GetComponent<auraGunBehavior> ();
 //		lockedOn = GetComponent<LockOnScript> ();
 		characterCtr = this.GetComponent<Rigidbody>();
-		myController = InputManager.Devices[playerNum];
+		if (InputManager.Devices.Count == 2 || (InputManager.Devices.Count == 1 && playerNum == 0)) { //two controllers or player 1 with one controller
+			controlType = ControlType.Controller;
+			myController = InputManager.Devices [playerNum];
+
+		} else {
+			controlType = ControlType.Keyboard;
+		}
 		previousRot = transform.rotation;
 		currentDashTime = maxDashTime;
 		isDashing = false;
@@ -79,7 +87,7 @@ public class AuraCharacterController : MonoBehaviour {
 			transform.position = new Vector3 (transform.position.x, 6f, transform.position.z);
 		}
 		//		moveDirection.y = 0;
-		myController = InputManager.Devices[playerNum];
+		//myController = InputManager.Devices[playerNum];
 		if (stuckTimer <= 0) {
 			MoveCharacter ();
 		} else {
@@ -96,17 +104,92 @@ public class AuraCharacterController : MonoBehaviour {
 
 
 	private Vector3 OnMove() {
-		return new Vector3(myController.LeftStickX, 0, myController.LeftStickY);
+		if (controlType == ControlType.Controller) {
+			return new Vector3 (myController.LeftStickX, 0, myController.LeftStickY);
+		} else {
+			float leftxLeft;
+			float leftxRight;
+			float leftx;
 
+			float leftyUp;
+			float leftyDown;
+			float lefty;
+
+			if(Input.GetKey(KeyCode.D)){
+				leftxLeft = 1;
+			}else{
+				leftxLeft = 0;
+			}
+			if (Input.GetKey (KeyCode.S)) {
+				leftxRight = -1;
+			} else {
+				leftxRight = 0;
+			}
+			leftx = leftxLeft + leftxRight;
+
+			if(Input.GetKey(KeyCode.W)){
+				leftyUp = 1;
+			}else{
+				leftyUp = 0;
+			}
+			if (Input.GetKey (KeyCode.S)) {
+				leftyDown = -1;
+			} else {
+				leftyDown = 0;
+			}
+			lefty = leftyDown + leftyUp;
+
+			return new Vector3 (leftx, 0, lefty);
+		}
 	}
 	public Vector3 RightStickMove (){
-		return new Vector3 (myController.RightStickX, 0, myController.RightStickY); 
-		print (myController.RightStickX);
+		if (controlType == ControlType.Controller) {
+			return new Vector3 (myController.RightStickX, 0, myController.RightStickY);
+		} else {
+			
+			float rightxLeft;
+			float rightxRight;
+			float rightx;
+
+			float rightyUp;
+			float rightyDown;
+			float righty;
+
+			if(Input.GetKey(KeyCode.J)){
+				rightxLeft = 1;
+			}else{
+				rightxLeft = 0;
+			}
+			if (Input.GetKey (KeyCode.G)) {
+				rightxRight = -1;
+			} else {
+				rightxRight = 0;
+			}
+			rightx = rightxLeft + rightxRight;
+
+			if(Input.GetKey(KeyCode.Y)){
+				rightyUp = 1;
+			}else{
+				rightyUp = 0;
+			}
+			if (Input.GetKey (KeyCode.H)) {
+				rightyDown = -1;
+			} else {
+				rightyDown = 0;
+			}
+			righty = rightyDown + rightyUp;
+
+			return new Vector3 (rightx, 0, righty);
+		}
 	}
 
 	public bool startButton ()
 	{
-		return (myController.CommandWasPressed);
+		if (controlType == ControlType.Controller) {
+			return (myController.CommandWasPressed);
+		} else {
+			return(Input.GetKeyUp (KeyCode.F));
+		}
 	}
 
 	public bool yButton (){
@@ -117,24 +200,46 @@ public class AuraCharacterController : MonoBehaviour {
 	} 
 
 	public bool xButtonUp (){
-		return (myController.Action3.WasPressed);
+		if (controlType == ControlType.Controller) {
+			return (myController.Action3.WasPressed);
+		} else {
+			return (Input.GetKeyDown(KeyCode.B));
+		}
 	} 
 	public bool secondaryFire (){
-		return (myController.LeftTrigger.IsPressed);
+		if (controlType == ControlType.Controller) {
+			return (myController.LeftTrigger.IsPressed);
+		} else {
+			return (Input.GetKey (KeyCode.LeftShift));
+		}
 	}
 
 	public bool secondaryFireDown (){
-		return (myController.LeftTrigger.WasPressed);
-	}
+		if (controlType == ControlType.Controller) {
+			return (myController.LeftTrigger.WasPressed);
+		} else {
+			return (Input.GetKeyDown (KeyCode.LeftShift));
+		}	}
 	public bool secondaryFireUp (){
-		return (myController.LeftTrigger.WasReleased);
-	}
+		if (controlType == ControlType.Controller) {
+			return (myController.LeftTrigger.WasReleased);
+		} else {
+			return (Input.GetKeyUp (KeyCode.LeftShift));
+		}	}
 	public bool primaryFire (){
-		return (myController.RightTrigger.IsPressed);
+		if (controlType == ControlType.Controller) {
+			return (myController.RightTrigger.IsPressed);
+		} else {
+			return (Input.GetKey (KeyCode.V));
+		}
 	} 
 
 	public bool bButtonUp (){
-		return (myController.Action2.WasPressed);
+		if (controlType == ControlType.Controller) {
+			return (myController.Action2.WasReleased);
+		} else {
+			return (Input.GetKeyDown (KeyCode.N));
+		}
 	}
 
 	public bool onLock() {
