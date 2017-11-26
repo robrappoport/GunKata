@@ -34,6 +34,10 @@ public class auraGunBehavior: MonoBehaviour
 	public float curStamina;
 	public Image staminaBar;
 	private bool isRecharging;
+    private bool isExhausted;
+    private bool isProjecting;
+    private bool pressedWhileExhausted;
+
 
 	private TwoDGameManager gameManager;
 	private AuraCharacterController myCont;
@@ -144,7 +148,6 @@ public class auraGunBehavior: MonoBehaviour
 			}
 			auraInitScale = AuraObj.transform.localScale;
 		}
-<<<<<<< HEAD
 
         if (myCont.secondaryFireUp()){
             auraInitScale = AuraObj.transform.localScale;
@@ -204,8 +207,6 @@ public class auraGunBehavior: MonoBehaviour
         //    AuraObj.SetActive(false);
         //    return;
         //}
-=======
->>>>>>> master
 	}
 
 	void auraContract ()
