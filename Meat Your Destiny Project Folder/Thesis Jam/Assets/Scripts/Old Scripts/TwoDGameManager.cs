@@ -19,6 +19,12 @@ public class TwoDGameManager : MonoBehaviour {
     public static Text player2Score;
     public static int player2ScoreNum = 0;
     private bool addedScore = false;
+
+    public GameObject player1Prefab, player2Prefab;
+    public GameObject player1, player2;
+
+    public Transform player1Start;
+    public Transform player2Start;
 //	GameObject audioManagerClone;
 //	public GameObject audioManagerPrefab;
 
@@ -40,10 +46,21 @@ public class TwoDGameManager : MonoBehaviour {
         player2Score = GameObject.Find("Player2Score").GetComponent<Text>();
 		playerWinner.text = " ";
 
-//		if (!GameObject.Find ("AudioManager(Clone)")) {
-//			audioManagerClone = Instantiate (audioManagerPrefab);
-//		}
+        //		if (!GameObject.Find ("AudioManager(Clone)")) {
+        //			audioManagerClone = Instantiate (audioManagerPrefab);
+        //		}
+
+        /////////GAME INSTANTIATION OCCURS HERE/////////
+
+        player1 = Instantiate(player1Prefab, player1Start.position, Quaternion.identity);
+        player2 = Instantiate(player2Prefab, player2Start.position, Quaternion.identity);
+
+        players[0] = player1.GetComponent<auraGunBehavior>();
+        players[1] = player2.GetComponent<auraGunBehavior>();
+        playerHealth1 = player1.GetComponent<auraPlayerHealth>();
+        playerHealth2 = player2.GetComponent<auraPlayerHealth>();
 	}
+
 
 	void Update ()
 	{

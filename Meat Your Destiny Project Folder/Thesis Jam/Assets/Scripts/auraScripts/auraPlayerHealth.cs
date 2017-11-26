@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class auraPlayerHealth : MonoBehaviour {
-	public Image HealthBar;
+	//public Image HealthBar;
 	public float MaxHealth;
 	public float CurrentHealth;
 	public bool takingDamage;
@@ -24,7 +24,7 @@ public class auraPlayerHealth : MonoBehaviour {
 		Debug.Log (render.material);
 		playerColor = normalColor;
 		CurrentHealth = MaxHealth;
-		SetHealth ();
+		//SetHealth ();
 		takingDamage = false;
 
 
@@ -42,7 +42,7 @@ public class auraPlayerHealth : MonoBehaviour {
 		if (!invincibilityFramesActive) {
 			takingDamage = true;
 			CurrentHealth += amount;
-			SetHealth ();
+			//SetHealth ();
 			invincibilityFramesActive = true;
 			StartCoroutine (colorChange ());
 
@@ -54,11 +54,11 @@ public class auraPlayerHealth : MonoBehaviour {
 		}
 	}
 
-	public void SetHealth ()
-	{
-		HealthBar.fillAmount = CurrentHealth*.01f;
+	//public void SetHealth ()
+	//{
+	//	HealthBar.fillAmount = CurrentHealth*.01f;
 
-	}
+	//}
 
 
 	private IEnumerator colorChange()

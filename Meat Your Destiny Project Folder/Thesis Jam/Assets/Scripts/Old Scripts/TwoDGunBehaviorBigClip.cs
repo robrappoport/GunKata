@@ -249,7 +249,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 //		pSys.gameObject.transform.localScale = Vector3.Lerp (originalScale, targetScale, lerpTime*Time.deltaTime);
 		playerAudio.clip = playerNoises [1];
 		playerAudio.Play();
-		gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
+		//gameManager.players [((playerNum - 1) + 1) % 2].bulletManager.Freeze (true);
 		myCont.isDashing = true;
 		myCont.curForce = myCont.dashForce;
 

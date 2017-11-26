@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class axisRestrict : MonoBehaviour {
+public class UITracker : MonoBehaviour {
 	public Transform Player;
 	public float UIOffset;
 	// Use this for initialization
