@@ -8,7 +8,7 @@ public class auraPlayerHealth : MonoBehaviour {
 	public float MaxHealth;
 	public float CurrentHealth;
 	public bool takingDamage;
-	public GameObject playerCanvas;
+	//public GameObject playerCanvas;
 	public float damageTime;
 	public Renderer render;
 	public bool invincibilityFramesActive;
@@ -21,7 +21,7 @@ public class auraPlayerHealth : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		render.material = playerColor;
-		Debug.Log (render.material);
+		//Debug.Log (render.material);
 		playerColor = normalColor;
 		CurrentHealth = MaxHealth;
 		//SetHealth ();
@@ -49,7 +49,7 @@ public class auraPlayerHealth : MonoBehaviour {
 
 			if (CurrentHealth <= 0f) {
 				gameObject.SetActive (false);
-				playerCanvas.gameObject.SetActive (false);
+				//playerCanvas.gameObject.SetActive (false);
 			}
 		}
 	}

@@ -25,6 +25,12 @@ public class TwoDGameManager : MonoBehaviour {
 
     public Transform player1Start;
     public Transform player2Start;
+
+    public UITracker player1Tracker;
+    public UITracker player2Tracker;
+
+    public GameObject player1Canvas, player2Canvas;
+
 //	GameObject audioManagerClone;
 //	public GameObject audioManagerPrefab;
 
@@ -42,6 +48,7 @@ public class TwoDGameManager : MonoBehaviour {
         {
             DontDestroyOnLoad(this.gameObject);
         }
+
         player1Score = GameObject.Find("Player1Score").GetComponent<Text>();
         player2Score = GameObject.Find("Player2Score").GetComponent<Text>();
 		playerWinner.text = " ";
@@ -51,14 +58,9 @@ public class TwoDGameManager : MonoBehaviour {
         //		}
 
         /////////GAME INSTANTIATION OCCURS HERE/////////
+        setLevel();
 
-        player1 = Instantiate(player1Prefab, player1Start.position, Quaternion.identity);
-        player2 = Instantiate(player2Prefab, player2Start.position, Quaternion.identity);
 
-        players[0] = player1.GetComponent<auraGunBehavior>();
-        players[1] = player2.GetComponent<auraGunBehavior>();
-        playerHealth1 = player1.GetComponent<auraPlayerHealth>();
-        playerHealth2 = player2.GetComponent<auraPlayerHealth>();
 	}
 
 
@@ -68,13 +70,15 @@ public class TwoDGameManager : MonoBehaviour {
 		if (playerHealth1.CurrentHealth <= 0 || playerHealth2.CurrentHealth <= 0) {
             if (playerHealth1.CurrentHealth > 0 && addedScore == false) {
                 addedScore = true;
+                player2Canvas.SetActive(false);
                 player1ScoreNum ++;
-				playerWinner.text = "green wins";
+                playerWinner.text = "green wins";
                 StartCoroutine(gameRestart());
                 return;
             } 
             if (playerHealth2.CurrentHealth > 0 && addedScore == false){
                 addedScore = true;
+                player1Canvas.SetActive(false);
                 player2ScoreNum++;
 				playerWinner.text = "red wins";
                 StartCoroutine(gameRestart());
@@ -95,5 +99,21 @@ public class TwoDGameManager : MonoBehaviour {
     {
         player1Score.text = "green divine ascensions\n" + player1ScoreNum;
         player2Score.text = "red divine ascensions\n" + player2ScoreNum;
+    }
+    void setLevel ()
+    {
+        player1 = Instantiate(player1Prefab, player1Start.position, Quaternion.identity) as GameObject;
+        player2 = Instantiate(player2Prefab, player2Start.position, Quaternion.identity) as GameObject;
+
+        playerHealth1 = player1.GetComponent<auraPlayerHealth>();
+        playerHealth2 = player2.GetComponent<auraPlayerHealth>();
+        players[0] = player1.GetComponent<auraGunBehavior>();
+        players[1] = player2.GetComponent<auraGunBehavior>();
+        GetComponent<bulletManagerManager>().bMan1 = player1.GetComponent<BulletManager>();
+        GetComponent<bulletManagerManager>().bMan2 = player2.GetComponent<BulletManager>();
+        player1.GetComponent<auraGunBehavior>().staminaBar = player1Canvas.transform.Find("GameObject/AuraBar").GetComponent<Image>();
+        player2.GetComponent<auraGunBehavior>().staminaBar = player2Canvas.transform.Find("GameObject/AuraBar").GetComponent<Image>();
+        player1Tracker.Player = player1.transform;
+        player2Tracker.Player = player2.transform;
     }
 }
