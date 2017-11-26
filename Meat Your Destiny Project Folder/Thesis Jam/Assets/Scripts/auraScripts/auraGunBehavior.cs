@@ -33,9 +33,7 @@ public class auraGunBehavior: MonoBehaviour
 	public float staminaTotal;
 	public float curStamina;
 	public Image staminaBar;
-	public bool isExhausted;
-    private bool isProjecting;
-    bool pressedWhileExhausted;
+	private bool isRecharging;
 
 	private TwoDGameManager gameManager;
 	private AuraCharacterController myCont;
@@ -80,18 +78,13 @@ public class auraGunBehavior: MonoBehaviour
 		if (isReloading) {
 			return;
 		}
-
-        auraProject();
-
-
-		//if (myCont.secondaryFire () && !isExhausted) {
+		if (myCont.secondaryFire () && !isRecharging) {
+			auraProject ();
+		} else if (auraInitScale != auraBaseScale && !isRecharging)
+		{
+			auraContract ();
+		}
 			
-  //      } else if ((auraInitScale != auraBaseScale) && !isExhausted)
-		//{
-		////	auraContract ();
-		//}
-			
-
 				
 		if (CurrentBullets > 0) {
 			if (myCont.primaryFire () == true) {
@@ -130,15 +123,28 @@ public class auraGunBehavior: MonoBehaviour
 
 	void auraProject ()
 	{
-        Debug.Log("running auraProject");
+		if (myCont.secondaryFireDown ()) {
+			AuraObj.SetActive (true);
+			timeElapsed = 0f;
+			auraInitScale = AuraObj.transform.localScale;
+		} 
+		if (myCont.secondaryFire ()) {
+			{
+				while (curStamina <= 0f || isRecharging) 
+				{	isRecharging = true;
+					StartCoroutine (auraRecharge ());
+					AuraObj.SetActive (false);
+					return;
+				}
+				curStamina -= staminaRate;
+				timeElapsed += Time.deltaTime;
+				SetStamina ();
+				AuraObj.transform.localScale = Vector3.Lerp (auraInitScale, auraBaseScale * auraMultiplier, timeElapsed / duration);
 
-        if (myCont.secondaryFireDown () && !isExhausted) {
-            isProjecting = true;
-            AuraObj.SetActive(true);
-            timeElapsed = 0f;
-            auraInitScale = AuraObj.transform.localScale;
-            pressedWhileExhausted = false;
+			}
+			auraInitScale = AuraObj.transform.localScale;
 		}
+<<<<<<< HEAD
 
         if (myCont.secondaryFireUp()){
             auraInitScale = AuraObj.transform.localScale;
@@ -198,19 +204,19 @@ public class auraGunBehavior: MonoBehaviour
         //    AuraObj.SetActive(false);
         //    return;
         //}
+=======
+>>>>>>> master
 	}
 
 	void auraContract ()
 	{
 		if (myCont.secondaryFireUp ()) {
-            isProjecting = false;
 			timeElapsed = 0f;
 			auraInitScale = AuraObj.transform.localScale;
 		} else {
+			timeElapsed += Time.deltaTime;
 			curStamina += staminaRate;
 			SetStamina ();
-            timeElapsed += Time.deltaTime;
-
 			AuraObj.transform.localScale = Vector3.Lerp (auraInitScale, auraBaseScale, timeElapsed / duration);
 			if (timeElapsed >= duration) {
 				AuraObj.SetActive (false);
@@ -220,20 +226,17 @@ public class auraGunBehavior: MonoBehaviour
 		
 	IEnumerator auraRecharge ()
 	{
-        //		Debug.Log ("test");
-        while (curStamina < (staminaTotal)) {
+//		Debug.Log ("test");
+		while (curStamina != staminaTotal) {
 			yield return new WaitForSeconds (.0005f);
-            Debug.Log("In while");
+//			Debug.Log ("In while");
 			curStamina += staminaRate;
 			SetStamina ();
-            if (curStamina >= (staminaTotal / 2))
-            {
-                Debug.Log("while is done");
-                isExhausted = false;
-                break;
-            }
 		}
-
+		if (curStamina == staminaTotal) {
+//			Debug.Log ("while is done");
+			isRecharging = false;
+		}
 	}
 
 	IEnumerator NormalReload(){
