@@ -37,16 +37,20 @@ public class auraGunBehavior : MonoBehaviour
     private bool isProjecting;
     bool pressedWhileExhausted;
 
+    //AUDIO
+    private AudioSource myAudio;
+    public AudioClip [] playerSounds;
+
     private TwoDGameManager gameManager;
     private AuraCharacterController myCont;
 
     void Start()
     {
-        //find all its own components and static objects    
+        //find all its own components and static objects 
         gameManager = FindObjectOfType<TwoDGameManager>();
         myCont = GetComponent<AuraCharacterController>();
         bulletManager = GetComponent<BulletManager>();
-
+        myAudio = GetComponent<AudioSource>();
         curStamina = staminaTotal;
         auraBaseScale = AuraObj.transform.localScale;
         auraInitScale = auraBaseScale;
@@ -107,10 +111,11 @@ public class auraGunBehavior : MonoBehaviour
                 //              Debug.Log ("is pressing button");
                 if (shootTime <= 0)
                 {
-                    //                  Debug.Log ("is shooting");
+                   
                     isFiring = true;
                     shootTime = initShootTime;
                     PrimaryFire();
+                    StartCoroutine(ShootSound()); 
                 }
             }
         }
@@ -178,6 +183,7 @@ public class auraGunBehavior : MonoBehaviour
                     AuraObj.SetActive(false);
 
                 }
+                StartCoroutine(AuraSound());
                 AuraObj.transform.localScale = Vector3.Lerp(auraInitScale,
                 auraBaseScale * auraMultiplier, timeElapsed / duration);
             }
@@ -196,9 +202,11 @@ public class auraGunBehavior : MonoBehaviour
         else
         {
             //recharge
-            curStamina += staminaRate;
+            //Gabe changed this
+            curStamina += staminaRate * .5f;
             SetStamina();
-            if (curStamina >= staminaTotal / 2f)
+            //this is amount needed to be able to Aura again
+            if (curStamina >= staminaTotal)
             {
                 isExhausted = false;
             }
@@ -245,7 +253,7 @@ public class auraGunBehavior : MonoBehaviour
         //      Debug.Log ("test");
         while (curStamina < (staminaTotal))
         {
-            yield return new WaitForSeconds(.0005f);
+            yield return new WaitForSeconds(1f);
             Debug.Log("In while");
             curStamina += staminaRate;
             SetStamina();
@@ -264,9 +272,31 @@ public class auraGunBehavior : MonoBehaviour
         yield return new WaitForSeconds(ReloadTime);
         CurrentBullets = MaxBullets;
         isReloading = false;
-        bulletManager.Freeze(false);
+        //bulletManager.Freeze(false);
 
 
+    }
+
+    IEnumerator ShootSound()
+    {
+        if (!myAudio.isPlaying) 
+        { 
+        myAudio.clip = playerSounds[0];
+        myAudio.Play();
+        yield return new WaitForSeconds(myAudio.clip.length * .2f);
+        myAudio.Stop();
+    }
+    }
+
+    IEnumerator AuraSound()
+    {
+        if (!myAudio.isPlaying)
+        {
+            myAudio.clip = playerSounds[1];
+            myAudio.Play();
+            yield return new WaitForSeconds(myAudio.clip.length);
+            myAudio.Stop();
+        }
     }
 
     public void SetStamina()
@@ -279,4 +309,6 @@ public class auraGunBehavior : MonoBehaviour
         }
 
     }
+
+   
 }

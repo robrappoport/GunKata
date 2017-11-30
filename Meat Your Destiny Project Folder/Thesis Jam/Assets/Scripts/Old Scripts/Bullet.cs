@@ -106,35 +106,35 @@ public class Bullet : MonoBehaviour {
 
 	}
 
-	public void SetFreeze(bool b){
-		isFrozen = b;
+//	public void SetFreeze(bool b){
+//		isFrozen = b;
 
-		if (isFrozen) {
-//			Debug.Log (freezeVal);
-//			freezeVal = RigidbodyConstraints.FreezePosition;
-			render.material = frozenBullet;
-//			prevVel = r.velocity;
-//			prevSpeed = bulletSpeed;
-			bulletSpeed = fastBulletSpeed;
-			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
-//			Debug.Log (bulletSpeed);
-//			GetComponent<Rigidbody> ().velocity = Vector3.zero;//isKinematic = true;
+//		if (isFrozen) {
+////			Debug.Log (freezeVal);
+////			freezeVal = RigidbodyConstraints.FreezePosition;
+//			render.material = frozenBullet;
+////			prevVel = r.velocity;
+////			prevSpeed = bulletSpeed;
+//			bulletSpeed = fastBulletSpeed;
+//			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+//			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
+////			Debug.Log (bulletSpeed);
+////			GetComponent<Rigidbody> ().velocity = Vector3.zero;//isKinematic = true;
 
-//			Debug.Log (freezeVal+"1");
+////			Debug.Log (freezeVal+"1");
 
-		} else {
-//			freezeVal = RigidbodyConstraints.FreezeRotation;
-			render.material = normBullet;
-//			r.velocity = prevVel;//.isKinematic = false;
-			bulletSpeed = prevSpeed;
-			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
-//			Debug.Log (bulletSpeed);
-		}
-		//r.constraints = freezeVal;
-//		Debug.Log (freezeVal+"2");
-	}
+//		} else {
+////			freezeVal = RigidbodyConstraints.FreezeRotation;
+//			render.material = normBullet;
+////			r.velocity = prevVel;//.isKinematic = false;
+//			bulletSpeed = prevSpeed;
+//			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+//			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
+////			Debug.Log (bulletSpeed);
+//		}
+//		//r.constraints = freezeVal;
+////		Debug.Log (freezeVal+"2");
+	//}
 
 
 	void OnCollisionEnter (Collision other)

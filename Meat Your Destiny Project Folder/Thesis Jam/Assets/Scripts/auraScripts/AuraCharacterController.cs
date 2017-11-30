@@ -86,7 +86,7 @@ public class AuraCharacterController : PlayControl {
 
 	// Update is called once per frame
 	void FixedUpdate () {
-		if (transform.position.y != 6f) {
+		if (transform.position.y >= 6f) {
 			transform.position = new Vector3 (transform.position.x, 6f, transform.position.z);
 		}
 		//		moveDirection.y = 0;

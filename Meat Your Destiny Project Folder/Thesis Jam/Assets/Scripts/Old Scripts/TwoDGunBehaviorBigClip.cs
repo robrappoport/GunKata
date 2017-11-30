@@ -234,7 +234,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 		yield return new WaitForSeconds (ReloadTime);
 		CurrentBullets = MaxBullets;
 		isReloading = false;
-		bulletManager.Freeze (false);
+		//bulletManager.Freeze (false);
 
 
 	}
@@ -259,7 +259,7 @@ public class TwoDGunBehaviorBigClip: MonoBehaviour
 		main.startColor = Color.yellow;
 		pSys.Stop ();
 		isReloading = false;
-		bulletManager.Freeze (false);
+		//bulletManager.Freeze (false);
 		}
 
 

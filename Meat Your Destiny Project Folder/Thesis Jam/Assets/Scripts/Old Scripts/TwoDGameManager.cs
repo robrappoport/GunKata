@@ -12,7 +12,7 @@ public class TwoDGameManager : MonoBehaviour {
 	public auraPlayerHealth playerHealth2;
     const int maxPlayers = 2;
 	public auraGunBehavior[] players;
-	private int restartTime = 3;
+    private int restartTime = 1;
 	public Text playerWinner;
     public static Text player1Score;
     public static int player1ScoreNum = 0;

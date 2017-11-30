@@ -29,11 +29,11 @@ public class BulletManager : MonoBehaviour {
 		bulletList.Remove (bullet);
 	}
 
-	public void Freeze(bool setFreeze){
-		foreach (Bullet b in bulletList) {
-			b.SetFreeze (setFreeze);
-		}
-	}
+	//public void Freeze(bool setFreeze){
+	//	foreach (Bullet b in bulletList) {
+	//		//b.SetFreeze (setFreeze);
+	//	}
+	//}
 
 	void Update ()
 	{
@@ -44,10 +44,6 @@ public class BulletManager : MonoBehaviour {
 			}
 		}
 
-		if(Input.GetKeyDown(KeyCode.Space)){
-			freeze = !freeze;
-			Freeze (freeze);	
-		}
 	}
 
 
