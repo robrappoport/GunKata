@@ -15,6 +15,7 @@ public class auraPlayerHealth : MonoBehaviour {
 	public Material playerColor;
 	public Material damagedColor;
 	public Material normalColor;
+    public ParticleSystem standardHalo, DamagedHalo;
 
 	public int flashNum;
 
@@ -39,13 +40,19 @@ public class auraPlayerHealth : MonoBehaviour {
 
 	public void takeDamage (int amount)
 	{
-		if (!invincibilityFramesActive) {
+        if (!invincibilityFramesActive && CurrentHealth > 0) {
 			takingDamage = true;
-			CurrentHealth += amount;
-			//SetHealth ();
-			invincibilityFramesActive = true;
-			StartCoroutine (colorChange ());
-
+			
+            //SetHealth ();
+            if (CurrentHealth > MaxHealth / 2)
+            {
+                invincibilityFramesActive = true;
+                standardHalo.Clear();
+                standardHalo.Stop();
+                DamagedHalo.Play();
+                StartCoroutine(colorChange());
+            }
+            CurrentHealth += amount;
 
 			if (CurrentHealth <= 0f) {
 				gameObject.SetActive (false);
@@ -79,7 +86,6 @@ public class auraPlayerHealth : MonoBehaviour {
 		}
 		invincibilityFramesActive = false;
 	}
-
 
 
 }
