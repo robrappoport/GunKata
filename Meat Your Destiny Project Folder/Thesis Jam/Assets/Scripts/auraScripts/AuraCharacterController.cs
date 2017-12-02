@@ -123,7 +123,7 @@ public class AuraCharacterController : PlayControl {
 			}else{
 				leftxLeft = 0;
 			}
-			if (Input.GetKey (KeyCode.S)) {
+			if (Input.GetKey (KeyCode.A)) {
 				leftxRight = -1;
 			} else {
 				leftxRight = 0;
