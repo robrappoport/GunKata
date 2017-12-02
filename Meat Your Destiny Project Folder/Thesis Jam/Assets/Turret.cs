@@ -37,6 +37,7 @@ public class Turret : MonoBehaviour {
 			//resolve the ownerNum
 			if (owner == Owner.NONE) {//set the owner to whoever hits the turret when the turret is unowned
 				ownerNum = col.gameObject.GetComponent<Bullet> ().ownerNumber;
+				litSegments = 1;
 
 			} else {
 				if (ownerNum == col.gameObject.GetComponent<Bullet> ().ownerNumber) {//if the owning player hits the turret, increment the number of lit segments up to a max of 3
@@ -104,6 +105,7 @@ public class Turret : MonoBehaviour {
 	}
 	void Fire(){
 		GameObject cannonBall = Instantiate (CannonballPrefab, Cannon.transform.position, Quaternion.identity, null) as GameObject;
+		cannonBall.GetComponent<Cannonball> ().OwnerNum = ownerNum;
 		cannonBall.GetComponent<Rigidbody> ().AddForce (Vector3.forward * cannonBall.GetComponent<Cannonball>().speed, ForceMode.Impulse);
 	}
 
