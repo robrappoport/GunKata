@@ -6,13 +6,14 @@ public class Turret : MonoBehaviour {
 
 	public Renderer topRenderer, middleRenderer, bottomRenderer;
 	public Color p1Color, p2Color, neutralColor, currentColor;
-	public GameObject Cannonball;
+	public GameObject CannonballPrefab;
 
 	TwoDGameManager gm;
 	enum Owner {Player1, Player2, NONE};
 	Owner owner = Owner.NONE;
-	int litSegments = 0, ownerNum = 2;
+	public int litSegments = 0, ownerNum = 2;
 	GameObject Cannon;
+	public float startTime, repeatTime;
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
 	void Start () {
@@ -20,6 +21,7 @@ public class Turret : MonoBehaviour {
 		topRenderer = transform.Find ("Turret Top").GetComponent<Renderer> ();
 		middleRenderer =transform.Find ("Turret Middle").GetComponent<Renderer> ();
 		bottomRenderer = transform.Find ("Turret Bottom").GetComponent<Renderer> ();
+		Cannon = topRenderer.gameObject;
 		p1Color = gm.player1.GetComponentInChildren<Renderer> ().material.color;
 		p2Color = gm.player2.GetComponentInChildren<Renderer> ().material.color;
 		currentColor = neutralColor;
@@ -50,8 +52,13 @@ public class Turret : MonoBehaviour {
 			}
 
 			AdjustOwnership (ownerNum);
-			AdjustSegments ();
-			
+			AdjustCannonStatus ();
+
+			if (litSegments > 2) {
+				InvokeRepeating ("Fire", startTime, repeatTime);
+			} else {
+				CancelInvoke ();
+			}
 
 		}
 	}
@@ -75,7 +82,7 @@ public class Turret : MonoBehaviour {
 		}
 	}
 
-	void AdjustSegments(){
+	void AdjustCannonStatus(){//adjusts turret based on the number of lit segments;
 		if (litSegments > 0) {
 			bottomRenderer.material.color = currentColor;
 		} else {
@@ -95,6 +102,9 @@ public class Turret : MonoBehaviour {
 		}
 
 	}
-
+	void Fire(){
+		GameObject cannonBall = Instantiate (CannonballPrefab, Cannon.transform.position, Quaternion.identity, null) as GameObject;
+		cannonBall.GetComponent<Rigidbody> ().AddForce (Vector3.forward * cannonBall.GetComponent<Cannonball>().speed, ForceMode.Impulse);
+	}
 
 }
