@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour {
 	public int BulletDmg;
+	public int ownerNumber = 0;
 	public BulletManager BMan;
 	public float bulletSpeed;
 	public float slowBulletSpeed;
