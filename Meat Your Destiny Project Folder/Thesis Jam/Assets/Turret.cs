@@ -14,6 +14,7 @@ public class Turret : MonoBehaviour {
 	public int litSegments = 0, ownerNum = 2;
 	GameObject Cannon;
 	public float startTime, repeatTime;
+	bool completelyOwned = false;
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
 	void Start () {
@@ -34,6 +35,7 @@ public class Turret : MonoBehaviour {
 
 	void OnTriggerEnter(Collider col){
 		if (col.gameObject.GetComponent<Bullet> ()) {
+
 			//resolve the ownerNum
 			if (owner == Owner.NONE) {//set the owner to whoever hits the turret when the turret is unowned
 				ownerNum = col.gameObject.GetComponent<Bullet> ().ownerNumber;
@@ -56,11 +58,17 @@ public class Turret : MonoBehaviour {
 			AdjustCannonStatus ();
 
 			if (litSegments > 2) {
-				InvokeRepeating ("Fire", startTime, repeatTime);
+				if (!completelyOwned) {
+					InvokeRepeating ("Fire", startTime, repeatTime);
+					print ("invoking fire");
+					completelyOwned = true;
+				}
 			} else {
 				CancelInvoke ();
+				completelyOwned = false;
 			}
 
+			col.gameObject.GetComponent<Bullet> ().BMan.DestroyBullet (col.gameObject.GetComponent<Bullet> ());
 		}
 	}
 		
@@ -105,8 +113,17 @@ public class Turret : MonoBehaviour {
 	}
 	void Fire(){
 		GameObject cannonBall = Instantiate (CannonballPrefab, Cannon.transform.position, Quaternion.identity, null) as GameObject;
-		cannonBall.GetComponent<Cannonball> ().OwnerNum = ownerNum;
+		cannonBall.GetComponent<Cannonball> ().ownerNum = ownerNum;
 		cannonBall.GetComponent<Rigidbody> ().AddForce (Vector3.forward * cannonBall.GetComponent<Cannonball>().speed, ForceMode.Impulse);
+		if (ownerNum == 0) {
+			cannonBall.GetComponent<Renderer> ().material = gm.player1.GetComponentInChildren<Renderer> ().material;
+			Physics.IgnoreCollision (gm.player1.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
+
+		} else if (ownerNum == 1) {
+			cannonBall.GetComponent<Renderer> ().material = gm.player2.GetComponentInChildren<Renderer> ().material;
+			Physics.IgnoreCollision (gm.player2.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
+
+		}
 	}
 
 }
