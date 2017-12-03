@@ -13,8 +13,9 @@ public class Turret : MonoBehaviour {
 	Owner owner = Owner.NONE;
 	public int litSegments = 0, ownerNum = 2;
 	GameObject Cannon;
-	public float startTime, repeatTime;
-	bool completelyOwned = false;
+	public float startTime, repeatTime, immuneTime;
+	bool completelyOwned = false, contestable = true;
+
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
 	void Start () {
@@ -26,6 +27,7 @@ public class Turret : MonoBehaviour {
 		p1Color = gm.player1.GetComponentInChildren<Renderer> ().material.color;
 		p2Color = gm.player2.GetComponentInChildren<Renderer> ().material.color;
 		currentColor = neutralColor;
+		InvokeRepeating ("Fire", startTime, repeatTime);
 	}
 	
 	// Update is called once per frame
@@ -35,39 +37,41 @@ public class Turret : MonoBehaviour {
 
 	void OnTriggerEnter(Collider col){
 		if (col.gameObject.GetComponent<Bullet> ()) {
+			if (contestable) {
+				//resolve the ownerNum
+				if (owner == Owner.NONE) {//set the owner to whoever hits the turret when the turret is unowned
+					ownerNum = col.gameObject.GetComponent<Bullet> ().ownerNumber;
+					litSegments = 1;
 
-			//resolve the ownerNum
-			if (owner == Owner.NONE) {//set the owner to whoever hits the turret when the turret is unowned
-				ownerNum = col.gameObject.GetComponent<Bullet> ().ownerNumber;
-				litSegments = 1;
-
-			} else {
-				if (ownerNum == col.gameObject.GetComponent<Bullet> ().ownerNumber) {//if the owning player hits the turret, increment the number of lit segments up to a max of 3
-					litSegments = (int)(Mathf.Clamp (litSegments + 1, 0, 3)); 
-				} else {//return the tower to neutral if the last segment is depleted; otherwise decrease the number of lit segments by 1
-					if (litSegments == 1) {
-						litSegments = 0;
-						ownerNum = 2;
-					} else {
-						litSegments = (int)(Mathf.Clamp (litSegments - 1, 0, 3)); 
+				} else {
+					if (ownerNum == col.gameObject.GetComponent<Bullet> ().ownerNumber) {//if the owning player hits the turret, increment the number of lit segments up to a max of 3
+						litSegments = (int)(Mathf.Clamp (litSegments + 1, 0, 3)); 
+					} else {//return the tower to neutral if the last segment is depleted; otherwise decrease the number of lit segments by 1
+						if (litSegments == 1) {
+							litSegments = 0;
+							ownerNum = 2;
+						} else {
+							litSegments = (int)(Mathf.Clamp (litSegments - 1, 0, 3)); 
+						}
 					}
 				}
-			}
 
-			AdjustOwnership (ownerNum);
-			AdjustCannonStatus ();
+				AdjustOwnership (ownerNum);
+				AdjustCannonStatus ();
 
-			if (litSegments > 2) {
-				if (!completelyOwned) {
-					InvokeRepeating ("Fire", startTime, repeatTime);
-					print ("invoking fire");
-					completelyOwned = true;
+				if (litSegments > 2) {
+					if (!completelyOwned) {
+
+						completelyOwned = true;
+						contestable = false;
+						Invoke ("MakeContestable", immuneTime);
+
+					}
+				} else {
+					completelyOwned = false;
 				}
-			} else {
-				CancelInvoke ();
-				completelyOwned = false;
+			
 			}
-
 			col.gameObject.GetComponent<Bullet> ().BMan.DestroyBullet (col.gameObject.GetComponent<Bullet> ());
 		}
 	}
@@ -115,15 +119,23 @@ public class Turret : MonoBehaviour {
 		GameObject cannonBall = Instantiate (CannonballPrefab, Cannon.transform.position, Quaternion.identity, null) as GameObject;
 		cannonBall.GetComponent<Cannonball> ().ownerNum = ownerNum;
 		cannonBall.GetComponent<Rigidbody> ().AddForce (Vector3.forward * cannonBall.GetComponent<Cannonball>().speed, ForceMode.Impulse);
-		if (ownerNum == 0) {
-			cannonBall.GetComponent<Renderer> ().material = gm.player1.GetComponentInChildren<Renderer> ().material;
-			Physics.IgnoreCollision (gm.player1.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
+		if (completelyOwned) {
+			if (ownerNum == 0) {
+				cannonBall.GetComponent<Renderer> ().material = gm.player1.GetComponentInChildren<Renderer> ().material;
+				Physics.IgnoreCollision (gm.player1.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
 
-		} else if (ownerNum == 1) {
-			cannonBall.GetComponent<Renderer> ().material = gm.player2.GetComponentInChildren<Renderer> ().material;
-			Physics.IgnoreCollision (gm.player2.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
+			} else if (ownerNum == 1) {
+				cannonBall.GetComponent<Renderer> ().material = gm.player2.GetComponentInChildren<Renderer> ().material;
+				Physics.IgnoreCollision (gm.player2.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
 
+			} else {
+				cannonBall.GetComponent<Renderer> ().material.color = neutralColor;
+			}
 		}
+	}
+
+	void MakeContestable(){
+		contestable = true;
 	}
 
 }
