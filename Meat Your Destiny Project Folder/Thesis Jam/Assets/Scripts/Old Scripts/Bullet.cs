@@ -169,9 +169,6 @@ public class Bullet : MonoBehaviour {
 			auraPlayerTwoSlow ();
 		}
 
-
-
-
 	}
 
 	void OnTriggerExit (Collider other)

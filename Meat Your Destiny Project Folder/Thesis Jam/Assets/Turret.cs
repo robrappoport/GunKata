@@ -118,7 +118,6 @@ public class Turret : MonoBehaviour {
 	void Fire(){
 		GameObject cannonBall = Instantiate (CannonballPrefab, Cannon.transform.position, Quaternion.identity, null) as GameObject;
 		cannonBall.GetComponent<Cannonball> ().ownerNum = ownerNum;
-		cannonBall.GetComponent<Rigidbody> ().AddForce (Vector3.forward * cannonBall.GetComponent<Cannonball>().speed, ForceMode.Impulse);
 		if (completelyOwned) {
 			if (ownerNum == 0) {
 				cannonBall.GetComponent<Renderer> ().material = gm.player1.GetComponentInChildren<Renderer> ().material;
