@@ -133,8 +133,15 @@ public class Turret : MonoBehaviour {
 		}
 	}
 
-	void MakeContestable(){
+	void Reset(){
 		contestable = true;
+
+		ownerNum = 2;
+		litSegments = 0;
+		completelyOwned = false;
+		AdjustOwnership (ownerNum);
+		AdjustCannonStatus ();
+
 	}
 
 }
