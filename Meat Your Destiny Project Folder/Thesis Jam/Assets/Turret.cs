@@ -16,6 +16,8 @@ public class Turret : MonoBehaviour {
 	public float startTime, repeatTime, immuneTime;
 	bool completelyOwned = false, contestable = true;
 
+    public GameObject [] Emitter;
+
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
 	void Start () {
@@ -116,21 +118,31 @@ public class Turret : MonoBehaviour {
 
 	}
 	void Fire(){
-		GameObject cannonBall = Instantiate (CannonballPrefab, Cannon.transform.position, Quaternion.identity, null) as GameObject;
-		cannonBall.GetComponent<Cannonball> ().ownerNum = ownerNum;
-		if (completelyOwned) {
-			if (ownerNum == 0) {
-				cannonBall.GetComponent<Renderer> ().material = gm.player1.GetComponentInChildren<Renderer> ().material;
-				Physics.IgnoreCollision (gm.player1.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
+        foreach (GameObject Em in Emitter)
+        {
+            GameObject cannonBall = Instantiate(CannonballPrefab, Em.transform.position, Em.transform.rotation, null) as GameObject;
+            cannonBall.GetComponent<Cannonball>().ownerNum = ownerNum;
+            if (completelyOwned)
+            {
+                if (ownerNum == 0)
+                {
+                    cannonBall.GetComponent<Renderer>().material = gm.player1.GetComponentInChildren<Renderer>().material;
+                    Physics.IgnoreCollision(gm.player1.GetComponentInChildren<Collider>(), cannonBall.GetComponent<Collider>());
 
-			} else if (ownerNum == 1) {
-				cannonBall.GetComponent<Renderer> ().material = gm.player2.GetComponentInChildren<Renderer> ().material;
-				Physics.IgnoreCollision (gm.player2.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
+                }
+                else if (ownerNum == 1)
+                {
+                    cannonBall.GetComponent<Renderer>().material = gm.player2.GetComponentInChildren<Renderer>().material;
+                    Physics.IgnoreCollision(gm.player2.GetComponentInChildren<Collider>(), cannonBall.GetComponent<Collider>());
 
-			} else {
-				cannonBall.GetComponent<Renderer> ().material.color = neutralColor;
-			}
-		}
+                }
+                else
+                {
+                    cannonBall.GetComponent<Renderer>().material.color = neutralColor;
+                }
+            }
+        }
+       
 	}
 
 	void Reset(){

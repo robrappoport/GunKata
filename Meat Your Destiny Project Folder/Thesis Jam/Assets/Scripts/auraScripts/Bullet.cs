@@ -136,7 +136,7 @@ public class Bullet : MonoBehaviour {
 //		//r.constraints = freezeVal;
 ////		Debug.Log (freezeVal+"2");
 	//}
-
+    
 
 	void OnCollisionEnter (Collision other)
 	{	
@@ -168,6 +168,9 @@ public class Bullet : MonoBehaviour {
 			player2AuraTriggered = true;
 			auraPlayerTwoSlow ();
 		}
+
+
+
 
 	}
 

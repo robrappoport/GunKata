@@ -59,7 +59,10 @@ public class Cannonball : MonoBehaviour {
 			}
 		}
 		CancelInvoke ();
-		SelfDestruct();
+        if (col.gameObject.tag != "Bullet")
+        {
+            SelfDestruct();
+        }
 	}
 
 	void SelfDestruct(){
