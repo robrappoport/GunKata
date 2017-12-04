@@ -6,8 +6,7 @@ public class auraGunBehavior : MonoBehaviour
     //Drag in the Bullet Emitter from the Component Inspector.
     public GameObject Bullet_Emitter;
     public BulletManager bulletManager;
-
-
+    public Turret turretMan;
     //Drag in the Bullet Prefab from the Component Inspector.
     public GameObject RyuBullet;
     public GameObject AuraObj;
@@ -36,6 +35,10 @@ public class auraGunBehavior : MonoBehaviour
     public bool isExhausted;
     private bool isProjecting;
     bool pressedWhileExhausted;
+
+
+    //Cave Story Gun Behavior Bools//
+    bool gunLevel1, gunLevel2, gunLevel3;
 
     //AUDIO
     private AudioSource myAudio;
@@ -138,13 +141,24 @@ public class auraGunBehavior : MonoBehaviour
 
     void PrimaryFire()
     {
-        CurrentBullets -= 1;
-        myCont.OnShot();
-        bulletManager.CreateBullet(
-            RyuBullet,
-            Bullet_Emitter.transform.position,
-            Quaternion.Euler(new Vector3(0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0))
-        );
+        gunLevel1 = true;
+        if (gunLevel1)
+        {
+            CurrentBullets -= 1;
+            myCont.OnShot();
+            bulletManager.CreateBullet(
+                RyuBullet,
+                Bullet_Emitter.transform.position,
+                Quaternion.Euler(new Vector3(0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
+        }
+        else if (gunLevel2)
+        {
+            
+        }
+        else if (gunLevel3)
+        {
+            
+        }
     }
 
     void auraProject()
@@ -310,5 +324,13 @@ public class auraGunBehavior : MonoBehaviour
 
     }
 
+    public void turretOwnerCheck ()
+    {
+        //check how many turrets the player owns//
+
+        //if player owns 1 turret
+        //else if player owns 2
+        //else if player owns 3
+    }
    
 }
