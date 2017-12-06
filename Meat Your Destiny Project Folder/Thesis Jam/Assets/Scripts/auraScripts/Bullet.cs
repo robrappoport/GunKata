@@ -48,8 +48,8 @@ public class Bullet : MonoBehaviour {
 	}
 	void Start () {
 		
-		Physics.IgnoreCollision (this.gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), true);
-
+            transform.position = new Vector3(transform.position.x, 5f, transform.position.z);
+        
 		bulletSpeed = bulletStartSpeed;
 		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
@@ -85,9 +85,9 @@ public class Bullet : MonoBehaviour {
 	}
 	void FixedUpdate(){
 		if ((!player1AuraTriggered && prevPlayer1Triggered) || (!player2AuraTriggered && prevPlayer2Triggered)) {
-			if (!(BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 0 && prevPlayer1Triggered) && !(BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 1 && prevPlayer2Triggered)) {
-				r.velocity *= -1f;
-			}
+			//if (!(BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 0 && prevPlayer1Triggered) && !(BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 1 && prevPlayer2Triggered)) {
+			//	r.velocity *= -1f;
+			//}
 			r.velocity = r.velocity.normalized * fastBulletSpeed;
 		}
 	
@@ -141,10 +141,25 @@ public class Bullet : MonoBehaviour {
 	void OnCollisionEnter (Collision other)
 	{	
 		if (isDestroyedOnHit) {
+            if (other.gameObject.tag == "CannonBall")
+            {
+                if (other.gameObject.GetComponent<Cannonball>().ownerNum != this.ownerNumber)
+                {
+                    BMan.DestroyBullet(this);
+                }
+                else
+                {
+                    //ignore collision
+                }
+            }
 			if (other.gameObject.tag == "Player") {
 				other.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (BulletDmg);
 				BMan.DestroyBullet (this);
 			}
+            else
+            {
+                BMan.DestroyBullet(this);
+            }
 		}
 	}
 		

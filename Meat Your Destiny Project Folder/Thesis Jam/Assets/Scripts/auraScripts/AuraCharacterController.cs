@@ -59,6 +59,7 @@ public class AuraCharacterController : PlayControl {
 		instance = this;
 	}
 	void Start () {
+        transform.position = new Vector3(transform.position.x, 5f, transform.position.z);
 		gunBehave = GetComponent<auraGunBehavior> ();
 //		lockedOn = GetComponent<LockOnScript> ();
 		characterCtr = this.GetComponent<Rigidbody>();
@@ -382,13 +383,12 @@ public class AuraCharacterController : PlayControl {
 
 	void OnTriggerStay (Collider other)
 	{
-//		Debug.Log ("test1");
+		
 		GameObject otherObj = other.gameObject;
-		GameObject otherParent = other.transform.root.gameObject;
+        Debug.Log(otherObj.tag);
 		if (otherObj.tag == "player1Aura" || otherObj.tag == "player2Aura") {
-			if (otherParent.GetComponent<AuraCharacterController> ().playerNum != this.playerNum) {
-				characterCtr.AddForce ((moveDirForward + moveDirSides).normalized * -slowForce / Time.deltaTime);
-			}
+			
+				characterCtr.AddForce ((moveDirForward + moveDirSides).normalized * -slowForce);
 		} else {
 			return;
 		}

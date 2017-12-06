@@ -34,6 +34,7 @@ public class auraGunBehavior : MonoBehaviour
     public Image staminaBar;
     public bool isExhausted;
     private bool isProjecting;
+    private bool isContracting;
     bool pressedWhileExhausted;
 
 
@@ -163,28 +164,30 @@ public class auraGunBehavior : MonoBehaviour
 
     void auraProject()
     {
-        Debug.Log("running auraProject");
+       
 
-        if (myCont.secondaryFireDown() && !isExhausted)
+        if (myCont.secondaryFireDown() && !isExhausted && !isProjecting && !isContracting)
         {
+            AuraObj.transform.position = transform.position;
             isProjecting = true;
             AuraObj.SetActive(true);
+            AuraObj.transform.parent = null;
             timeElapsed = 0f;
             auraInitScale = AuraObj.transform.localScale;
             pressedWhileExhausted = false;
         }
 
-        if (myCont.secondaryFireUp())
-        {
-            auraInitScale = AuraObj.transform.localScale;
-            isProjecting = false;
-            timeElapsed = 0f;
-        }
+        //if (myCont.secondaryFireUp())
+        //{
+        //    auraInitScale = AuraObj.transform.localScale;
+        //    isProjecting = false;
+        //    timeElapsed = 0f;
+        //}
 
-        if (myCont.secondaryFire() && !isExhausted && !pressedWhileExhausted)
+        if (/*myCont.secondaryFire() && */!isExhausted && !pressedWhileExhausted)
         {
 
-            if (isProjecting && !isExhausted)
+            if (isProjecting && !isExhausted && !isContracting)
             {
                 curStamina -= staminaRate;
                 timeElapsed += Time.deltaTime * 5;
@@ -194,7 +197,7 @@ public class auraGunBehavior : MonoBehaviour
                     curStamina = 0;
                     isExhausted = true;
                     pressedWhileExhausted = true;
-                    AuraObj.SetActive(false);
+                    isContracting = true;
 
                 }
                 StartCoroutine(AuraSound());
@@ -225,10 +228,14 @@ public class auraGunBehavior : MonoBehaviour
                 isExhausted = false;
             }
             //Contraction happens here
-            timeElapsed += Time.deltaTime * 1.5f;
-            AuraObj.transform.localScale = Vector3.Lerp(auraInitScale, auraBaseScale, timeElapsed / duration);
+            //timeElapsed += Time.deltaTime * 1.5f;
+            //AuraObj.transform.localScale = Vector3.Lerp(auraInitScale, auraBaseScale, timeElapsed / duration);
         }
 
+        if (isContracting)
+        {
+            auraContract();
+        }
 
 
         //while (curStamina <= 0f || isExhausted)
@@ -242,7 +249,7 @@ public class auraGunBehavior : MonoBehaviour
 
     void auraContract()
     {
-        if (myCont.secondaryFireUp())
+        if (curStamina <= 0f)
         {
             isProjecting = false;
             timeElapsed = 0f;
@@ -257,6 +264,8 @@ public class auraGunBehavior : MonoBehaviour
             AuraObj.transform.localScale = Vector3.Lerp(auraInitScale, auraBaseScale, timeElapsed / duration);
             if (timeElapsed >= duration)
             {
+                Debug.Log("Is");
+                isContracting = false;
                 AuraObj.SetActive(false);
             }
         }

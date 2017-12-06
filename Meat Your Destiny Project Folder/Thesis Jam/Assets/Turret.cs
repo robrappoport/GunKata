@@ -8,6 +8,8 @@ public class Turret : MonoBehaviour {
 	public Color p1Color, p2Color, neutralColor, currentColor;
 	public GameObject CannonballPrefab;
 
+    //public List<Cannonball> cannonBallList = new List<Cannonball>();
+
 	TwoDGameManager gm;
 	enum Owner {Player1, Player2, NONE};
 	Owner owner = Owner.NONE;
@@ -66,7 +68,7 @@ public class Turret : MonoBehaviour {
 
 						completelyOwned = true;
 						contestable = false;
-						Invoke ("MakeContestable", immuneTime);
+						Invoke ("Reset", immuneTime);
 
 					}
 				} else {
@@ -122,19 +124,22 @@ public class Turret : MonoBehaviour {
         {
             GameObject cannonBall = Instantiate(CannonballPrefab, Em.transform.position, Em.transform.rotation, null) as GameObject;
             cannonBall.GetComponent<Cannonball>().ownerNum = ownerNum;
+            Cannonball cball = cannonBall.GetComponent<Cannonball>();
+            //cannonBallList.Add(cball);
             if (completelyOwned)
             {
                 if (ownerNum == 0)
                 {
                     cannonBall.GetComponent<Renderer>().material = gm.player1.GetComponentInChildren<Renderer>().material;
                     Physics.IgnoreCollision(gm.player1.GetComponentInChildren<Collider>(), cannonBall.GetComponent<Collider>());
+                    cannonBall.layer = LayerMask.NameToLayer("Player1OwnsTurret");
 
                 }
                 else if (ownerNum == 1)
                 {
                     cannonBall.GetComponent<Renderer>().material = gm.player2.GetComponentInChildren<Renderer>().material;
                     Physics.IgnoreCollision(gm.player2.GetComponentInChildren<Collider>(), cannonBall.GetComponent<Collider>());
-
+                    cannonBall.layer = LayerMask.NameToLayer("Player2OwnsTurret");
                 }
                 else
                 {

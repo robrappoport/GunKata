@@ -15,6 +15,14 @@ public class BulletManager : MonoBehaviour {
 //		bulletRigid.velocity = this.gameObject.GetComponent<Rigidbody> ().velocity;
 		Bullet bullet = bulletObj.GetComponent<Bullet> ();
 		bullet.ownerNumber = GetComponent<AuraCharacterController> ().playerNum;
+        if (bullet.ownerNumber == 0)
+        {
+            bulletObj.layer = LayerMask.NameToLayer("Player1Bullet");
+        }
+        else if (bullet.ownerNumber == 1)
+        {
+            bulletObj.layer = LayerMask.NameToLayer("Player2Bullet");
+        }
 //		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 //		float velocityOffset = Mathf.Max(Vector3.Dot (new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)), this.gameObject.GetComponent<Rigidbody> ().velocity), 0);
 //		bullet.bulletSpeed += velocityOffset;
@@ -30,13 +38,13 @@ public class BulletManager : MonoBehaviour {
 		bulletList.Remove (bullet);
 	}
 
-	//public void Freeze(bool setFreeze){
-	//	foreach (Bullet b in bulletList) {
-	//		//b.SetFreeze (setFreeze);
-	//	}
-	//}
-
-	void Update ()
+    //public void Freeze(bool setFreeze){
+    //	foreach (Bullet b in bulletList) {
+    //		//b.SetFreeze (setFreeze);
+    //	}
+    //}
+   
+    void Update ()
 	{
 		for (int i = bulletList.Count - 1; i >= 0; i--) {
 //			Debug.Log (bulletList [i].lifeTime);

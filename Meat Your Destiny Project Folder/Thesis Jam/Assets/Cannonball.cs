@@ -8,7 +8,7 @@ public class Cannonball : MonoBehaviour {
 	public int ownerNum;
 	public Renderer player1BulletMaterial, player2BulletMaterial;
 	public Material frozenBullet;
-
+    public Turret myTurret;
 
 
 	public bool player1AuraTriggered;
@@ -23,6 +23,7 @@ public class Cannonball : MonoBehaviour {
 
 	void Start(){
 
+        transform.position = new Vector3(transform.position.x, 5f, transform.position.z);
 		Invoke ("SelfDestruct", lifetime);
 		r = GetComponent<Rigidbody> ();
 		render = GetComponent<Renderer> ();
@@ -59,8 +60,9 @@ public class Cannonball : MonoBehaviour {
 			}
 		}
 		CancelInvoke ();
-        if (col.gameObject.tag != "Bullet")
+        if (col.gameObject.tag != "Bullet" && col.gameObject.tag != "CannonBall")
         {
+            //myTurret.cannonBallList.Remove(this);
             SelfDestruct();
         }
 	}
