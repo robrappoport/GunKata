@@ -168,6 +168,7 @@ public class auraGunBehavior : MonoBehaviour
 
         if (myCont.secondaryFireDown() && !isExhausted && !isProjecting && !isContracting)
         {
+            StartCoroutine(AuraSound());
             AuraObj.transform.position = transform.position;
             isProjecting = true;
             AuraObj.SetActive(true);
@@ -186,6 +187,7 @@ public class auraGunBehavior : MonoBehaviour
 
         if (/*myCont.secondaryFire() && */!isExhausted && !pressedWhileExhausted)
         {
+            
 
             if (isProjecting && !isExhausted && !isContracting)
             {
@@ -200,7 +202,7 @@ public class auraGunBehavior : MonoBehaviour
                     isContracting = true;
 
                 }
-                StartCoroutine(AuraSound());
+               
                 AuraObj.transform.localScale = Vector3.Lerp(auraInitScale,
                 auraBaseScale * auraMultiplier, timeElapsed / duration);
             }
