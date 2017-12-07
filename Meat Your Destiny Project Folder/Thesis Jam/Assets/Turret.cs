@@ -5,7 +5,7 @@ using UnityEngine;
 public class Turret : MonoBehaviour {
 
 	public Renderer topRenderer, middleRenderer, bottomRenderer;
-	public Color p1Color, p2Color, neutralColor, currentColor;
+	public Color p1Color, p2Color, neutralColor, currentColor, uncontestableColor;
 	public GameObject CannonballPrefab;
 
     //public List<Cannonball> cannonBallList = new List<Cannonball>();
@@ -15,7 +15,7 @@ public class Turret : MonoBehaviour {
 	Owner owner = Owner.NONE;
 	public int litSegments = 0, ownerNum = 2;
 	GameObject Cannon;
-	public float startTime, repeatTime, immuneTime;
+	public float startTime, repeatTime, immuneTime, uncontestableTime;
 	bool completelyOwned = false, contestable = true;
 
     public GameObject [] Emitter;
@@ -61,7 +61,7 @@ public class Turret : MonoBehaviour {
 				}
 
 				AdjustOwnership (ownerNum);
-				AdjustCannonStatus ();
+				AdjustCannonColor ();
 
 				if (litSegments > 2) {
 					if (!completelyOwned) {
@@ -99,7 +99,7 @@ public class Turret : MonoBehaviour {
 		}
 	}
 
-	void AdjustCannonStatus(){//adjusts turret based on the number of lit segments;
+	void AdjustCannonColor(){//adjusts turret based on the number of lit segments;
 		if (litSegments > 0) {
 			bottomRenderer.material.color = currentColor;
 		} else {
@@ -151,14 +151,22 @@ public class Turret : MonoBehaviour {
 	}
 
 	void Reset(){
-		contestable = true;
 
 		ownerNum = 2;
 		litSegments = 0;
 		completelyOwned = false;
 		AdjustOwnership (ownerNum);
-		AdjustCannonStatus ();
-
+		AdjustCannonColor ();
+		topRenderer.material.color = uncontestableColor;
+		middleRenderer.material.color = uncontestableColor;
+		bottomRenderer.material.color = uncontestableColor;
+		CancelInvoke ();
+		Invoke ("Neutralize", uncontestableTime);
 	}
 
+	void Neutralize(){
+		contestable = true;
+		AdjustCannonColor();
+
+	}
 }
