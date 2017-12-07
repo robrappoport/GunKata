@@ -7,16 +7,19 @@ public class Turret : MonoBehaviour {
 	public Renderer topRenderer, middleRenderer, bottomRenderer;
 	public Color p1Color, p2Color, neutralColor, currentColor, uncontestableColor;
 	public GameObject CannonballPrefab;
+	public int litSegments = 0, ownerNum = 2;
+	public float startTime, repeatTime, immuneTime, uncontestableTime;
 
     //public List<Cannonball> cannonBallList = new List<Cannonball>();
 
 	TwoDGameManager gm;
 	enum Owner {Player1, Player2, NONE};
 	Owner owner = Owner.NONE;
-	public int litSegments = 0, ownerNum = 2;
+
 	GameObject Cannon;
-	public float startTime, repeatTime, immuneTime, uncontestableTime;
 	bool completelyOwned = false, contestable = true;
+
+	public List<Cannonball> cannonBallList = new List<Cannonball>();
 
     public GameObject [] Emitter;
 
@@ -65,7 +68,16 @@ public class Turret : MonoBehaviour {
 
 				if (litSegments > 2) {
 					if (!completelyOwned) {
+						foreach (Cannonball c in cannonBallList) {
+							if (c) {
+								if (c.ownerNum != ownerNum) {
 
+									Destroy (c.gameObject);
+								} 
+							} 
+							else {
+							}
+						}
 						completelyOwned = true;
 						contestable = false;
 						Invoke ("Reset", immuneTime);
@@ -123,7 +135,12 @@ public class Turret : MonoBehaviour {
         foreach (GameObject Em in Emitter)
         {
             GameObject cannonBall = Instantiate(CannonballPrefab, Em.transform.position, Em.transform.rotation, null) as GameObject;
-            cannonBall.GetComponent<Cannonball>().ownerNum = ownerNum;
+			cannonBallList.Add (cannonBall.GetComponent<Cannonball> ());
+			if (completelyOwned) {
+				cannonBall.GetComponent<Cannonball> ().ownerNum = ownerNum;
+			} else {
+				cannonBall.GetComponent<Cannonball> ().ownerNum = 2;
+			}
             Cannonball cball = cannonBall.GetComponent<Cannonball>();
             //cannonBallList.Add(cball);
             if (completelyOwned)
@@ -144,6 +161,7 @@ public class Turret : MonoBehaviour {
                 else
                 {
                     cannonBall.GetComponent<Renderer>().material.color = neutralColor;
+	
                 }
             }
         }
@@ -167,6 +185,7 @@ public class Turret : MonoBehaviour {
 	void Neutralize(){
 		contestable = true;
 		AdjustCannonColor();
+		InvokeRepeating ("Fire", startTime, repeatTime);
 
 	}
 }
