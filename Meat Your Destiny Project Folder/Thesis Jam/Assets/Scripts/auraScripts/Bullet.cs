@@ -216,7 +216,7 @@ public class Bullet : MonoBehaviour {
 		bulletSpeed = slowBulletSpeed;
 		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 		r.velocity = r.velocity.normalized * bulletSpeed;
-		Debug.Log ("bullet speed is" + ""+ r.velocity);
+		//Debug.Log ("bullet speed is" + ""+ r.velocity);
 	}
 
 	void auraPlayerTwoSlow ()
@@ -224,7 +224,7 @@ public class Bullet : MonoBehaviour {
 		bulletSpeed = slowBulletSpeed;
 		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 		r.velocity = r.velocity.normalized * bulletSpeed;//new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)) * bulletSpeed;
-		Debug.Log ("bullet speed is" + ""+ r.velocity);
+		//Debug.Log ("bullet speed is" + ""+ r.velocity);
 	}
 
 	void auraStop ()

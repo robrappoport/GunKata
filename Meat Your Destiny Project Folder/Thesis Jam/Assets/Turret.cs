@@ -8,7 +8,7 @@ public class Turret : MonoBehaviour {
 	public Color p1Color, p2Color, neutralColor, currentColor, uncontestableColor;
 	public GameObject CannonballPrefab;
 	public int litSegments = 0, ownerNum = 2;
-	public float startTime, repeatTime, immuneTime, uncontestableTime;
+	public float startTime, repeatTime, immuneTime, uncontestableTime, spinSpeed;
 
     //public List<Cannonball> cannonBallList = new List<Cannonball>();
 
@@ -39,7 +39,8 @@ public class Turret : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        Vector3 curRotation = transform.localRotation.eulerAngles;
+        transform.localRotation = Quaternion.Euler(curRotation.x, curRotation.y + spinSpeed, curRotation.z);
 	}
 
 	void OnTriggerEnter(Collider col){

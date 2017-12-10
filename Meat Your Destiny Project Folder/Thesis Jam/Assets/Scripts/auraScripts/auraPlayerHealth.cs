@@ -16,6 +16,7 @@ public class auraPlayerHealth : MonoBehaviour {
 	public Material damagedColor;
 	public Material normalColor;
     public ParticleSystem standardHalo, DamagedHalo;
+    public GameObject explosionPrefab;
 
 	public int flashNum;
 
@@ -55,6 +56,7 @@ public class auraPlayerHealth : MonoBehaviour {
             CurrentHealth += amount;
 
 			if (CurrentHealth <= 0f) {
+                Instantiate(explosionPrefab, transform.position, transform.rotation);
 				gameObject.SetActive (false);
 				//playerCanvas.gameObject.SetActive (false);
 			}
