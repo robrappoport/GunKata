@@ -112,15 +112,20 @@ public class auraGunBehavior : MonoBehaviour
         {
             if (myCont.primaryFire() == true)
             {
+                myCont.OnShot();
                 //              Debug.Log ("is pressing button");
                 if (shootTime <= 0)
                 {
-                   
+                    
                     isFiring = true;
                     shootTime = initShootTime;
                     PrimaryFire();
                     StartCoroutine(ShootSound()); 
                 }
+            }
+            else
+            {
+                myCont.NotShot();
             }
         }
 
@@ -130,7 +135,7 @@ public class auraGunBehavior : MonoBehaviour
     {
         if (CurrentBullets != MaxBullets)
         {
-            myCont.OnShot();
+            //myCont.OnShot();
             if (autoReloadEnabled == true && buttonReload != true)
             {
                 autoReload = true;
@@ -146,7 +151,7 @@ public class auraGunBehavior : MonoBehaviour
         if (gunLevel1)
         {
             CurrentBullets -= 1;
-            myCont.OnShot();
+            //myCont.OnShot();
             bulletManager.CreateBullet(
                 RyuBullet,
                 Bullet_Emitter.transform.position,
@@ -222,7 +227,7 @@ public class auraGunBehavior : MonoBehaviour
         {
             //recharge
             //Gabe changed this
-            curStamina += staminaRate * .5f;
+            curStamina += staminaRate * .2f;
             SetStamina();
             //this is amount needed to be able to Aura again
             if (curStamina >= staminaTotal)
@@ -259,7 +264,7 @@ public class auraGunBehavior : MonoBehaviour
         }
         else
         {
-            curStamina += staminaRate;
+            curStamina += staminaRate * .2f;
             SetStamina();
             timeElapsed += Time.deltaTime;
 
@@ -282,7 +287,7 @@ public class auraGunBehavior : MonoBehaviour
             Debug.Log("In while");
             curStamina += staminaRate;
             SetStamina();
-            if (curStamina >= (staminaTotal / 2))
+            if (curStamina >= (staminaTotal / 3))
             {
                 Debug.Log("while is done");
                 isExhausted = false;

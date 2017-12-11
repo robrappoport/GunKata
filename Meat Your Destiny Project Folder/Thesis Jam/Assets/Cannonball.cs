@@ -122,7 +122,7 @@ public class Cannonball : MonoBehaviour {
 		speed = slowSpeed;
 		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 		r.velocity = r.velocity.normalized * speed;
-		Debug.Log ("bullet speed is" + ""+ r.velocity);
+		//Debug.Log ("bullet speed is" + ""+ r.velocity);
 	}
 
 	void auraPlayerTwoSlow ()
@@ -130,7 +130,7 @@ public class Cannonball : MonoBehaviour {
 		speed = slowSpeed;
 		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 		r.velocity = r.velocity.normalized * speed;//new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)) * bulletSpeed;
-		Debug.Log ("bullet speed is" + ""+ r.velocity);
+		//Debug.Log ("bullet speed is" + ""+ r.velocity);
 	}
 
 	void auraStop ()

@@ -32,6 +32,8 @@ public class AuraCharacterController : PlayControl {
 	public float moveForce;
 	public float dashForce;
 	public float slowForce;
+    public float shootForce;
+    public float prevMoveForce;
 	float stuckTimer;
 	public float stuckTime = .1f;
 	public enum ControlType {Keyboard, Controller, NONE};/// <summary>
@@ -59,6 +61,7 @@ public class AuraCharacterController : PlayControl {
 		instance = this;
 	}
 	void Start () {
+        //prevMoveForce = moveForce;
         transform.position = new Vector3(transform.position.x, 5f, transform.position.z);
 		gunBehave = GetComponent<auraGunBehavior> ();
 //		lockedOn = GetComponent<LockOnScript> ();
@@ -82,8 +85,12 @@ public class AuraCharacterController : PlayControl {
 	}
 
 	public void OnShot(){
-		stuckTimer = stuckTime;
+        //prevMoveForce = moveForce;
+        moveForce = shootForce;
 	}
+    public void NotShot(){
+        moveForce = prevMoveForce;
+    }
 
 	// Update is called once per frame
 	void FixedUpdate () {
@@ -92,14 +99,14 @@ public class AuraCharacterController : PlayControl {
 		}
 		//		moveDirection.y = 0;
 		//myController = InputManager.Devices[playerNum];
-		if (stuckTimer <= 0) {
+		//if (stuckTimer <= 0) {
 			MoveCharacter ();
-		} else {
-			characterCtr.velocity = Vector3.zero;
-		}
+		//} else {
+		//	characterCtr.velocity = Vector3.zero;
+		//}
 		//		storeDir = cameraTrans.right;
 		//		MyCharacterActions ();
-		stuckTimer -= Time.deltaTime;
+		//stuckTimer -= Time.deltaTime;
 		if (startButton())
 		{
 			SceneManager.LoadScene("AuraVersion");
