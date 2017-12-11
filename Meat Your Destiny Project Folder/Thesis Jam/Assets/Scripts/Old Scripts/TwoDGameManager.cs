@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public class TwoDGameManager : MonoBehaviour {
     public static TwoDGameManager thisInstance;
+
+	public float respawnTime = 1;
 	public auraPlayerHealth playerHealth1;
 	public auraPlayerHealth playerHealth2;
     const int maxPlayers = 2;
@@ -69,19 +71,23 @@ public class TwoDGameManager : MonoBehaviour {
         playerScoreUpdate();
 		if (playerHealth1.CurrentHealth <= 0 || playerHealth2.CurrentHealth <= 0) {
             if (playerHealth1.CurrentHealth > 0 && addedScore == false) {
+				//player 1 wins
                 addedScore = true;
                 player2Canvas.SetActive(false);
                 player1ScoreNum ++;
-                playerWinner.text = "green wins";
-                StartCoroutine(gameRestart());
+//                playerWinner.text = "green wins";
+                //StartCoroutine(gameRestart());
+				Invoke("SpawnPlayer2", respawnTime);
                 return;
             } 
             if (playerHealth2.CurrentHealth > 0 && addedScore == false){
+				//player 2 wins
                 addedScore = true;
                 player1Canvas.SetActive(false);
                 player2ScoreNum++;
-				playerWinner.text = "red wins";
-                StartCoroutine(gameRestart());
+//				playerWinner.text = "red wins";
+               //StartCoroutine(gameRestart());
+				Invoke("SpawnPlayer1", respawnTime);
                 return;
 			}
 		}
@@ -102,18 +108,36 @@ public class TwoDGameManager : MonoBehaviour {
     }
     void setLevel ()
     {
-        player1 = Instantiate(player1Prefab, player1Start.position, Quaternion.identity) as GameObject;
-        player2 = Instantiate(player2Prefab, player2Start.position, Quaternion.identity) as GameObject;
-
-        playerHealth1 = player1.GetComponent<auraPlayerHealth>();
-        playerHealth2 = player2.GetComponent<auraPlayerHealth>();
-        players[0] = player1.GetComponent<auraGunBehavior>();
-        players[1] = player2.GetComponent<auraGunBehavior>();
-        GetComponent<bulletManagerManager>().bMan1 = player1.GetComponent<BulletManager>();
-        GetComponent<bulletManagerManager>().bMan2 = player2.GetComponent<BulletManager>();
-        player1.GetComponent<auraGunBehavior>().staminaBar = player1Canvas.transform.Find("GameObject/AuraBar").GetComponent<Image>();
-        player2.GetComponent<auraGunBehavior>().staminaBar = player2Canvas.transform.Find("GameObject/AuraBar").GetComponent<Image>();
-        player1Tracker.Player = player1.transform;
-        player2Tracker.Player = player2.transform;
+		SpawnPlayer1 ();
+		SpawnPlayer2 ();
     }
+
+	void SpawnPlayer1(){
+		if (player1) {
+			Destroy (player1);
+		}
+		player1 = Instantiate(player1Prefab, player1Start.position, Quaternion.identity) as GameObject;
+		playerHealth1 = player1.GetComponent<auraPlayerHealth>();
+		players[0] = player1.GetComponent<auraGunBehavior>();
+		GetComponent<bulletManagerManager>().bMan1 = player1.GetComponent<BulletManager>();
+		player1.GetComponent<auraGunBehavior>().staminaBar = player1Canvas.transform.Find("GameObject/AuraBar").GetComponent<Image>();
+		player1Tracker.Player = player1.transform;
+		addedScore = false;
+
+
+	}
+
+	void SpawnPlayer2(){
+		if (player2) {
+			Destroy (player2);
+		}
+		player2 = Instantiate(player2Prefab, player2Start.position, Quaternion.identity) as GameObject;
+		playerHealth2 = player2.GetComponent<auraPlayerHealth>();
+		players[1] = player2.GetComponent<auraGunBehavior>();
+		GetComponent<bulletManagerManager>().bMan2 = player2.GetComponent<BulletManager>();
+		player2.GetComponent<auraGunBehavior>().staminaBar = player2Canvas.transform.Find("GameObject/AuraBar").GetComponent<Image>();
+		player2Tracker.Player = player2.transform;
+		addedScore = false;
+
+	}
 }

@@ -31,8 +31,8 @@ public class Turret : MonoBehaviour {
 		middleRenderer =transform.Find ("Turret Middle").GetComponent<Renderer> ();
 		bottomRenderer = transform.Find ("Turret Bottom").GetComponent<Renderer> ();
 		Cannon = topRenderer.gameObject;
-		p1Color = gm.player1.GetComponentInChildren<Renderer> ().material.color;
-		p2Color = gm.player2.GetComponentInChildren<Renderer> ().material.color;
+		p1Color = gm.playerHealth1.normalColor.color;
+		p2Color = gm.playerHealth2.normalColor.color;
 		currentColor = neutralColor;
 		InvokeRepeating ("Fire", startTime, repeatTime);
 	}
@@ -68,6 +68,9 @@ public class Turret : MonoBehaviour {
 
 				if (litSegments > 2) {
 					if (!completelyOwned) {
+
+
+						//destroy all unowned cannonballs
 						foreach (Cannonball c in cannonBallList) {
 							if (c) {
 								if (c.ownerNum != ownerNum) {
@@ -134,8 +137,18 @@ public class Turret : MonoBehaviour {
 	void Fire(){
         foreach (GameObject Em in Emitter)
         {
+			//create new, clean list
+
+			List<Cannonball> newCannonBallList = new List<Cannonball>();
+			foreach (Cannonball c in cannonBallList) {
+				if (c) {
+					newCannonBallList.Add (c);
+				} 
+			}
+			cannonBallList = newCannonBallList;
             GameObject cannonBall = Instantiate(CannonballPrefab, Em.transform.position, Em.transform.rotation, null) as GameObject;
 			cannonBallList.Add (cannonBall.GetComponent<Cannonball> ());
+
 			if (completelyOwned) {
 				cannonBall.GetComponent<Cannonball> ().ownerNum = ownerNum;
 			} else {
