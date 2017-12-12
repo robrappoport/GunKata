@@ -85,7 +85,7 @@ public class TwoDGameManager : MonoBehaviour {
 				//player 2 wins
                 addedScore = true;
                 player1Canvas.SetActive(false);
-                player1ScoreNum += 2;
+                player2ScoreNum += 2;
 //				playerWinner.text = "red wins";
                //StartCoroutine(gameRestart());
 				Invoke("SpawnPlayer1", respawnTime);
@@ -101,6 +101,8 @@ public class TwoDGameManager : MonoBehaviour {
 	public IEnumerator gameRestart ()
 	{
 		yield return new WaitForSeconds (restartTime);
+        player1ScoreNum = 0;
+        player2ScoreNum = 0;
 		SceneManager.LoadScene("AuraVersion");
         addedScore = false;
 	}

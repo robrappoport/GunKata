@@ -8,7 +8,7 @@ public class respawnExplosion : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Vector3 center = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z);
+        Vector3 center = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         float radius = sphereRad;
         bulletExplosion(center, radius);
     }
@@ -20,10 +20,10 @@ public class respawnExplosion : MonoBehaviour
 
         for (var i = 0; i < hitColliders.Length; i++)
         {
-            Debug.Log("something was hit" + hitColliders[i].name);
+            //Debug.Log("something was hit" + hitColliders[i].name);
             if (hitColliders[i].tag == "CannonBall"){
-                Debug.Log("i hit something" + hitColliders[i].name);
-                Destroy(hitColliders[i].gameObject);
+                //Debug.Log("i hit something" + hitColliders[i].name);
+                hitColliders[i].GetComponent<Cannonball>().checkHit();
             }
         }
     }

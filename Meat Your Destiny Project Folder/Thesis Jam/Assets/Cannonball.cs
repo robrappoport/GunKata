@@ -141,4 +141,9 @@ public class Cannonball : MonoBehaviour {
 		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)) * speed;
 	}
 
+    public void checkHit()
+    {
+        Destroy(gameObject);
+    }
+
 }
