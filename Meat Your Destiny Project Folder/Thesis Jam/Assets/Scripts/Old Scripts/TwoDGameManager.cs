@@ -21,6 +21,7 @@ public class TwoDGameManager : MonoBehaviour {
     public static Text player2Score;
     public static int player2ScoreNum = 0;
     private bool addedScore = false;
+    public int maxScore;
 
     public GameObject player1Prefab, player2Prefab;
     public GameObject player1, player2;
@@ -74,7 +75,7 @@ public class TwoDGameManager : MonoBehaviour {
 				//player 1 wins
                 addedScore = true;
                 player2Canvas.SetActive(false);
-                player1ScoreNum ++;
+                player1ScoreNum += 2;
 //                playerWinner.text = "green wins";
                 //StartCoroutine(gameRestart());
 				Invoke("SpawnPlayer2", respawnTime);
@@ -84,13 +85,16 @@ public class TwoDGameManager : MonoBehaviour {
 				//player 2 wins
                 addedScore = true;
                 player1Canvas.SetActive(false);
-                player2ScoreNum++;
+                player1ScoreNum += 2;
 //				playerWinner.text = "red wins";
                //StartCoroutine(gameRestart());
 				Invoke("SpawnPlayer1", respawnTime);
                 return;
 			}
 		}
+        playerWin();
+
+
 
 	}
 
@@ -140,4 +144,27 @@ public class TwoDGameManager : MonoBehaviour {
 		addedScore = false;
 
 	}
+
+    void playerWin()
+    {
+        if (player1ScoreNum >= maxScore)
+        {
+            player1.SetActive(false);
+            player2.SetActive(false);
+            player2Canvas.SetActive(false);
+            player1Canvas.SetActive(false);
+            playerWinner.text = "green wins";
+            StartCoroutine(gameRestart());
+        }
+        if (player2ScoreNum >= maxScore)
+        {
+            player1.SetActive(false);
+            player2.SetActive(false);
+            player2Canvas.SetActive(false);
+            player1Canvas.SetActive(false);
+            playerWinner.text = "red wins";
+            StartCoroutine(gameRestart());
+
+        }
+    }
 }

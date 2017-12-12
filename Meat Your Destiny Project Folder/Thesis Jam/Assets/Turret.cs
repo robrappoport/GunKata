@@ -164,6 +164,7 @@ public class Turret : MonoBehaviour {
                     cannonBall.GetComponent<Renderer>().material = gm.player1.GetComponentInChildren<Renderer>().material;
                     Physics.IgnoreCollision(gm.player1.GetComponentInChildren<Collider>(), cannonBall.GetComponent<Collider>());
                     cannonBall.layer = LayerMask.NameToLayer("Player1OwnsTurret");
+                    TwoDGameManager.player1ScoreNum++;
 
                 }
                 else if (ownerNum == 1)
@@ -171,6 +172,7 @@ public class Turret : MonoBehaviour {
                     cannonBall.GetComponent<Renderer>().material = gm.player2.GetComponentInChildren<Renderer>().material;
                     Physics.IgnoreCollision(gm.player2.GetComponentInChildren<Collider>(), cannonBall.GetComponent<Collider>());
                     cannonBall.layer = LayerMask.NameToLayer("Player2OwnsTurret");
+                    TwoDGameManager.player2ScoreNum++;
                 }
                 else
                 {
