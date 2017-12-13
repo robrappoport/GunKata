@@ -11,6 +11,7 @@ public class Turret : MonoBehaviour
     public int litSegments = 0, ownerNum = 2, timesOwned = 0, maxTimesCanBeOwned;
     public float startTime, repeatTime, immuneTime, uncontestableTime, spinSpeed;
     public bool amountOwnedIncrease;
+    private bool scoreIncrease;
 
 
 
@@ -194,18 +195,28 @@ public class Turret : MonoBehaviour
 
                 if (ownerNum == 0)
                 {
-                    cannonBall.GetComponent<Renderer>().material = gm.player1.GetComponentInChildren<Renderer>().material;
+                    cannonBall.GetComponent<Renderer>().material = cannonBall.GetComponent<Cannonball>().player1BulletMaterial;
                     Physics.IgnoreCollision(gm.player1.GetComponentInChildren<Collider>(), cannonBall.GetComponent<Collider>());
                     cannonBall.layer = LayerMask.NameToLayer("Player1OwnsTurret");
+                    if (!scoreIncrease)
+                    {
+                        TwoDGameManager.player1ScoreNum++;
+                        scoreIncrease = true;
+                    }
+
                    
 
                 }
                 else if (ownerNum == 1)
                 {
-                    cannonBall.GetComponent<Renderer>().material = gm.player2.GetComponentInChildren<Renderer>().material;
+                    cannonBall.GetComponent<Renderer>().material = cannonBall.GetComponent<Cannonball>().player2BulletMaterial;
                     Physics.IgnoreCollision(gm.player2.GetComponentInChildren<Collider>(), cannonBall.GetComponent<Collider>());
                     cannonBall.layer = LayerMask.NameToLayer("Player2OwnsTurret");
-                    TwoDGameManager.player2ScoreNum++;
+                    if (!scoreIncrease)
+                    {
+                        TwoDGameManager.player2ScoreNum++;
+                        scoreIncrease = true;
+                    }
                 }
                 else
                 {
@@ -231,6 +242,7 @@ public class Turret : MonoBehaviour
         CancelInvoke();
         Invoke("Neutralize", uncontestableTime);
         amountOwnedIncrease = false;
+        scoreIncrease = false;
     }
 
     void Neutralize()

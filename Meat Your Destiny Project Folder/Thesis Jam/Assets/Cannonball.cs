@@ -6,7 +6,7 @@ public class Cannonball : MonoBehaviour {
 	public float speed, lifetime;
 	public int damage;
 	public int ownerNum;
-	public Renderer player1BulletMaterial, player2BulletMaterial;
+	public Material player1BulletMaterial, player2BulletMaterial;
 	public Material frozenBullet;
     public Turret myTurret;
 
@@ -22,7 +22,7 @@ public class Cannonball : MonoBehaviour {
 	Renderer render;
 
 	void Start(){
-
+        
         transform.position = new Vector3(transform.position.x, 5f, transform.position.z);
 		Invoke ("SelfDestruct", lifetime);
 		r = GetComponent<Rigidbody> ();

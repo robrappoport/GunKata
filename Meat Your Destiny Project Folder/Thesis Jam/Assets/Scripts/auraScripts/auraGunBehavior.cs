@@ -36,6 +36,7 @@ public class auraGunBehavior : MonoBehaviour
     private bool isProjecting;
     private bool isContracting;
     bool pressedWhileExhausted;
+    public ParticleSystem standardHalo, DamagedHalo;
 
 
     //Cave Story Gun Behavior Bools//
@@ -173,6 +174,9 @@ public class auraGunBehavior : MonoBehaviour
 
         if (myCont.secondaryFireDown() && !isExhausted && !isProjecting && !isContracting)
         {
+            standardHalo.Clear();
+            standardHalo.Pause();
+            DamagedHalo.Play();
             StartCoroutine(AuraSound());
             AuraObj.transform.position = transform.position;
             isProjecting = true;
@@ -232,6 +236,7 @@ public class auraGunBehavior : MonoBehaviour
             //this is amount needed to be able to Aura again
             if (curStamina >= staminaTotal)
             {
+                standardHalo.Play();
                 isExhausted = false;
             }
             //Contraction happens here
@@ -287,7 +292,7 @@ public class auraGunBehavior : MonoBehaviour
             Debug.Log("In while");
             curStamina += staminaRate;
             SetStamina();
-            if (curStamina >= (staminaTotal / 3))
+            if (curStamina >= (staminaTotal))
             {
                 Debug.Log("while is done");
                 isExhausted = false;

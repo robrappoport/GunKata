@@ -15,7 +15,7 @@ public class auraPlayerHealth : MonoBehaviour {
 	public Material playerColor;
 	public Material damagedColor;
 	public Material normalColor;
-    public ParticleSystem standardHalo, DamagedHalo;
+    //public ParticleSystem standardHalo, DamagedHalo;
     public GameObject explosionPrefab;
 
 	public int flashNum;
@@ -48,15 +48,16 @@ public class auraPlayerHealth : MonoBehaviour {
             if (CurrentHealth > MaxHealth / 2)
             {
                 invincibilityFramesActive = true;
-                standardHalo.Clear();
-                standardHalo.Stop();
-                DamagedHalo.Play();
+                //standardHalo.Clear();
+                //standardHalo.Stop();
+                //DamagedHalo.Play();
                 StartCoroutine(colorChange());
             }
             CurrentHealth += amount;
 
 			if (CurrentHealth <= 0f) {
                 Instantiate(explosionPrefab, transform.position, transform.rotation);
+                Debug.Log("dying");
 				gameObject.SetActive (false);
 				//playerCanvas.gameObject.SetActive (false);
 			}
