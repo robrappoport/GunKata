@@ -56,7 +56,8 @@ public class Turret : MonoBehaviour
                 amountOwnedIncrease = true;
 
                 timesOwned++;
-                createNewTurret();
+                CreateNewTurret();
+				print ("creating new turret");
             }
         }
     }
@@ -242,17 +243,20 @@ public class Turret : MonoBehaviour
         litSegments = litSegments_;
         ownerNum = ownerNum_;
         timesOwned = timesOwned_;
-        determineOwnership();
     }
 
-    void createNewTurret ()
+    void CreateNewTurret ()
     {
         Turret newTurret = Instantiate(turretTypes[timesOwned-1], transform.position, Quaternion.identity).GetComponent<Turret>();
         newTurret.init(ownerNum, timesOwned+1, litSegments);
+		newTurret.AdjustOwnership (newTurret.ownerNum);
+		newTurret.AdjustCannonColor ();
+		newTurret.DetermineDegreeOfOwnership ();
+
         Destroy(gameObject);
     }
 
-    public void determineOwnership ()
+    public void DetermineDegreeOfOwnership ()
     {
         if (litSegments > 2)
         {
