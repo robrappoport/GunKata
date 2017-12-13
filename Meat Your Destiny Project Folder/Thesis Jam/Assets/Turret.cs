@@ -21,7 +21,7 @@ public class Turret : MonoBehaviour
     Owner owner = Owner.NONE;
 
     GameObject Cannon;
-    bool completelyOwned = false, contestable = true;
+    public bool completelyOwned = false, contestable = true;
 
     public List<Cannonball> cannonBallList = new List<Cannonball>();
 
@@ -41,7 +41,7 @@ public class Turret : MonoBehaviour
         p2Color = gm.playerHealth2.normalColor.color;
         currentColor = neutralColor;
         InvokeRepeating("Fire", startTime, repeatTime);
-        amountOwnedIncrease = false;
+        //amountOwnedIncrease = false;
     }
 
     // Update is called once per frame
@@ -51,8 +51,10 @@ public class Turret : MonoBehaviour
         transform.localRotation = Quaternion.Euler(curRotation.x, curRotation.y + spinSpeed, curRotation.z);
         if (completelyOwned)
         {
+            Debug.Log("checking");
             if (!amountOwnedIncrease && timesOwned < maxTimesCanBeOwned)
             {
+                Debug.Log("checking2");
                 amountOwnedIncrease = true;
 
                 timesOwned++;
@@ -97,8 +99,9 @@ public class Turret : MonoBehaviour
 
                 AdjustOwnership(ownerNum);
                 AdjustCannonColor();
+                DetermineDegreeOfOwnership();
 
-                //determineOwnership();
+               
 
 
 
@@ -194,7 +197,7 @@ public class Turret : MonoBehaviour
                     cannonBall.GetComponent<Renderer>().material = gm.player1.GetComponentInChildren<Renderer>().material;
                     Physics.IgnoreCollision(gm.player1.GetComponentInChildren<Collider>(), cannonBall.GetComponent<Collider>());
                     cannonBall.layer = LayerMask.NameToLayer("Player1OwnsTurret");
-                    TwoDGameManager.player1ScoreNum++;
+                   
 
                 }
                 else if (ownerNum == 1)
@@ -240,6 +243,7 @@ public class Turret : MonoBehaviour
 
    public void init (int ownerNum_, int timesOwned_, int litSegments_)
     {
+        Debug.Log(timesOwned_);
         litSegments = litSegments_;
         ownerNum = ownerNum_;
         timesOwned = timesOwned_;
@@ -247,10 +251,19 @@ public class Turret : MonoBehaviour
 
     void CreateNewTurret ()
     {
+        if (ownerNum == 0)
+        {
+            TwoDGameManager.player1ScoreNum++;
+        }
+        if (ownerNum == 1)
+        {
+            TwoDGameManager.player2ScoreNum++;
+        }
         Turret newTurret = Instantiate(turretTypes[timesOwned-1], transform.position, Quaternion.identity).GetComponent<Turret>();
         newTurret.init(ownerNum, timesOwned+1, litSegments);
-		newTurret.AdjustOwnership (newTurret.ownerNum);
-		newTurret.AdjustCannonColor ();
+        newTurret.amountOwnedIncrease = true;
+		//newTurret.AdjustOwnership (newTurret.ownerNum);
+		//newTurret.AdjustCannonColor ();
 		newTurret.DetermineDegreeOfOwnership ();
 
         Destroy(gameObject);
