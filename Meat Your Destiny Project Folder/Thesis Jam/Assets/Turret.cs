@@ -31,13 +31,14 @@ public class Turret : MonoBehaviour
 
     //ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
     //I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
-    void Start()
+    void Awake()
     {
         gm = FindObjectOfType<TwoDGameManager>();
-        topRenderer = transform.Find("Turret Top").GetComponent<Renderer>();
-        middleRenderer = transform.Find("Turret Middle").GetComponent<Renderer>();
-        bottomRenderer = transform.Find("Turret Bottom").GetComponent<Renderer>();
-        Cannon = topRenderer.gameObject;
+		topRenderer = transform.Find("Turret Top").GetComponent<Renderer>();
+		middleRenderer = transform.Find("Turret Middle").GetComponent<Renderer>();
+		bottomRenderer = transform.Find("Turret Bottom").GetComponent<Renderer>();
+		Cannon = topRenderer.gameObject;
+
         p1Color = gm.playerHealth1.normalColor.color;
         p2Color = gm.playerHealth2.normalColor.color;
         currentColor = neutralColor;
@@ -274,8 +275,8 @@ public class Turret : MonoBehaviour
         Turret newTurret = Instantiate(turretTypes[timesOwned-1], transform.position, Quaternion.identity).GetComponent<Turret>();
         newTurret.init(ownerNum, timesOwned+1, litSegments);
         newTurret.amountOwnedIncrease = true;
-		//newTurret.AdjustOwnership (newTurret.ownerNum);
-		//newTurret.AdjustCannonColor ();
+		newTurret.AdjustOwnership (newTurret.ownerNum);
+		newTurret.AdjustCannonColor ();
 		newTurret.DetermineDegreeOfOwnership ();
 
         Destroy(gameObject);
