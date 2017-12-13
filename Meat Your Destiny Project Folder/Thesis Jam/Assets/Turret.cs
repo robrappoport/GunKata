@@ -97,37 +97,9 @@ public class Turret : MonoBehaviour
                 AdjustOwnership(ownerNum);
                 AdjustCannonColor();
 
-                if (litSegments > 2)
-                {
-                    if (!completelyOwned)
-                    {
+                //determineOwnership();
 
 
-                        //destroy all unowned cannonballs
-                        foreach (Cannonball c in cannonBallList)
-                        {
-                            if (c)
-                            {
-                                if (c.ownerNum != ownerNum)
-                                {
-
-                                    Destroy(c.gameObject);
-                                }
-                            }
-                            else
-                            {
-                            }
-                        }
-                        completelyOwned = true;
-                        contestable = false;
-                        //Invoke("Reset", immuneTime);
-
-                    }
-                }
-                else
-                {
-                    completelyOwned = false;
-                }
 
             }
             col.gameObject.GetComponent<Bullet>().BMan.DestroyBullet(col.gameObject.GetComponent<Bullet>());
@@ -265,20 +237,53 @@ public class Turret : MonoBehaviour
 
     }
 
-   public void init (int ownerNum_, int timesOwned_, int litSegments_, bool contestable_, bool completelyOwned_)
+   public void init (int ownerNum_, int timesOwned_, int litSegments_)
     {
-        contestable = contestable_;
-        completelyOwned = completelyOwned_;
         litSegments = litSegments_;
         ownerNum = ownerNum_;
         timesOwned = timesOwned_;
-        Invoke("Reset", immuneTime);
+        determineOwnership();
     }
 
     void createNewTurret ()
     {
         Turret newTurret = Instantiate(turretTypes[timesOwned-1], transform.position, Quaternion.identity).GetComponent<Turret>();
-        newTurret.init(ownerNum, timesOwned+1, litSegments, contestable = false, completelyOwned = true);
+        newTurret.init(ownerNum, timesOwned+1, litSegments);
         Destroy(gameObject);
+    }
+
+    public void determineOwnership ()
+    {
+        if (litSegments > 2)
+        {
+            if (!completelyOwned)
+            {
+
+
+                //destroy all unowned cannonballs
+                foreach (Cannonball c in cannonBallList)
+                {
+                    if (c)
+                    {
+                        if (c.ownerNum != ownerNum)
+                        {
+
+                            Destroy(c.gameObject);
+                        }
+                    }
+                    else
+                    {
+                    }
+                }
+                completelyOwned = true;
+                contestable = false;
+                Invoke("Reset", immuneTime);
+
+            }
+        }
+        else
+        {
+            completelyOwned = false;
+        }
     }
 }
