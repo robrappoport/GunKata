@@ -17,6 +17,7 @@ public class Cannonball : MonoBehaviour {
 	public bool prevPlayer2Triggered;
 	private float timeInAura;
 	public float auraSpeedIncrease, slowSpeed, startSpeed, stopSpeed;
+    public GameObject impactPrefab;
 
 	Rigidbody r;
 	Renderer render;
@@ -62,6 +63,7 @@ public class Cannonball : MonoBehaviour {
 		CancelInvoke ();
         if (col.gameObject.tag != "Bullet" && col.gameObject.tag != "CannonBall")
         {
+            Instantiate(impactPrefab, transform.position, Quaternion.identity);
             //myTurret.cannonBallList.Remove(this);
             SelfDestruct();
         }

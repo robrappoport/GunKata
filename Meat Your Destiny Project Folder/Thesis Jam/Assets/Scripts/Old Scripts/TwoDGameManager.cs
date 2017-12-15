@@ -38,6 +38,8 @@ public class TwoDGameManager : MonoBehaviour {
 
     public GameObject player1Canvas, player2Canvas;
 
+    public GameObject textPrefab;
+
 //	GameObject audioManagerClone;
 //	public GameObject audioManagerPrefab;
 
@@ -78,7 +80,7 @@ public class TwoDGameManager : MonoBehaviour {
             if (playerHealth1.CurrentHealth > 0 && addedScore == false) {
 				//player 1 wins
                 addedScore = true;
-                player2Canvas.SetActive(false);
+                //player2Canvas.SetActive(false);
                 player1ScoreNum += 2f;
                 Debug.Log("Adding to player1 score");
 //                playerWinner.text = "green wins";
@@ -89,7 +91,7 @@ public class TwoDGameManager : MonoBehaviour {
             if (playerHealth2.CurrentHealth > 0 && addedScore == false){
 				//player 2 wins
                 addedScore = true;
-                player1Canvas.SetActive(false);
+                //player1Canvas.SetActive(false);
                 player2ScoreNum += 2f;
                 Debug.Log("Adding to player2 score");
 
@@ -139,8 +141,12 @@ public class TwoDGameManager : MonoBehaviour {
 		playerHealth1 = player1.GetComponent<auraPlayerHealth>();
 		players[0] = player1.GetComponent<auraGunBehavior>();
 		GetComponent<bulletManagerManager>().bMan1 = player1.GetComponent<BulletManager>();
+        player1.GetComponent<auraGunBehavior>().curStamina = player1.GetComponent<auraGunBehavior>().staminaTotal;
+        Debug.Log("player 1's stamina is" + player1.GetComponent<auraGunBehavior>().curStamina);
 		player1.GetComponent<auraGunBehavior>().staminaBar = player1Canvas.transform.Find("GameObject/AuraBar").GetComponent<Image>();
+        player1.GetComponent<auraGunBehavior>().staminaBar.fillAmount = 1;
 		player1Tracker.Player = player1.transform;
+
 		addedScore = false;
 
 
@@ -156,8 +162,12 @@ public class TwoDGameManager : MonoBehaviour {
 		playerHealth2 = player2.GetComponent<auraPlayerHealth>();
 		players[1] = player2.GetComponent<auraGunBehavior>();
 		GetComponent<bulletManagerManager>().bMan2 = player2.GetComponent<BulletManager>();
+        player2.GetComponent<auraGunBehavior>().curStamina = player2.GetComponent<auraGunBehavior>().staminaTotal;
+        Debug.Log("player 2's stamina is"+ player2.GetComponent<auraGunBehavior>().curStamina);
 		player2.GetComponent<auraGunBehavior>().staminaBar = player2Canvas.transform.Find("GameObject/AuraBar").GetComponent<Image>();
+        player2.GetComponent<auraGunBehavior>().staminaBar.fillAmount = 1;
 		player2Tracker.Player = player2.transform;
+
 		addedScore = false;
 
 	}

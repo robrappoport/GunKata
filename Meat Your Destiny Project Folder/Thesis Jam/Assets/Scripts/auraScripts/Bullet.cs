@@ -39,6 +39,7 @@ public class Bullet : MonoBehaviour {
 
 	private float timeInAura;
 	public float auraBulletSpeedIncrease;
+    public GameObject impactPrefab;
 	// Use this for initialization
 	void Awake(){
 		r = GetComponent<Rigidbody> ();
@@ -76,10 +77,16 @@ public class Bullet : MonoBehaviour {
 		inactiveTime -= Time.deltaTime;
 //		Debug.Log (inactiveTime);
 		if (inactiveTime > 0f) {
-			Physics.IgnoreCollision (this.gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), true);
+            if (BMan != null)
+            {
+                Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), BMan.gameObject.GetComponent<Collider>(), true);
+            }
 			render.enabled = false;
 		} else {
-			Physics.IgnoreCollision (this.gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), false);
+            if (BMan != null)
+            {
+                Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), BMan.gameObject.GetComponent<Collider>(), false);
+            }
 			render.enabled = true;
 		}
 	}
@@ -107,38 +114,42 @@ public class Bullet : MonoBehaviour {
 
 	}
 
-//	public void SetFreeze(bool b){
-//		isFrozen = b;
+    //	public void SetFreeze(bool b){
+    //		isFrozen = b;
 
-//		if (isFrozen) {
-////			Debug.Log (freezeVal);
-////			freezeVal = RigidbodyConstraints.FreezePosition;
-//			render.material = frozenBullet;
-////			prevVel = r.velocity;
-////			prevSpeed = bulletSpeed;
-//			bulletSpeed = fastBulletSpeed;
-//			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-//			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
-////			Debug.Log (bulletSpeed);
-////			GetComponent<Rigidbody> ().velocity = Vector3.zero;//isKinematic = true;
+    //		if (isFrozen) {
+    ////			Debug.Log (freezeVal);
+    ////			freezeVal = RigidbodyConstraints.FreezePosition;
+    //			render.material = frozenBullet;
+    ////			prevVel = r.velocity;
+    ////			prevSpeed = bulletSpeed;
+    //			bulletSpeed = fastBulletSpeed;
+    //			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+    //			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
+    ////			Debug.Log (bulletSpeed);
+    ////			GetComponent<Rigidbody> ().velocity = Vector3.zero;//isKinematic = true;
 
-////			Debug.Log (freezeVal+"1");
+    ////			Debug.Log (freezeVal+"1");
 
-//		} else {
-////			freezeVal = RigidbodyConstraints.FreezeRotation;
-//			render.material = normBullet;
-////			r.velocity = prevVel;//.isKinematic = false;
-//			bulletSpeed = prevSpeed;
-//			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-//			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
-////			Debug.Log (bulletSpeed);
-//		}
-//		//r.constraints = freezeVal;
-////		Debug.Log (freezeVal+"2");
-	//}
-    
+    //		} else {
+    ////			freezeVal = RigidbodyConstraints.FreezeRotation;
+    //			render.material = normBullet;
+    ////			r.velocity = prevVel;//.isKinematic = false;
+    //			bulletSpeed = prevSpeed;
+    //			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+    //			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * bulletSpeed;
+    ////			Debug.Log (bulletSpeed);
+    //		}
+    //		//r.constraints = freezeVal;
+    ////		Debug.Log (freezeVal+"2");
+    //}
+    private void OnDestroy()
+    {
+        Instantiate(impactPrefab, transform.position, Quaternion.identity);
 
-	void OnCollisionEnter (Collision other)
+    }
+
+    void OnCollisionEnter (Collision other)
 	{	
 		if (isDestroyedOnHit) {
             if (other.gameObject.tag == "CannonBall")

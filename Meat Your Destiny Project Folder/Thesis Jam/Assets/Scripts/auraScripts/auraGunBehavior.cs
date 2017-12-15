@@ -17,6 +17,7 @@ public class auraGunBehavior : MonoBehaviour
     public float ReloadTime;
     public float initShootTime;
     public float shootTime;
+    public float shootVol;
     private bool isFiring;
     public bool autoReloadEnabled;
     private bool autoReload;
@@ -314,24 +315,26 @@ public class auraGunBehavior : MonoBehaviour
 
     IEnumerator ShootSound()
     {
-        if (!myAudio.isPlaying) 
-        { 
-        myAudio.clip = playerSounds[0];
-        myAudio.Play();
-        yield return new WaitForSeconds(myAudio.clip.length * .2f);
-        myAudio.Stop();
-    }
+        Sound.me.Play(playerSounds[0], shootVol, true);
+            //myAudio.clip = playerSounds[0];
+            //myAudio.Play();
+            yield return null;
+        //yield return new WaitForSeconds(myAudio.clip.length * .2f);
+        //myAudio.Stop();
+    
     }
 
     IEnumerator AuraSound()
     {
-        if (!myAudio.isPlaying)
+        Sound.me.Play(playerSounds[1], 1f, true);
+        yield return null;
+        /*if (!myAudio.isPlaying)
         {
             myAudio.clip = playerSounds[1];
             myAudio.Play();
             yield return new WaitForSeconds(myAudio.clip.length);
             myAudio.Stop();
-        }
+        }*/
     }
 
     public void SetStamina()

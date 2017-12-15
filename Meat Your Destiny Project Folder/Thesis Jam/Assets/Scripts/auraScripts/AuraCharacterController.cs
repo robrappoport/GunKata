@@ -42,6 +42,7 @@ public class AuraCharacterController : PlayControl {
 	ControlType controlType;
 
 	private auraGunBehavior gunBehave;
+    public float hitStunnedTimer;
 	//	public float dragForce;
 	//	public float dashDrag;
 	//	public float stopForce;
@@ -97,10 +98,15 @@ public class AuraCharacterController : PlayControl {
 		if (transform.position.y >= 6f) {
 			transform.position = new Vector3 (transform.position.x, 6f, transform.position.z);
 		}
-		//		moveDirection.y = 0;
-		//myController = InputManager.Devices[playerNum];
-		//if (stuckTimer <= 0) {
-			MoveCharacter ();
+        //		moveDirection.y = 0;
+        //myController = InputManager.Devices[playerNum];
+        //if (stuckTimer <= 0) {
+        if (hitStunnedTimer <= 0)
+        {
+            MoveCharacter();
+        } else {
+            hitStunnedTimer -= Time.deltaTime;
+        }
 		//} else {
 		//	characterCtr.velocity = Vector3.zero;
 		//}
@@ -108,7 +114,9 @@ public class AuraCharacterController : PlayControl {
 		//		MyCharacterActions ();
 		//stuckTimer -= Time.deltaTime;
 		if (startButton())
-		{
+        {
+            TwoDGameManager.player1ScoreNum = 0;
+            TwoDGameManager.player2ScoreNum = 0;
 			SceneManager.LoadScene("AuraVersion");
 		}
 	}

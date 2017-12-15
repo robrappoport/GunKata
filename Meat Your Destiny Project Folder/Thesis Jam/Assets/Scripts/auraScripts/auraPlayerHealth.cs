@@ -19,6 +19,10 @@ public class auraPlayerHealth : MonoBehaviour {
     public GameObject explosionPrefab;
 
 	public int flashNum;
+    public AudioClip damageSnd;
+
+    public GameObject textPrefab;
+    public Color enemyPlayerColor;
 
 	// Use this for initialization
 	void Start () {
@@ -45,18 +49,24 @@ public class auraPlayerHealth : MonoBehaviour {
 			takingDamage = true;
 			
             //SetHealth ();
-            if (CurrentHealth > MaxHealth / 2)
+            CurrentHealth += amount;
+
+            if (CurrentHealth > 0)
             {
+                Sound.me.Play(damageSnd, 1f, true);
                 invincibilityFramesActive = true;
+                GetComponent<AuraCharacterController>().hitStunnedTimer = .2f;
                 //standardHalo.Clear();
                 //standardHalo.Stop();
                 //DamagedHalo.Play();
                 StartCoroutine(colorChange());
             }
-            CurrentHealth += amount;
 
 			if (CurrentHealth <= 0f) {
                 Instantiate(explosionPrefab, transform.position, transform.rotation);
+                TextManager text = ((GameObject)Instantiate(textPrefab, transform.position, Quaternion.identity)).GetComponent<TextManager>();
+                text.color = enemyPlayerColor;
+                text.pointString = "100";
                 Debug.Log("dying");
 				gameObject.SetActive (false);
 				//playerCanvas.gameObject.SetActive (false);

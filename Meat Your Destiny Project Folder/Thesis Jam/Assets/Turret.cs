@@ -12,6 +12,7 @@ public class Turret : MonoBehaviour
     public float startTime, repeatTime, immuneTime, uncontestableTime, spinSpeed;
     public bool amountOwnedIncrease;
     private bool scoreIncrease;
+    public GameObject textPrefab;
 
 
 
@@ -28,6 +29,9 @@ public class Turret : MonoBehaviour
 
     public GameObject[] Emitter;
     public GameObject[] turretTypes;
+    public GameObject[] impactPrefabs;
+    public Color[] playerColors;
+
 
     //ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
     //I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
@@ -180,14 +184,18 @@ public class Turret : MonoBehaviour
             cannonBallList = newCannonBallList;
             GameObject cannonBall = Instantiate(CannonballPrefab, Em.transform.position, Em.transform.rotation, null) as GameObject;
             cannonBallList.Add(cannonBall.GetComponent<Cannonball>());
+            Cannonball newBall = cannonBall.GetComponent<Cannonball>();
+            newBall.impactPrefab = impactPrefabs[ownerNum];
 
             if (completelyOwned)
             {
-                cannonBall.GetComponent<Cannonball>().ownerNum = ownerNum;
+                
+                newBall.ownerNum = ownerNum;
+
             }
             else
             {
-                cannonBall.GetComponent<Cannonball>().ownerNum = 2;
+                newBall.ownerNum = 2;
             }
             Cannonball cball = cannonBall.GetComponent<Cannonball>();
             //cannonBallList.Add(cball);
@@ -202,6 +210,9 @@ public class Turret : MonoBehaviour
                     if (!scoreIncrease)
                     {
                         TwoDGameManager.player1ScoreNum++;
+                        TextManager txt = ((GameObject)Instantiate(textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager>();
+                        txt.color = playerColors[ownerNum];
+                        txt.pointString = "50";
                         scoreIncrease = true;
                     }
 
@@ -215,6 +226,9 @@ public class Turret : MonoBehaviour
                     cannonBall.layer = LayerMask.NameToLayer("Player2OwnsTurret");
                     if (!scoreIncrease)
                     {
+                        TextManager txt = ((GameObject)Instantiate(textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager>();
+                        txt.color = playerColors[ownerNum];
+                        txt.pointString = "50";
                         TwoDGameManager.player2ScoreNum++;
                         scoreIncrease = true;
                     }

@@ -7,7 +7,8 @@ public class BulletManager : MonoBehaviour {
 //	public static bulletManager Instance;
 
 	public List<Bullet> bulletList = new List<Bullet> ();
-	public bool freeze = false; 
+	public bool freeze = false;
+    public GameObject impactPrefab;
 
 	public void CreateBullet(GameObject bulletType, Vector3 bulletPos, Quaternion bulletRot){
 		GameObject bulletObj = Instantiate (bulletType, bulletPos, bulletRot);
@@ -15,6 +16,7 @@ public class BulletManager : MonoBehaviour {
 //		bulletRigid.velocity = this.gameObject.GetComponent<Rigidbody> ().velocity;
 		Bullet bullet = bulletObj.GetComponent<Bullet> ();
 		bullet.ownerNumber = GetComponent<AuraCharacterController> ().playerNum;
+        bullet.impactPrefab = impactPrefab;
         if (bullet.ownerNumber == 0)
         {
             bulletObj.layer = LayerMask.NameToLayer("Player1Bullet");
