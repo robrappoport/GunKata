@@ -34,15 +34,19 @@ public class auraGunBehavior : MonoBehaviour
     public float staminaTotal;
     public float curStamina;
     public Image staminaBar;
+    //DEPCRECATED//
     public bool isExhausted;
+    //DEPCRECATED//
     private bool isProjecting;
     private bool isContracting;
-    bool pressedWhileExhausted;
+    public bool pressedWhileExhausted;
     public ParticleSystem standardHalo, DamagedHalo;
 
     [Header ("SPRITE AURA VARS")]
-    public Sprite sprAura;
+    public GameObject sprAura;
     public float tempAuraScaleMin;
+    private float tempAuraScaleCurrent;
+    public float tempAuraGrowthRate;
 
     //Cave Story Gun Behavior Bools//
     bool gunLevel1, gunLevel2, gunLevel3;
@@ -62,8 +66,10 @@ public class auraGunBehavior : MonoBehaviour
         bulletManager = GetComponent<BulletManager>();
         myAudio = GetComponent<AudioSource>();
         curStamina = staminaTotal;
-        auraBaseScale = AuraObj.transform.localScale;
-        auraInitScale = auraBaseScale;
+        //auraBaseScale = AuraObj.transform.localScale;
+        //auraInitScale = auraBaseScale;
+        sprAura.GetComponent<Renderer>().enabled = false;
+        sprAura.transform.localScale *= tempAuraScaleMin;
         isFiring = false;
         shootTime = 0;
         //      Debug.Log ("Player Number"+playerNum);
@@ -177,46 +183,64 @@ public class auraGunBehavior : MonoBehaviour
     {
        
 
-        if (myCont.secondaryFireDown() && !isExhausted && !isProjecting && !isContracting)
+        if (myCont.secondaryFireDown() && 100 - curStamina < .00000001/*&& !isExhausted && !isProjecting && !isContracting*/)
         {
             standardHalo.Clear();
             standardHalo.Pause();
             DamagedHalo.Play();
             StartCoroutine(AuraSound());
-            AuraObj.transform.position = transform.position;
+            //AuraObj.transform.position = transform.position;
             isProjecting = true;
             //AuraObj.SetActive(true);
             timeElapsed = 0f;
-            auraInitScale = AuraObj.transform.localScale;
+            //auraInitScale = AuraObj.transform.localScale;
             pressedWhileExhausted = false;
+            tempAuraScaleCurrent = tempAuraScaleMin;
+            sprAura.GetComponent<Renderer>().enabled = true;
         }
 
         if (myCont.secondaryFireUp())
         {
-            AuraObj.SetActive(true);
-            AuraObj.transform.parent = null;
+            //Debug.Log("we're in here fam");
+            sprAura.GetComponent<Renderer>().enabled = false;
+            isProjecting = false;
+            AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position, 
+                        Quaternion.Euler(0,0,0))
+                .GetComponent<AuraGenerator>();
+            aura.Init(playerNum, tempAuraScaleCurrent);
+            tempAuraScaleCurrent = tempAuraScaleMin;
+            sprAura.transform.localScale = new Vector3(1, 1, 1);
+            sprAura.transform.localScale *= tempAuraScaleCurrent;
         }
 
-        if (!isExhausted && !pressedWhileExhausted)
+        if (curStamina > 0)
         {
             
 
-            if (myCont.secondaryFire() && isProjecting && !isExhausted && !isContracting)
+            if (myCont.secondaryFire() && isProjecting/* && !isExhausted && !isContracting*/)
             {
                 curStamina -= staminaRate;
-                timeElapsed += Time.deltaTime * 5;
+                timeElapsed += Time.deltaTime * tempAuraGrowthRate;
                 SetStamina();
                 if (curStamina <= 0)
                 {
                     curStamina = 0;
                     isExhausted = true;
+                    isProjecting = false;
                     pressedWhileExhausted = true;
                     isContracting = true;
-
+                    sprAura.GetComponent<Renderer>().enabled = false;
                 }
+                tempAuraScaleCurrent += tempAuraGrowthRate * Time.deltaTime;
+                if (tempAuraScaleCurrent >= 1f)
+                {
+                    tempAuraScaleCurrent = 1f;
+                }
+                sprAura.transform.localScale = new Vector3(1, 1, 1);
+                sprAura.transform.localScale *= tempAuraScaleCurrent;
                
-                AuraObj.transform.localScale = Vector3.Lerp(auraInitScale,
-                auraBaseScale * auraMultiplier, timeElapsed / duration);
+                //AuraObj.transform.localScale = Vector3.Lerp(auraInitScale,
+                //auraBaseScale * auraMultiplier, timeElapsed / duration);
             }
 
             /*if (isExhausted){
@@ -228,13 +252,13 @@ public class auraGunBehavior : MonoBehaviour
                 }
             }*/
 
-            auraInitScale = AuraObj.transform.localScale;
+            //auraInitScale = AuraObj.transform.localScale;
         }
-        else
+        if (curStamina < staminaTotal && !isProjecting)
         {
             //recharge
             //Gabe changed this
-            curStamina += staminaRate * .2f;
+            curStamina += staminaRate * .5f;
             SetStamina();
             //this is amount needed to be able to Aura again
             if (curStamina >= staminaTotal)
@@ -248,7 +272,7 @@ public class auraGunBehavior : MonoBehaviour
 
         if (isContracting)
         {
-            auraContract();
+            //auraContract();
         }
 
 
@@ -267,7 +291,7 @@ public class auraGunBehavior : MonoBehaviour
         {
             isProjecting = false;
             timeElapsed = 0f;
-            auraInitScale = AuraObj.transform.localScale;
+            //auraInitScale = AuraObj.transform.localScale;
         }
         else
         {
@@ -275,12 +299,12 @@ public class auraGunBehavior : MonoBehaviour
             SetStamina();
             timeElapsed += Time.deltaTime;
 
-            AuraObj.transform.localScale = Vector3.Lerp(auraInitScale, auraBaseScale, timeElapsed / duration);
+            //AuraObj.transform.localScale = Vector3.Lerp(auraInitScale, auraBaseScale, timeElapsed / duration);
             if (timeElapsed >= duration)
             {
                 Debug.Log("Is");
                 isContracting = false;
-                AuraObj.SetActive(false);
+                //AuraObj.SetActive(false);
             }
         }
     }

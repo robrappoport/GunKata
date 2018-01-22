@@ -241,7 +241,7 @@ public class AuraCharacterController : PlayControl {
 		}	}
 	public bool secondaryFireUp (){
 		if (controlType == ControlType.Controller) {
-			return (myController.LeftTrigger.WasReleased);
+            return (myController.LeftTrigger.WasReleased);
 		} else {
 			return (Input.GetKeyUp (KeyCode.LeftShift));
 		}	}
@@ -400,7 +400,7 @@ public class AuraCharacterController : PlayControl {
 	{
 		
 		GameObject otherObj = other.gameObject;
-        Debug.Log(otherObj.tag);
+        //Debug.Log(otherObj.tag);
 		if (otherObj.tag == "player1Aura" || otherObj.tag == "player2Aura") {
 			
 				characterCtr.AddForce ((moveDirForward + moveDirSides).normalized * -slowForce);
