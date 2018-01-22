@@ -10,6 +10,7 @@ public class auraGunBehavior : MonoBehaviour
     //Drag in the Bullet Prefab from the Component Inspector.
     public GameObject RyuBullet;
     public GameObject AuraObj;
+
     public int playerNum;
     private float bulletOffsetNorm = 0f;
     public int MaxBullets;
@@ -39,6 +40,9 @@ public class auraGunBehavior : MonoBehaviour
     bool pressedWhileExhausted;
     public ParticleSystem standardHalo, DamagedHalo;
 
+    [Header ("SPRITE AURA VARS")]
+    public Sprite sprAura;
+    public float tempAuraScaleMin;
 
     //Cave Story Gun Behavior Bools//
     bool gunLevel1, gunLevel2, gunLevel3;
@@ -181,25 +185,23 @@ public class auraGunBehavior : MonoBehaviour
             StartCoroutine(AuraSound());
             AuraObj.transform.position = transform.position;
             isProjecting = true;
-            AuraObj.SetActive(true);
-            AuraObj.transform.parent = null;
+            //AuraObj.SetActive(true);
             timeElapsed = 0f;
             auraInitScale = AuraObj.transform.localScale;
             pressedWhileExhausted = false;
         }
 
-        //if (myCont.secondaryFireUp())
-        //{
-        //    auraInitScale = AuraObj.transform.localScale;
-        //    isProjecting = false;
-        //    timeElapsed = 0f;
-        //}
+        if (myCont.secondaryFireUp())
+        {
+            AuraObj.SetActive(true);
+            AuraObj.transform.parent = null;
+        }
 
-        if (/*myCont.secondaryFire() && */!isExhausted && !pressedWhileExhausted)
+        if (!isExhausted && !pressedWhileExhausted)
         {
             
 
-            if (isProjecting && !isExhausted && !isContracting)
+            if (myCont.secondaryFire() && isProjecting && !isExhausted && !isContracting)
             {
                 curStamina -= staminaRate;
                 timeElapsed += Time.deltaTime * 5;
@@ -241,8 +243,7 @@ public class auraGunBehavior : MonoBehaviour
                 isExhausted = false;
             }
             //Contraction happens here
-            //timeElapsed += Time.deltaTime * 1.5f;
-            //AuraObj.transform.localScale = Vector3.Lerp(auraInitScale, auraBaseScale, timeElapsed / duration);
+           
         }
 
         if (isContracting)
