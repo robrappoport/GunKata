@@ -3,7 +3,7 @@
 /// <summary>
 /// Ubh bullet.
 /// </summary>
-[DisallowMultipleComponent]
+//[DisallowMultipleComponent]
 public class UbhBullet : UbhMonoBehaviour
 {
     private Transform m_transformCache;

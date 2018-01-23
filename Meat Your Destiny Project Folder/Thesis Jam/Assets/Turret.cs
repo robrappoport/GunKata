@@ -46,7 +46,7 @@ public class Turret : MonoBehaviour
         p1Color = gm.playerHealth1.normalColor.color;
         p2Color = gm.playerHealth2.normalColor.color;
         currentColor = neutralColor;
-        InvokeRepeating("Fire", startTime, repeatTime);
+        //InvokeRepeating("Fire", startTime, repeatTime);
         //amountOwnedIncrease = false;
     }
 
@@ -68,7 +68,11 @@ public class Turret : MonoBehaviour
 				print ("creating new turret");
             }
         }
+		CleanCannonballList ();
+			
     }
+
+
 
     void OnTriggerEnter(Collider col)
     {
@@ -167,24 +171,33 @@ public class Turret : MonoBehaviour
         }
 
     }
+
+	void CleanCannonballList(){
+		//create new, clean list
+		List<Cannonball> newCannonBallList = new List<Cannonball>();
+		foreach (Cannonball c in cannonBallList)
+		{
+			if (c)
+			{
+				if (c.GetComponent<Cannonball> ()) {
+					newCannonBallList.Add (c);
+				}
+			}
+		}
+		cannonBallList = newCannonBallList;
+	}
     void Fire()
-    {
+	{	 
+
+		CleanCannonballList ();
+			
         foreach (GameObject Em in Emitter)
         {
-            //create new, clean list
-
-            List<Cannonball> newCannonBallList = new List<Cannonball>();
-            foreach (Cannonball c in cannonBallList)
-            {
-                if (c)
-                {
-                    newCannonBallList.Add(c);
-                }
-            }
-            cannonBallList = newCannonBallList;
+     
             GameObject cannonBall = Instantiate(CannonballPrefab, Em.transform.position, Em.transform.rotation, null) as GameObject;
             cannonBallList.Add(cannonBall.GetComponent<Cannonball>());
             Cannonball newBall = cannonBall.GetComponent<Cannonball>();
+			print (impactPrefabs.Length);
             newBall.impactPrefab = impactPrefabs[ownerNum];
 
             if (completelyOwned)
@@ -264,7 +277,7 @@ public class Turret : MonoBehaviour
     {
         contestable = true;
         AdjustCannonColor();
-        InvokeRepeating("Fire", startTime, repeatTime);
+        //InvokeRepeating("Fire", startTime, repeatTime);
 
     }
 
