@@ -201,16 +201,18 @@ public class auraGunBehavior : MonoBehaviour
 
         if (myCont.secondaryFireUp())
         {
-            //Debug.Log("we're in here fam");
-            sprAura.GetComponent<Renderer>().enabled = false;
-            isProjecting = false;
-            AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position, 
-                        Quaternion.Euler(0,0,0))
-                .GetComponent<AuraGenerator>();
-            aura.Init(playerNum, tempAuraScaleCurrent);
-            tempAuraScaleCurrent = tempAuraScaleMin;
-            sprAura.transform.localScale = new Vector3(1, 1, 1);
-            sprAura.transform.localScale *= tempAuraScaleCurrent;
+            if (isProjecting)
+            {
+                sprAura.GetComponent<Renderer>().enabled = false;
+                isProjecting = false;
+                AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position,
+                            Quaternion.Euler(0, 0, 0))
+                    .GetComponent<AuraGenerator>();
+                aura.Init(playerNum, tempAuraScaleCurrent);
+                tempAuraScaleCurrent = tempAuraScaleMin;
+                sprAura.transform.localScale = new Vector3(1, 1, 1);
+                sprAura.transform.localScale *= tempAuraScaleCurrent;
+            }
         }
 
         if (curStamina > 0)
