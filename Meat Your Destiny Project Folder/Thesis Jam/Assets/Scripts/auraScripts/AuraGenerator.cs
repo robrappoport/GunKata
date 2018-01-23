@@ -17,11 +17,20 @@ public class AuraGenerator : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        auraCurLife -= Time.deltaTime;
-
-        if (auraCurLife < 1/5 * auraLifeTime)
+        auraCurLife = Mathf.Clamp(auraCurLife, 0, auraLifeTime);
+        auraCurLife += Time.deltaTime;
+        Debug.Log(auraCurLife);
+        if (auraCurLife <= 0)
         {
-            gameObject.transform.localScale = Vector3.Lerp(auraSizeMax, new Vector3 (0,0,0), auraCurLife/1);
+            auraCurLife = 0;
+        }
+        if (auraCurLife >= auraLifeTime)
+        {
+            auraCurLife = auraLifeTime;
+        }
+        if (auraCurLife > (.5f * auraLifeTime))
+        {
+            gameObject.transform.localScale = Vector3.Lerp(auraSizeMax, new Vector3 (0,0,0), auraCurLife/auraLifeTime);
         }
 	}
 
@@ -41,8 +50,8 @@ public class AuraGenerator : MonoBehaviour {
         {
             gameObject.tag = "player2Aura";
         }
-        auraLifeTime = auraSize * 5;
-        auraCurLife = auraLifeTime;
+        auraLifeTime = auraSize * 10;
+        auraCurLife = 0;
 
     }
 }
