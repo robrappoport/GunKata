@@ -30,14 +30,6 @@ public class Cannonball : MonoBehaviour {
 		render = GetComponent<Renderer> ();
 		if (ownerNum != 2) {
 			render.material.color = myTurret.playerColors [ownerNum];
-            if (ownerNum == 0)
-            {
-                gameObject.layer = LayerMask.NameToLayer("Player1OwnsTurret");
-            }
-            if (ownerNum == 1)
-            {
-                gameObject.layer = LayerMask.NameToLayer("Player2OwnsTurret");
-            }
 		}
 
         transform.position = new Vector3(transform.position.x, 5f, transform.position.z);

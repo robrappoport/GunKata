@@ -19,7 +19,7 @@ public class AuraGenerator : MonoBehaviour {
 	void Update () {
         auraCurLife = Mathf.Clamp(auraCurLife, 0, auraLifeTime);
         auraCurLife += Time.deltaTime;
-        Debug.Log(auraCurLife);
+//        Debug.Log(auraCurLife);
         if (auraCurLife <= 0)
         {
             auraCurLife = 0;

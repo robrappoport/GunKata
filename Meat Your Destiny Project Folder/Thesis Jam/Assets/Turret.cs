@@ -13,11 +13,13 @@ public class Turret : MonoBehaviour
     public bool amountOwnedIncrease;
     private bool scoreIncrease;
     public GameObject textPrefab;
+	public List<Renderer> SegmentsList;
 
-
+	public float charge, chargeSpeed = 1;
+	public bool charging = false;
 
     //public List<Cannonball> cannonBallList = new List<Cannonball>();
-
+	UbhShotCtrl myShooter;
     TwoDGameManager gm;
     enum Owner { Player1, Player2, NONE };
     Owner owner = Owner.NONE;
@@ -35,12 +37,20 @@ public class Turret : MonoBehaviour
 
     //ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
     //I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
-    void Awake()
-    {
+    void Awake(){	
+
+		charge = 0;
+		ownerNum = 2;
         gm = FindObjectOfType<TwoDGameManager>();
+		myShooter = GetComponentInChildren<UbhShotCtrl> ();
+		//set up segments here
 		topRenderer = transform.Find("Turret Top").GetComponent<Renderer>();
 		middleRenderer = transform.Find("Turret Middle").GetComponent<Renderer>();
 		bottomRenderer = transform.Find("Turret Bottom").GetComponent<Renderer>();
+		SegmentsList.Add (bottomRenderer);
+		SegmentsList.Add (middleRenderer);
+		SegmentsList.Add (topRenderer);
+		//
 		Cannon = topRenderer.gameObject;
 
         p1Color = gm.playerHealth1.normalColor.color;
@@ -53,85 +63,139 @@ public class Turret : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 curRotation = transform.localRotation.eulerAngles;
-        transform.localRotation = Quaternion.Euler(curRotation.x, curRotation.y + spinSpeed, curRotation.z);
-        if (completelyOwned)
-        {
-            Debug.Log("checking");
-            if (!amountOwnedIncrease && timesOwned < maxTimesCanBeOwned)
-            {
-                Debug.Log("checking2");
-                amountOwnedIncrease = true;
+		if (charging) {
+			charge = Mathf.Clamp (charge + Time.deltaTime * chargeSpeed, 0, 3);
+		}
+//        Vector3 curRotation = transform.localRotation.eulerAngles;
+//        transform.localRotation = Quaternion.Euler(curRotation.x, curRotation.y + spinSpeed, curRotation.z);
+//        if (completelyOwned)
+//        {
+//            Debug.Log("checking");
+//            if (!amountOwnedIncrease && timesOwned < maxTimesCanBeOwned)
+//            {
+//                Debug.Log("checking2");
+//                amountOwnedIncrease = true;
+//                timesOwned++;
+//                CreateNewTurret();
+//				print ("creating new turret");
+//            }
+//        }
 
-                timesOwned++;
-                CreateNewTurret();
-				print ("creating new turret");
-            }
-        }
+		litSegments = (int)charge;
+		AdjustCannonColor ();
+		AdjustOwnership (owner);
+
+		DetermineDegreeOfOwnership();
+		if (completelyOwned) {
+			
+			myShooter.StartShotRoutine ();
+			if (owner == Owner.Player1) {
+				ownerNum = 0;
+				neutralColor = p1Color;
+			}
+			else if(owner == Owner.Player2){
+				ownerNum = 1;
+				neutralColor = p2Color;
+			}
+			litSegments = 0;
+			charge = 0;
+		}
+
+
 		CleanCannonballList ();
 			
     }
 
 
+	void OnTriggerStay(Collider col){
+		if (col.gameObject.GetComponent<AuraGenerator> ()) {
+			
+			//ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
+			if (litSegments < 3) {
+				charging = true;
 
-    void OnTriggerEnter(Collider col)
-    {
-        if (col.gameObject.GetComponent<Bullet>())
-        {
-            if (contestable)
-            {
-                //resolve the ownerNum
-                if (owner == Owner.NONE)
-                {//set the owner to whoever hits the turret when the turret is unowned
-                    ownerNum = col.gameObject.GetComponent<Bullet>().ownerNumber;
-                    litSegments = 1;
+			}
+			//if the intruding player is hitting the , increment the number of lit segments up to a max of 3
+			if (ownerNum != col.gameObject.GetComponent<AuraGenerator> ().auraPlayerNum) {
+				print ("triggered");
 
-                }
-                else
-                {
-                    if (ownerNum == col.gameObject.GetComponent<Bullet>().ownerNumber)
-                    {//if the owning player hits the turret, increment the number of lit segments up to a max of 3
-                        litSegments = (int)(Mathf.Clamp(litSegments + 1, 0, 3));
-                    }
-                    else
-                    {//return the tower to neutral if the last segment is depleted; otherwise decrease the number of lit segments by 1
-                        if (litSegments == 1)
-                        {
-                            litSegments = 0;
-                            ownerNum = 2;
-                        }
-                        else
-                        {
-                            litSegments = (int)(Mathf.Clamp(litSegments - 1, 0, 3));
-                        }
-                    }
-                }
-
-                AdjustOwnership(ownerNum);
-                AdjustCannonColor();
-                DetermineDegreeOfOwnership();
-
-               
+				if (col.gameObject.GetComponent<AuraGenerator> ().auraPlayerNum == 0) {
+					owner = Owner.Player1;
+				} else {
+					owner = Owner.Player2;
+				}
+				litSegments = (int)charge;
 
 
+			}
+		}
+	}
 
-            }
-            col.gameObject.GetComponent<Bullet>().BMan.DestroyBullet(col.gameObject.GetComponent<Bullet>());
-        }
-    }
+	void OnTriggerExit(Collider col){
+		print( col.gameObject.name);
 
-    void AdjustOwnership(int ownership)
+		if (col.gameObject.GetComponent<AuraGenerator> ()) {
+			charging = false;
+		}
+	}
+
+//    void OnTriggerEnter(Collider col)
+//    {
+//        if (col.gameObject.GetComponent<Bullet>())
+//        {
+//            if (contestable)
+//            {
+//                //resolve the ownerNum
+//                if (owner == Owner.NONE)
+//                {//set the owner to whoever hits the turret when the turret is unowned
+//                    ownerNum = col.gameObject.GetComponent<Bullet>().ownerNumber;
+//                    litSegments = 1;
+//
+//
+//                }
+//                else
+//                {
+//                    if (ownerNum == col.gameObject.GetComponent<Bullet>().ownerNumber)
+//                    {//if the owning player hits the turret, increment the number of lit segments up to a max of 3
+//                        litSegments = (int)(Mathf.Clamp(litSegments + 1, 0, 3));
+//                    }
+//                    else
+//                    {//return the tower to neutral if the last segment is depleted; otherwise decrease the number of lit segments by 1
+//                        if (litSegments == 1)
+//                        {
+//                            litSegments = 0;
+//                            ownerNum = 2;
+//                        }
+//                        else
+//                        {
+//                            litSegments = (int)(Mathf.Clamp(litSegments - 1, 0, 3));
+//                        }
+//                    }
+//                }
+//
+//                AdjustOwnership(ownerNum);
+//                AdjustCannonColor();
+//                DetermineDegreeOfOwnership();
+//
+//               
+//
+//
+//
+//            }
+//            col.gameObject.GetComponent<Bullet>().BMan.DestroyBullet(col.gameObject.GetComponent<Bullet>());
+//        }
+//    }
+
+	void AdjustOwnership(Owner ownership)
     {
         //adjust ownership and color based on owner number;
 
         switch (ownership)
         {
-            case 0: //player 1
-                owner = Owner.Player1;
+		case Owner.Player1: //player 1
                 currentColor = p1Color;
                 break;
-            case 1: //player 2
-                owner = Owner.Player2;
+		case Owner.Player2: //player 2
                 currentColor = p2Color;
                 break;
             default: //neutral
@@ -262,7 +326,7 @@ public class Turret : MonoBehaviour
         ownerNum = 2;
         litSegments = 0;
         completelyOwned = false;
-        AdjustOwnership(ownerNum);
+		AdjustOwnership(owner);
         AdjustCannonColor();
         topRenderer.material.color = uncontestableColor;
         middleRenderer.material.color = uncontestableColor;
@@ -289,25 +353,25 @@ public class Turret : MonoBehaviour
         timesOwned = timesOwned_;
     }
 
-    void CreateNewTurret ()
-    {
-        if (ownerNum == 0)
-        {
-            TwoDGameManager.player1ScoreNum++;
-        }
-        if (ownerNum == 1)
-        {
-            TwoDGameManager.player2ScoreNum++;
-        }
-        Turret newTurret = Instantiate(turretTypes[timesOwned-1], transform.position, Quaternion.identity).GetComponent<Turret>();
-        newTurret.init(ownerNum, timesOwned+1, litSegments);
-        newTurret.amountOwnedIncrease = true;
-		newTurret.AdjustOwnership (newTurret.ownerNum);
-		newTurret.AdjustCannonColor ();
-		newTurret.DetermineDegreeOfOwnership ();
-
-        Destroy(gameObject);
-    }
+//    void CreateNewTurret ()
+//    {
+//        if (ownerNum == 0)
+//        {
+//            TwoDGameManager.player1ScoreNum++;
+//        }
+//        if (ownerNum == 1)
+//        {
+//            TwoDGameManager.player2ScoreNum++;
+//        }
+//        Turret newTurret = Instantiate(turretTypes[timesOwned-1], transform.position, Quaternion.identity).GetComponent<Turret>();
+//        newTurret.init(ownerNum, timesOwned+1, litSegments);
+//        newTurret.amountOwnedIncrease = true;
+//		newTurret.AdjustOwnership (newTurret.ownerNum);
+//		newTurret.AdjustCannonColor ();
+//		newTurret.DetermineDegreeOfOwnership ();
+//
+//        Destroy(gameObject);
+//    }
 
     public void DetermineDegreeOfOwnership ()
     {
@@ -317,24 +381,24 @@ public class Turret : MonoBehaviour
             {
 
 
-                //destroy all unowned cannonballs
-                foreach (Cannonball c in cannonBallList)
-                {
-                    if (c)
-                    {
-                        if (c.ownerNum != ownerNum)
-                        {
-
-                            Destroy(c.gameObject);
-                        }
-                    }
-                    else
-                    {
-                    }
-                }
+//                //destroy all unowned cannonballs
+//                foreach (Cannonball c in cannonBallList)
+//                {
+//                    if (c)
+//                    {
+//                        if (c.ownerNum != ownerNum)
+//                        {
+//
+//                            Destroy(c.gameObject);
+//                        }
+//                    }
+//                    else
+//                    {
+//                    }
+//                }
                 completelyOwned = true;
                 contestable = false;
-                Invoke("Reset", immuneTime);
+                //Invoke("Reset", immuneTime);
 
             }
         }
