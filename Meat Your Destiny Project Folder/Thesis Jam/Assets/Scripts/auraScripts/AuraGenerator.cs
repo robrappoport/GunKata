@@ -23,6 +23,7 @@ public class AuraGenerator : MonoBehaviour {
         if (auraCurLife <= 0)
         {
             auraCurLife = 0;
+            Destroy(gameObject,2f);
         }
         if (auraCurLife >= auraLifeTime)
         {
@@ -30,7 +31,7 @@ public class AuraGenerator : MonoBehaviour {
         }
         if (auraCurLife > (.5f * auraLifeTime))
         {
-            gameObject.transform.localScale = Vector3.Lerp(auraSizeMax, new Vector3 (0,0,0), auraCurLife/auraLifeTime);
+            gameObject.transform.localScale = Vector3.Lerp((auraSizeMax), new Vector3 (0,0,0), auraCurLife/auraLifeTime);
         }
 	}
 

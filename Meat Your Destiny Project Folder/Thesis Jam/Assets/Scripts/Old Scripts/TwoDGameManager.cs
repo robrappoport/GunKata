@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class TwoDGameManager : MonoBehaviour {
     public static TwoDGameManager thisInstance;
-
+    public ZoneScript[] zones;
 	public float respawnTime = 1;
 	public auraPlayerHealth playerHealth1;
 	public auraPlayerHealth playerHealth2;
@@ -40,6 +40,7 @@ public class TwoDGameManager : MonoBehaviour {
 
     public GameObject textPrefab;
 
+
 //	GameObject audioManagerClone;
 //	public GameObject audioManagerPrefab;
 
@@ -49,6 +50,7 @@ public class TwoDGameManager : MonoBehaviour {
     }
 	void Awake ()
 	{
+        StartCoroutine(TimerCo());
         if (thisInstance == null)
         {
             thisInstance = GameObject.Find("gameManager").GetComponent<TwoDGameManager>();
@@ -214,5 +216,17 @@ public class TwoDGameManager : MonoBehaviour {
     {
         player1ScoreNum = 0f;
         player2ScoreNum = 0f;
+    }
+
+    public IEnumerator TimerCo ()
+    {
+        for (int i = 0; i < zones.Length; i++)
+        {
+            yield return new WaitForSeconds(zones[i].zoneTime);
+            for (int j = 0; j < zones[i].sections.Length; j++)
+            {
+                zones[i].sections[j].Drop();
+            }
+        }
     }
 }
