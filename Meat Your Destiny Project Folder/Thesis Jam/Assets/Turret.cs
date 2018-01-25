@@ -16,10 +16,10 @@ public class Turret : MonoBehaviour
 	public List<Renderer> SegmentsList;
 
 	public float charge, chargeSpeed = 1;
-	public bool charging = false;
+	public bool charging = false, withinTimerLimits = true;
 
     //public List<Cannonball> cannonBallList = new List<Cannonball>();
-	UbhShotCtrl myShooter;
+	//UbhShotCtrl myShooter;
     TwoDGameManager gm;
     public enum Owner { Player1, Player2, NONE };
     public Owner owner = Owner.NONE;
@@ -42,7 +42,7 @@ public class Turret : MonoBehaviour
 		charge = 0;
 		ownerNum = 2;
         gm = FindObjectOfType<TwoDGameManager>();
-		myShooter = GetComponentInChildren<UbhShotCtrl> ();
+		//myShooter = GetComponentInChildren<UbhShotCtrl> ();
 		//set up segments here
 		topRenderer = transform.Find("Turret Top").GetComponent<Renderer>();
 		middleRenderer = transform.Find("Turret Middle").GetComponent<Renderer>();
@@ -66,8 +66,8 @@ public class Turret : MonoBehaviour
 		if (charging && contestable) {
 			charge = Mathf.Clamp (charge + chargeIncrementSign * Time.deltaTime * chargeSpeed, 0, 3);
 		}
-//        Vector3 curRotation = transform.localRotation.eulerAngles;
-//        transform.localRotation = Quaternion.Euler(curRotation.x, curRotation.y + spinSpeed, curRotation.z);
+        Vector3 curRotation = transform.localRotation.eulerAngles;
+        transform.localRotation = Quaternion.Euler(curRotation.x, curRotation.y + spinSpeed, curRotation.z);
 //        if (completelyOwned)
 //        {
 //            Debug.Log("checking");
@@ -87,8 +87,10 @@ public class Turret : MonoBehaviour
 
 		DetermineDegreeOfOwnership();
 		if (completelyOwned) {
+			CancelInvoke ();
+			InvokeRepeating ("Fire", startTime, repeatTime);
 			contestable = false;
-			myShooter.StartShotRoutine ();
+			//myShooter.StartShotRoutine ();
 			if (owner == Owner.Player1) {
 				if (ownerNum != 0) {
 					ownerNum = 0;
@@ -128,32 +130,34 @@ public class Turret : MonoBehaviour
 
 
 	void OnTriggerStay(Collider col){
-		if (contestable) {
-			if (completelyOwned) {
-				contestable = false;
-			}
-
-			if (col.gameObject.GetComponent<AuraGenerator> ()) {
-				//ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
-				if (litSegments < 3	&& (owner == Owner.NONE || MismatchedOwners())){
-					charging = true;
-
+		if (withinTimerLimits) {
+			if (contestable) {
+				if (completelyOwned) {
+					contestable = false;
 				}
+
+				if (col.gameObject.GetComponent<AuraGenerator> ()) {
+					//ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
+					if (litSegments < 3) {
+						charging = true;
+
+					}
 
 			
-				if (col.gameObject.GetComponent<AuraGenerator> ().auraPlayerNum == 0) {
-					owner = Owner.Player1;
-				} else {
-					owner = Owner.Player2;
-				}
-				litSegments = (int)charge;
+					if (col.gameObject.GetComponent<AuraGenerator> ().auraPlayerNum == 0) {
+						owner = Owner.Player1;
+					} else {
+						owner = Owner.Player2;
+					}
+					litSegments = (int)charge;
 
-				//if the intruding player is hitting the turret , increment the number of lit segments up to a max of 3
-				if (ownerNum != col.gameObject.GetComponent<AuraGenerator> ().auraPlayerNum) {
+					//if the intruding player is hitting the turret , increment the number of lit segments up to a max of 3
+					if (ownerNum != col.gameObject.GetComponent<AuraGenerator> ().auraPlayerNum) {
 
-					chargeIncrementSign = 1;
-				} else {
-					chargeIncrementSign = -1;
+						chargeIncrementSign = 1;
+					} else {
+						chargeIncrementSign = -1;
+					}
 				}
 			}
 		}
@@ -313,8 +317,8 @@ public class Turret : MonoBehaviour
             }
             Cannonball cball = cannonBall.GetComponent<Cannonball>();
             //cannonBallList.Add(cball);
-            if (completelyOwned)
-            {
+//            if (completelyOwned)
+//            {
 
                 if (ownerNum == 0)
                 {
@@ -352,7 +356,7 @@ public class Turret : MonoBehaviour
                     cannonBall.GetComponent<Renderer>().material.color = neutralColor;
 
                 }
-            }
+           // }
         }
 
     }
@@ -378,7 +382,7 @@ public class Turret : MonoBehaviour
     {
         contestable = true;
         AdjustCannonColor();
-        //InvokeRepeating("Fire", startTime, repeatTime);
+        InvokeRepeating("Fire", startTime, repeatTime);
 
     }
 

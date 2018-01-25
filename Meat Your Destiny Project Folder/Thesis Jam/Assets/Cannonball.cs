@@ -24,20 +24,22 @@ public class Cannonball : MonoBehaviour {
 
 	void Start(){
 		
-		myTurret = GetComponentInParent<Turret> ();
-		ownerNum = myTurret.ownerNum;
-		impactPrefab = myTurret.impactPrefabs [ownerNum];
+//		myTurret = GetComponentInParent<Turret> ();
+//		ownerNum = myTurret.ownerNum;
+//		impactPrefab = myTurret.impactPrefabs [ownerNum];
 		render = GetComponent<Renderer> ();
-		if (ownerNum != 2) {
-			render.material.color = myTurret.playerColors [ownerNum];
-		}
+//		if (ownerNum != 2) {
+//			render.material.color = myTurret.playerColors [ownerNum];
+//		}
 
         transform.position = new Vector3(transform.position.x, 5f, transform.position.z);
 		Invoke ("SelfDestruct", lifetime);
 		r = GetComponent<Rigidbody> ();
-
+	
 		speed = startSpeed;
 		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+		r.velocity = transform.forward * speed;
+
 //		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * speed;
 
 	}
@@ -61,14 +63,14 @@ public class Cannonball : MonoBehaviour {
 	}
 
 
-	void OnCollisionEnter(Collision col){
+	void OnTriggerEnter(Collider col){
 		if (col.gameObject.GetComponent<auraPlayerHealth> ()) {
 			if (col.gameObject.GetComponent<AuraCharacterController> ().playerNum != ownerNum) {
 				col.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (damage);
 			}
 		}
 		CancelInvoke ();
-        if (col.gameObject.tag != "Bullet" && col.gameObject.tag != "CannonBall")
+		if (col.gameObject.tag != "Bullet" && col.gameObject.tag != "CannonBall" && col.gameObject.GetComponent<Turret>() != myTurret && !col.GetComponent<AuraGenerator>())
         {
             Instantiate(impactPrefab, transform.position, Quaternion.identity);
             //myTurret.cannonBallList.Remove(this);
@@ -88,7 +90,8 @@ public class Cannonball : MonoBehaviour {
 		//		Debug.Log("enter bullet speed" + bulletSpeed);
 
 		if (other.gameObject.tag == "player1Aura") 
-		{
+		{	
+			r = GetComponent<Rigidbody> ();
 
 			player1AuraTriggered = true;
 			auraPlayerOneSlow ();
@@ -96,6 +99,8 @@ public class Cannonball : MonoBehaviour {
 
 		if (other.gameObject.tag == "player2Aura") 
 		{
+			r = GetComponent<Rigidbody> ();
+
 			//			this.gameObject.GetComponent<Collider> ().material.bounciness = 0f;
 			player2AuraTriggered = true;
 			auraPlayerTwoSlow ();
@@ -105,22 +110,23 @@ public class Cannonball : MonoBehaviour {
 
 	void OnTriggerExit (Collider other)
 	{
-		//		this.gameObject.GetComponent<Collider> ().material.bounciness = 1f;
-		if (prevPlayer1Triggered) {
-			player1AuraTriggered = false;
-			prevPlayer1Triggered = false;
-		}
-		if (prevPlayer2Triggered) {
-			player2AuraTriggered = false;
-			prevPlayer2Triggered = false;
-		}
-		//tr.time += (time + timeInAura + auraSpeedIncrease);
-		//		Debug.Log (tr.time);
-		//		Debug.Log ("exit time" + timeInAura);
-		speed = startSpeed * (timeInAura + auraSpeedIncrease);
-		//		Debug.Log ("exit bullet speed" + bulletSpeed);
-		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-//		r.velocity = r.velocity.normalized * speed;
+		print ("exiting aura");
+			//		this.gameObject.GetComponent<Collider> ().material.bounciness = 1f;
+			if (prevPlayer1Triggered) {
+				player1AuraTriggered = false;
+				prevPlayer1Triggered = false;
+			}
+			if (prevPlayer2Triggered) {
+				player2AuraTriggered = false;
+				prevPlayer2Triggered = false;
+			}
+			//tr.time += (time + timeInAura + auraSpeedIncrease);
+			//		Debug.Log (tr.time);
+			//		Debug.Log ("exit time" + timeInAura);
+			speed = startSpeed * (timeInAura + auraSpeedIncrease);
+			//		Debug.Log ("exit bullet speed" + bulletSpeed);
+			//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+			r.velocity = r.velocity.normalized * speed;
 
 
 	}
@@ -131,15 +137,18 @@ public class Cannonball : MonoBehaviour {
 		speed = slowSpeed;
 		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 		r.velocity = r.velocity.normalized * speed;
+
 		//Debug.Log ("bullet speed is" + ""+ r.velocity);
 	}
 
 	void auraPlayerTwoSlow ()
 	{
+
 		speed = slowSpeed;
 		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-		r.velocity = r.velocity.normalized * speed;//new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)) * bulletSpeed;
 		//Debug.Log ("bullet speed is" + ""+ r.velocity);
+		r.velocity = r.velocity.normalized * speed;
+
 	}
 
 	void auraStop ()
