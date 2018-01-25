@@ -31,14 +31,14 @@ public class AuraGenerator : MonoBehaviour {
         }
         if (auraCurLife > (.5f * auraLifeTime))
         {
-<<<<<<< HEAD
+
             gameObject.transform.localScale = Vector3.Lerp((auraSizeMax), new Vector3 (0,0,0), auraCurLife/auraLifeTime);
-=======
+
             gameObject.transform.localScale = Vector3.Lerp(auraSizeMax, new Vector3 (0,0,0), auraCurLife/auraLifeTime);
 			if (transform.localScale.magnitude <= 1) {
 				Destroy (gameObject);
 			}
->>>>>>> AuraBranch
+
         }
 	}
 
