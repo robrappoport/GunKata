@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Cannonball : MonoBehaviour {
-	public float speed, lifetime;
+	public float speed, lifetime = 10;
 	public int damage;
 	public int ownerNum;
 	public Material player1BulletMaterial, player2BulletMaterial;
@@ -23,15 +23,22 @@ public class Cannonball : MonoBehaviour {
 	Renderer render;
 
 	void Start(){
-        
+		
+		myTurret = GetComponentInParent<Turret> ();
+		ownerNum = myTurret.ownerNum;
+		impactPrefab = myTurret.impactPrefabs [ownerNum];
+		render = GetComponent<Renderer> ();
+		if (ownerNum != 2) {
+			render.material.color = myTurret.playerColors [ownerNum];
+		}
+
         transform.position = new Vector3(transform.position.x, 5f, transform.position.z);
 		Invoke ("SelfDestruct", lifetime);
 		r = GetComponent<Rigidbody> ();
-		render = GetComponent<Renderer> ();
 
 		speed = startSpeed;
 		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * speed;
+//		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * speed;
 
 	}
 
@@ -113,7 +120,7 @@ public class Cannonball : MonoBehaviour {
 		speed = startSpeed * (timeInAura + auraSpeedIncrease);
 		//		Debug.Log ("exit bullet speed" + bulletSpeed);
 		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-		r.velocity = r.velocity.normalized * speed;
+//		r.velocity = r.velocity.normalized * speed;
 
 
 	}

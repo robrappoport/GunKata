@@ -7,7 +7,7 @@ public class AuraGenerator : MonoBehaviour {
     private float auraScaleCurrent;
     public float auraGrowthRate;
     public int auraPlayerNum;
-    public float auraLifeTime;
+	public float auraLifeTime;
     private float auraCurLife;
     private Vector3 auraSizeMax;
 	// Use this for initialization
@@ -19,7 +19,7 @@ public class AuraGenerator : MonoBehaviour {
 	void Update () {
         auraCurLife = Mathf.Clamp(auraCurLife, 0, auraLifeTime);
         auraCurLife += Time.deltaTime;
-        Debug.Log(auraCurLife);
+//        Debug.Log(auraCurLife);
         if (auraCurLife <= 0)
         {
             auraCurLife = 0;
@@ -31,7 +31,14 @@ public class AuraGenerator : MonoBehaviour {
         }
         if (auraCurLife > (.5f * auraLifeTime))
         {
+<<<<<<< HEAD
             gameObject.transform.localScale = Vector3.Lerp((auraSizeMax), new Vector3 (0,0,0), auraCurLife/auraLifeTime);
+=======
+            gameObject.transform.localScale = Vector3.Lerp(auraSizeMax, new Vector3 (0,0,0), auraCurLife/auraLifeTime);
+			if (transform.localScale.magnitude <= 1) {
+				Destroy (gameObject);
+			}
+>>>>>>> AuraBranch
         }
 	}
 
