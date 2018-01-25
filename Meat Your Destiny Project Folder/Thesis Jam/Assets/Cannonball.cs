@@ -67,6 +67,8 @@ public class Cannonball : MonoBehaviour {
 		if (col.gameObject.GetComponent<auraPlayerHealth> ()) {
 			if (col.gameObject.GetComponent<AuraCharacterController> ().playerNum != ownerNum) {
 				col.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (damage);
+				SelfDestruct();
+
 			}
 		}
 		CancelInvoke ();
