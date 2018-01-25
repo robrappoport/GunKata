@@ -8,10 +8,10 @@ public class Turret : MonoBehaviour
     public Renderer topRenderer, middleRenderer, bottomRenderer;
     public Color p1Color, p2Color, neutralColor, currentColor, uncontestableColor;
     public GameObject CannonballPrefab;
-    public int litSegments = 0, ownerNum = 2, timesOwned = 0, maxTimesCanBeOwned;
+	public int litSegments = 0, ownerNum = 2, timesOwned = 0, maxTimesCanBeOwned, chargeIncrementSign = 1;
     public float startTime, repeatTime, immuneTime, uncontestableTime, spinSpeed;
     public bool amountOwnedIncrease;
-    private bool scoreIncrease;
+    public bool scoreIncrease;
     public GameObject textPrefab;
 	public List<Renderer> SegmentsList;
 
@@ -21,8 +21,8 @@ public class Turret : MonoBehaviour
     //public List<Cannonball> cannonBallList = new List<Cannonball>();
 	UbhShotCtrl myShooter;
     TwoDGameManager gm;
-    enum Owner { Player1, Player2, NONE };
-    Owner owner = Owner.NONE;
+    public enum Owner { Player1, Player2, NONE };
+    public Owner owner = Owner.NONE;
 
     GameObject Cannon;
     public bool completelyOwned = false, contestable = true;
@@ -63,8 +63,8 @@ public class Turret : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if (charging) {
-			charge = Mathf.Clamp (charge + Time.deltaTime * chargeSpeed, 0, 3);
+		if (charging && contestable) {
+			charge = Mathf.Clamp (charge + chargeIncrementSign * Time.deltaTime * chargeSpeed, 0, 3);
 		}
 //        Vector3 curRotation = transform.localRotation.eulerAngles;
 //        transform.localRotation = Quaternion.Euler(curRotation.x, curRotation.y + spinSpeed, curRotation.z);
@@ -87,18 +87,38 @@ public class Turret : MonoBehaviour
 
 		DetermineDegreeOfOwnership();
 		if (completelyOwned) {
-			
+			contestable = false;
 			myShooter.StartShotRoutine ();
 			if (owner == Owner.Player1) {
-				ownerNum = 0;
-				neutralColor = p1Color;
-			}
-			else if(owner == Owner.Player2){
-				ownerNum = 1;
-				neutralColor = p2Color;
+				if (ownerNum != 0) {
+					ownerNum = 0;
+					neutralColor = p1Color;
+
+					//increase the score
+			
+					TwoDGameManager.player1ScoreNum++;
+					TextManager txt = ((GameObject)Instantiate (textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager> ();
+					txt.color = playerColors [ownerNum];
+					txt.pointString = "50";
+					scoreIncrease = true;
+					print("player1 score increase");
+				}
+			} else if (owner == Owner.Player2) {
+				if (ownerNum != 1) {
+					ownerNum = 1;
+					neutralColor = p2Color;
+
+					TextManager txt = ((GameObject)Instantiate (textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager> ();
+					txt.color = playerColors [ownerNum];
+					txt.pointString = "50";
+					TwoDGameManager.player2ScoreNum++;
+					scoreIncrease = true;
+					print ("player2 score increase");
+				}
 			}
 			litSegments = 0;
 			charge = 0;
+
 		}
 
 
@@ -108,17 +128,19 @@ public class Turret : MonoBehaviour
 
 
 	void OnTriggerStay(Collider col){
-		if (col.gameObject.GetComponent<AuraGenerator> ()) {
-			
-			//ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
-			if (litSegments < 3) {
-				charging = true;
-
+		if (contestable) {
+			if (completelyOwned) {
+				contestable = false;
 			}
-			//if the intruding player is hitting the , increment the number of lit segments up to a max of 3
-			if (ownerNum != col.gameObject.GetComponent<AuraGenerator> ().auraPlayerNum) {
-				print ("triggered");
 
+			if (col.gameObject.GetComponent<AuraGenerator> ()) {
+				//ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
+				if (litSegments < 3	&& (owner == Owner.NONE || MismatchedOwners())){
+					charging = true;
+
+				}
+
+			
 				if (col.gameObject.GetComponent<AuraGenerator> ().auraPlayerNum == 0) {
 					owner = Owner.Player1;
 				} else {
@@ -126,16 +148,31 @@ public class Turret : MonoBehaviour
 				}
 				litSegments = (int)charge;
 
+				//if the intruding player is hitting the turret , increment the number of lit segments up to a max of 3
+				if (ownerNum != col.gameObject.GetComponent<AuraGenerator> ().auraPlayerNum) {
 
+					chargeIncrementSign = 1;
+				} else {
+					chargeIncrementSign = -1;
+				}
 			}
 		}
 	}
 
+	bool MismatchedOwners(){
+		if (ownerNum == 0 && owner != Owner.Player1) {
+			return true;
+		} else if (ownerNum == 1 && owner != Owner.Player2) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	void OnTriggerExit(Collider col){
-		print( col.gameObject.name);
 
 		if (col.gameObject.GetComponent<AuraGenerator> ()) {
 			charging = false;
+			contestable = true;
 		}
 	}
 
@@ -397,7 +434,7 @@ public class Turret : MonoBehaviour
 //                    }
 //                }
                 completelyOwned = true;
-                contestable = false;
+                //contestable = false;
                 //Invoke("Reset", immuneTime);
 
             }
