@@ -327,7 +327,7 @@ public class Turret : MonoBehaviour
                     cannonBall.layer = LayerMask.NameToLayer("Player1OwnsTurret");
                     if (!scoreIncrease)
                     {
-                        TwoDGameManager.player1ScoreNum++;
+                        TwoDGameManager.player1ScoreNum+=2;
                         TextManager txt = ((GameObject)Instantiate(textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager>();
                         txt.color = playerColors[ownerNum];
                         txt.pointString = "50";
@@ -347,7 +347,7 @@ public class Turret : MonoBehaviour
                         TextManager txt = ((GameObject)Instantiate(textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager>();
                         txt.color = playerColors[ownerNum];
                         txt.pointString = "50";
-                        TwoDGameManager.player2ScoreNum++;
+                        TwoDGameManager.player2ScoreNum+=2;
                         scoreIncrease = true;
                     }
                 }

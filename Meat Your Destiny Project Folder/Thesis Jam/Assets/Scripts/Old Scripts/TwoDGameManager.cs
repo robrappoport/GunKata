@@ -113,14 +113,14 @@ public class TwoDGameManager : MonoBehaviour {
             {
                 StartCoroutine(DelayedSpawnPlayer1());
                 addedScore2 = true;
-                player2ScoreNum += 2f;
+                player2ScoreNum += 10f;
                 return;
             }
             if (playerHealth2.CurrentHealth <= 0 && addedScore1 == false)
             {
                 StartCoroutine(DelayedSpawnPlayer2());
                 addedScore1 = true;
-                player1ScoreNum += 2f;
+                player1ScoreNum += 10f;
                 return;
             }
 
