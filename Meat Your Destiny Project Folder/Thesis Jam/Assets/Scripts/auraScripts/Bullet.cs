@@ -15,6 +15,7 @@ public class Bullet : MonoBehaviour {
 	public float inactiveTime = .2f;
 	public float lifeTime = 2.0f;
 	public float rayDist;
+    private float bulletHeight;
 	Rigidbody r;
 	Renderer render;
 	Vector3 velocity;
@@ -49,7 +50,8 @@ public class Bullet : MonoBehaviour {
 	}
 	void Start () {
 		
-            transform.position = new Vector3(transform.position.x, 5f, transform.position.z);
+        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        bulletHeight = transform.position.y;
         
 		bulletSpeed = bulletStartSpeed;
 		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
@@ -72,6 +74,10 @@ public class Bullet : MonoBehaviour {
 	// Update is called once per frame
 
 	void Update(){
+        if ((transform.position.y) > (bulletHeight))
+        {
+            transform.position = new Vector3(transform.position.x, bulletHeight, transform.position.z);
+        }
 		tr.time = time;
 		lifeTime -= Time.deltaTime;
 		inactiveTime -= Time.deltaTime;

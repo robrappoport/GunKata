@@ -13,6 +13,7 @@ public class AuraCharacterController : PlayControl {
 	//    public Vector3 moveDirection;
 	public Vector3 moveDirForward;
 	public Vector3 moveDirSides;
+    public float heightValue;
 	//	private Vector3 storeDir;
 	private Vector3 directionPos;
 	//	public Transform cameraTrans;
@@ -63,7 +64,8 @@ public class AuraCharacterController : PlayControl {
 	}
 	void Start () {
         //prevMoveForce = moveForce;
-        transform.position = new Vector3(transform.position.x, 5f, transform.position.z);
+        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        //heightValue = transform.position.y;
 		gunBehave = GetComponent<auraGunBehavior> ();
 //		lockedOn = GetComponent<LockOnScript> ();
 		characterCtr = this.GetComponent<Rigidbody>();
@@ -95,9 +97,9 @@ public class AuraCharacterController : PlayControl {
 
 	// Update is called once per frame
 	void FixedUpdate () {
-		if (transform.position.y >= 6f) {
-			transform.position = new Vector3 (transform.position.x, 6f, transform.position.z);
-		}
+  //      if (transform.position.y >= heightValue) {
+  //          transform.position = new Vector3 (transform.position.x, heightValue, transform.position.z);
+		//}
         //		moveDirection.y = 0;
         //myController = InputManager.Devices[playerNum];
         //if (stuckTimer <= 0) {

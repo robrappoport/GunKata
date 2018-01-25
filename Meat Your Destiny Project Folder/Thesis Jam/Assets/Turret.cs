@@ -298,7 +298,7 @@ public class Turret : MonoBehaviour
 			
         foreach (GameObject Em in Emitter)
         {
-     
+            Debug.Log(Em.transform.position);
             GameObject cannonBall = Instantiate(CannonballPrefab, Em.transform.position, Em.transform.rotation, null) as GameObject;
             cannonBallList.Add(cannonBall.GetComponent<Cannonball>());
             Cannonball newBall = cannonBall.GetComponent<Cannonball>();

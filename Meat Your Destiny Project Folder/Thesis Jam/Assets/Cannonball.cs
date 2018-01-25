@@ -9,7 +9,7 @@ public class Cannonball : MonoBehaviour {
 	public Material player1BulletMaterial, player2BulletMaterial;
 	public Material frozenBullet;
     public Turret myTurret;
-
+    private float bulletHeight;
 
 	public bool player1AuraTriggered;
 	public bool player2AuraTriggered;
@@ -32,7 +32,8 @@ public class Cannonball : MonoBehaviour {
 //			render.material.color = myTurret.playerColors [ownerNum];
 //		}
 
-        transform.position = new Vector3(transform.position.x, 5f, transform.position.z);
+        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        bulletHeight = transform.position.y;
 		Invoke ("SelfDestruct", lifetime);
 		r = GetComponent<Rigidbody> ();
 	
@@ -45,7 +46,10 @@ public class Cannonball : MonoBehaviour {
 	}
 
 	void FixedUpdate(){
-
+        if ((transform.position.y) > (bulletHeight))
+        {
+            transform.position = new Vector3 (transform.position.x, bulletHeight, transform.position.z);
+        }
 
 		if (player1AuraTriggered && player2AuraTriggered) 
 		{

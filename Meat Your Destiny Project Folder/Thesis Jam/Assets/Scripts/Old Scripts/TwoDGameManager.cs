@@ -22,7 +22,8 @@ public class TwoDGameManager : MonoBehaviour {
     public static Image player2Score;
     public static float player2ScoreNum = 0;
     public float lerpTime;
-    private bool addedScore = false;
+    private bool addedScore1 = false;
+    private bool addedScore2 = false;
     private float displayedPlayer1Score;
     private float displayedPlayer2Score;
     public float maxScore;
@@ -32,6 +33,12 @@ public class TwoDGameManager : MonoBehaviour {
 
     public Transform player1Start;
     public Transform player2Start;
+
+    public Vector3[] player1Spawns;
+    public Vector3[] player2Spawns;
+
+    private int index1 = 0;
+    private int index2 = 0;
 
     public UITracker player1Tracker;
     public UITracker player2Tracker;
@@ -77,31 +84,46 @@ public class TwoDGameManager : MonoBehaviour {
 
 	void Update ()
 	{
+        player1Start.position = player1Spawns[index1];
+        player2Start.position = player2Spawns[index2];
         playerScoreUpdate();
 		if (playerHealth1.CurrentHealth <= 0 || playerHealth2.CurrentHealth <= 0) {
-            if (playerHealth1.CurrentHealth > 0 && addedScore == false) {
-				//player 1 wins
-                addedScore = true;
-                //player2Canvas.SetActive(false);
-                player1ScoreNum += 2f;
-                Debug.Log("Adding to player1 score");
-//                playerWinner.text = "green wins";
-                //StartCoroutine(gameRestart());
-                StartCoroutine(DelayedSpawnPlayer2());
-                return;
-            } 
-            if (playerHealth2.CurrentHealth > 0 && addedScore == false){
-				//player 2 wins
-                addedScore = true;
-                //player1Canvas.SetActive(false);
-                player2ScoreNum += 2f;
-                Debug.Log("Adding to player2 score");
+//            if (playerHealth1.CurrentHealth > 0 && addedScore == false) {
+//				//player 1 wins
+//                addedScore = true;
+//                //player2Canvas.SetActive(false);
+//                player1ScoreNum += 2f;
+//                Debug.Log("Adding to player1 score");
+////                playerWinner.text = "green wins";
+//                //StartCoroutine(gameRestart());
+//                return;
+//            } 
+//            if (playerHealth2.CurrentHealth > 0 && addedScore == false){
+//				//player 2 wins
+//                addedScore = true;
+//                //player1Canvas.SetActive(false);
+//                player2ScoreNum += 2f;
+//                Debug.Log("Adding to player2 score");
 
-//				playerWinner.text = "red wins";
-               //StartCoroutine(gameRestart());
+////				playerWinner.text = "red wins";
+   //            //StartCoroutine(gameRestart());
+   //             return;
+			//}
+            if (playerHealth1.CurrentHealth <= 0 && addedScore2 == false)
+            {
                 StartCoroutine(DelayedSpawnPlayer1());
+                addedScore2 = true;
+                player2ScoreNum += 2f;
                 return;
-			}
+            }
+            if (playerHealth2.CurrentHealth <= 0 && addedScore1 == false)
+            {
+                StartCoroutine(DelayedSpawnPlayer2());
+                addedScore1 = true;
+                player1ScoreNum += 2f;
+                return;
+            }
+
 		}
         playerWin();
 
@@ -114,7 +136,8 @@ public class TwoDGameManager : MonoBehaviour {
 		yield return new WaitForSeconds (restartTime);
         resetScore();
 		SceneManager.LoadScene("AuraVersion");
-        addedScore = false;
+        addedScore1 = false;
+        addedScore2 = false;
 	}
 
     public void playerScoreUpdate ()
@@ -139,17 +162,17 @@ public class TwoDGameManager : MonoBehaviour {
 			Destroy (player1);
 		}
         Debug.Log("Spawning player 1");
-		player1 = Instantiate(player1Prefab, player1Start.position, Quaternion.identity) as GameObject;
+        player1 = Instantiate(player1Prefab, new Vector3 (player1Spawns[index1].x, player1Spawns[index1].y + 5, player1Spawns[index1].z), Quaternion.identity) as GameObject;
 		playerHealth1 = player1.GetComponent<auraPlayerHealth>();
 		players[0] = player1.GetComponent<auraGunBehavior>();
 		GetComponent<bulletManagerManager>().bMan1 = player1.GetComponent<BulletManager>();
         player1.GetComponent<auraGunBehavior>().curStamina = player1.GetComponent<auraGunBehavior>().staminaTotal;
-        Debug.Log("player 1's stamina is" + player1.GetComponent<auraGunBehavior>().curStamina);
+        //Debug.Log("player 1's stamina is" + player1.GetComponent<auraGunBehavior>().curStamina);
 		player1.GetComponent<auraGunBehavior>().staminaBar = player1Canvas.transform.Find("GameObject/AuraBar").GetComponent<Image>();
         player1.GetComponent<auraGunBehavior>().staminaBar.fillAmount = 1;
 		player1Tracker.Player = player1.transform;
 
-		addedScore = false;
+		addedScore2 = false;
 
 
 	}
@@ -160,24 +183,24 @@ public class TwoDGameManager : MonoBehaviour {
 		}
         Debug.Log("Spawning player 2");
 
-		player2 = Instantiate(player2Prefab, player2Start.position, Quaternion.identity) as GameObject;
+        player2 = Instantiate(player2Prefab, player2Start.position = new Vector3(player2Spawns[index2].x, player2Spawns[index2].y + 5, player2Spawns[index2].z), Quaternion.identity) as GameObject;
 		playerHealth2 = player2.GetComponent<auraPlayerHealth>();
 		players[1] = player2.GetComponent<auraGunBehavior>();
 		GetComponent<bulletManagerManager>().bMan2 = player2.GetComponent<BulletManager>();
         player2.GetComponent<auraGunBehavior>().curStamina = player2.GetComponent<auraGunBehavior>().staminaTotal;
-        Debug.Log("player 2's stamina is"+ player2.GetComponent<auraGunBehavior>().curStamina);
+        //Debug.Log("player 2's stamina is"+ player2.GetComponent<auraGunBehavior>().curStamina);
 		player2.GetComponent<auraGunBehavior>().staminaBar = player2Canvas.transform.Find("GameObject/AuraBar").GetComponent<Image>();
         player2.GetComponent<auraGunBehavior>().staminaBar.fillAmount = 1;
 		player2Tracker.Player = player2.transform;
 
-		addedScore = false;
+		addedScore1 = false;
 
 	}
 
     IEnumerator DelayedSpawnPlayer1 ()
     {
         yield return new WaitForSeconds(respawnTime);
-        Instantiate(respawnBulletDestroyer, player1Start.position, Quaternion.identity);
+        Instantiate(respawnBulletDestroyer, player1Spawns[index1], Quaternion.identity);
         yield return new WaitForSeconds(.1f);
         SpawnPlayer1();
         
@@ -185,7 +208,7 @@ public class TwoDGameManager : MonoBehaviour {
     IEnumerator DelayedSpawnPlayer2()
     {
         yield return new WaitForSeconds(respawnTime);
-        Instantiate(respawnBulletDestroyer, player2Start.position, Quaternion.identity);
+        Instantiate(respawnBulletDestroyer, player2Spawns[index2], Quaternion.identity);
         yield return new WaitForSeconds(.1f);
         SpawnPlayer2();
     }
@@ -223,9 +246,19 @@ public class TwoDGameManager : MonoBehaviour {
         for (int i = 0; i < zones.Length; i++)
         {
             yield return new WaitForSeconds(zones[i].zoneTime);
+            if (index1 < player1Spawns.Length-1)
+            {
+                index1++;
+            }
+            if (index2 < player2Spawns.Length-1)
+            {
+                index2++;
+            }
+
             for (int j = 0; j < zones[i].sections.Length; j++)
             {
                 zones[i].sections[j].Drop();
+
             }
         }
     }

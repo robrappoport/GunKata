@@ -23,6 +23,7 @@ public class auraPlayerHealth : MonoBehaviour {
 
     public GameObject textPrefab;
     public Color enemyPlayerColor;
+    public float hitStun;
 
 	// Use this for initialization
 	void Start () {
@@ -40,6 +41,16 @@ public class auraPlayerHealth : MonoBehaviour {
 	void Update ()
 	{
 		render.material = playerColor;
+        GroundCheck();
+        if (CurrentHealth <= 0f)
+        {
+            Instantiate(explosionPrefab, transform.position, transform.rotation);
+            TextManager text = ((GameObject)Instantiate(textPrefab, transform.position, Quaternion.identity)).GetComponent<TextManager>();
+            text.color = enemyPlayerColor;
+            text.pointString = "100";
+            //Debug.Log("dying");
+            gameObject.SetActive(false);
+        }
 	}
 
 
@@ -55,22 +66,22 @@ public class auraPlayerHealth : MonoBehaviour {
             {
                 Sound.me.Play(damageSnd, 1f, true);
                 invincibilityFramesActive = true;
-                GetComponent<AuraCharacterController>().hitStunnedTimer = .2f;
+                GetComponent<AuraCharacterController>().hitStunnedTimer = hitStun;
                 //standardHalo.Clear();
                 //standardHalo.Stop();
                 //DamagedHalo.Play();
                 StartCoroutine(colorChange());
             }
 
-			if (CurrentHealth <= 0f) {
-                Instantiate(explosionPrefab, transform.position, transform.rotation);
-                TextManager text = ((GameObject)Instantiate(textPrefab, transform.position, Quaternion.identity)).GetComponent<TextManager>();
-                text.color = enemyPlayerColor;
-                text.pointString = "100";
-                Debug.Log("dying");
-				gameObject.SetActive (false);
-				//playerCanvas.gameObject.SetActive (false);
-			}
+			//if (CurrentHealth <= 0f) {
+   //             Instantiate(explosionPrefab, transform.position, transform.rotation);
+   //             TextManager text = ((GameObject)Instantiate(textPrefab, transform.position, Quaternion.identity)).GetComponent<TextManager>();
+   //             text.color = enemyPlayerColor;
+   //             text.pointString = "100";
+   //             Debug.Log("dying");
+			//	gameObject.SetActive (false);
+			//	//playerCanvas.gameObject.SetActive (false);
+			//}
 		}
 	}
 
@@ -99,6 +110,19 @@ public class auraPlayerHealth : MonoBehaviour {
 		}
 		invincibilityFramesActive = false;
 	}
+
+    private void GroundCheck ()
+    {
+        Vector3 groundCheck = transform.TransformDirection(Vector3.down);
+
+        if (!Physics.Raycast(transform.position, groundCheck, 20f))
+        {
+            //Debug.Log("hello?");
+            CurrentHealth = 0;
+        }
+
+
+    }
 
 
 }
