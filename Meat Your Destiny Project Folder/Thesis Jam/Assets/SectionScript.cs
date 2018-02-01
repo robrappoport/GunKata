@@ -5,6 +5,7 @@ using UnityEngine;
 public class SectionScript : MonoBehaviour {
     public Turret[] sectionTurret;
     public GameObject floor;
+    public ShakeMeScript shake;
     private float dropSpeed;
     private Renderer floorRend;
     public float dropTotal;
@@ -13,6 +14,9 @@ public class SectionScript : MonoBehaviour {
     public Material normColor;
     public Material flashColor;
     public Material deadColor;
+
+   
+
     // Use this for initialization
 
     void Start()
@@ -25,28 +29,34 @@ public class SectionScript : MonoBehaviour {
     }
     // Update is called once per frame
     void Update () {
-		
+        //if (Input.GetKeyDown(KeyCode.Space)){
+        //    shake.ShakeMe();
+        //}
+       
 	}
 
     public void Drop ()
     {
         StartCoroutine(DropCo());
+        shake.ShakeMe();
     }
 
     public IEnumerator DropCo ()
     {
+       
         for (int i = 0; i < flashTime; i++)
         {
             normColor = flashColor;
             floorRend.material = normColor;
+          
 
-            yield return new WaitForSeconds(.1f);
+            yield return new WaitForSeconds(.5f);
 
 
             normColor = deadColor;
             floorRend.material = normColor;
 
-            yield return new WaitForSeconds(.1f);
+            yield return new WaitForSeconds(.5f);
 
         }
         for (int i = 0; i < sectionTurret.Length; i++)
