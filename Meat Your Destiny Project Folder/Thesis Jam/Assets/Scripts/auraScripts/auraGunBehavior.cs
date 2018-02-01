@@ -10,6 +10,8 @@ public class auraGunBehavior : MonoBehaviour
     //Drag in the Bullet Prefab from the Component Inspector.
     public GameObject RyuBullet;
     public GameObject AuraObj;
+    public GameObject ProjectAuraObj;
+    public GameObject SlowAuraobj;
 
     public int playerNum;
     private float bulletOffsetNorm = 0f;
@@ -80,6 +82,18 @@ public class auraGunBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        //AURA CHANGER
+        if (myCont.yButton())
+        {
+            AuraObj = ProjectAuraObj;
+        }
+        if (myCont.xButton())
+        {
+            AuraObj = SlowAuraobj;
+        }
+        //AURA CHANGER
+
         if (shootTime > 0)
         {
             //          Debug.Log ("test shootime");

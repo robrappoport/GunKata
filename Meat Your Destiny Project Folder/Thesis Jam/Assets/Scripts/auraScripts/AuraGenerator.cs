@@ -10,6 +10,7 @@ public class AuraGenerator : MonoBehaviour {
 	public float auraLifeTime;
     private float auraCurLife;
     private Vector3 auraSizeMax;
+    public AuraType auraType;
 	// Use this for initialization
 	void Start () {
         
@@ -50,16 +51,22 @@ public class AuraGenerator : MonoBehaviour {
         gameObject.transform.localScale = new Vector3(1, 1, 1);
         gameObject.transform.localScale *= (auraSize * 100);
         auraSizeMax = gameObject.transform.localScale;
-        if (auraPlayerNum == 0)
-        {
-            gameObject.tag = "player1Aura";
-        }
-        if (auraPlayerNum == 1)
-        {
-            gameObject.tag = "player2Aura";
-        }
+        //if (auraPlayerNum == 0)
+        //{
+        //    gameObject.tag = "player1Aura";
+        //}
+        //if (auraPlayerNum == 1)
+        //{
+        //    gameObject.tag = "player2Aura";
+        //}
         auraLifeTime = auraSize * 10;
         auraCurLife = 0;
 
     }
+
+    public enum AuraType
+    {
+        slowdown, projection
+    }
 }
+

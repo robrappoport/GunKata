@@ -23,7 +23,7 @@ public class AuraCharacterController : PlayControl {
 	public float maxDashTime = 1.0f;
 	public float dashSpeed = 4.0f;
 	public float dashStopSpeed = 0.1f;
-
+    private float initDistance;
 	public float currentDashTime;
 	//	private float currentSpeed = 0;
 	public bool isDashing;
@@ -38,6 +38,7 @@ public class AuraCharacterController : PlayControl {
 	float stuckTimer;
 	public float stuckTime = .1f;
 	public enum ControlType {Keyboard, Controller, NONE};/// <summary>
+    public float forceMultiplier;
 	/// Keyboard controls are as follows: WASD to move, YGHJ to rotate, V to shoot, left shift to project aura.
 	/// </summary>
 	ControlType controlType;
@@ -403,19 +404,45 @@ public class AuraCharacterController : PlayControl {
 		
 		GameObject otherObj = other.gameObject;
         //Debug.Log(otherObj.tag);
-		if (otherObj.tag == "player1Aura" || otherObj.tag == "player2Aura") {
+        if (otherObj.tag == "PlayerAura") {
 			
-				characterCtr.AddForce ((moveDirForward + moveDirSides).normalized * -slowForce);
+            switch (otherObj.gameObject.GetComponent<AuraGenerator>().auraType)
+            {
+                case AuraGenerator.AuraType.slowdown: 
+                    characterCtr.AddForce((moveDirForward + moveDirSides).normalized * -slowForce);
+                    break;
+                case AuraGenerator.AuraType.projection:
+                    AuraProject(otherObj.transform);
+                    break;
+            }
+				
 		} else {
 			return;
 		}
 	}
 
-	void OnTriggerExit (Collider other)
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "PlayerAura")
+        {
+            initDistance = Vector3.Distance(transform.position, other.gameObject.transform.position);
+        }
+    }
+    void OnTriggerExit (Collider other)
 	{
 //		Debug.Log ("test3");
 		curForce = moveForce;
 	}
+
+    void AuraProject(Transform t1)
+    {
+        Transform auraCenter = t1;
+        float distanceBtwn = Vector3.Distance(transform.position, auraCenter.position);
+        float distancePercent = 1f - (distanceBtwn / initDistance);
+        float projectForce = forceMultiplier * distancePercent;
+        Vector3 auraVector = auraCenter.position - transform.position;
+        characterCtr.AddForce(auraVector.normalized * projectForce, ForceMode.Force);
+    }
 
 }
 

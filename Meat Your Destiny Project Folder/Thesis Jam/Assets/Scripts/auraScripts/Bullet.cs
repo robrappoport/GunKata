@@ -8,7 +8,9 @@ public class Bullet : MonoBehaviour {
 	public BulletManager BMan;
 	public float bulletSpeed;
 	public float slowBulletSpeed;
+    public float projectionBulletSpeed;
 	public float bulletStartSpeed;
+    public float forceMultiplier;
 	public float prevSpeed;
 	public float fastBulletSpeed;
 	public float stopBulletSpeed;
@@ -16,6 +18,7 @@ public class Bullet : MonoBehaviour {
 	public float lifeTime = 2.0f;
 	public float rayDist;
     private float bulletHeight;
+    private float initDistance;
 	Rigidbody r;
 	Renderer render;
 	Vector3 velocity;
@@ -179,27 +182,44 @@ public class Bullet : MonoBehaviour {
             }
 		}
 	}
-		
-	void OnTriggerStay (Collider other)
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "PlayerAura")
+        {
+            initDistance = Vector3.Distance(transform.position, other.gameObject.transform.position);
+        }
+    }
+
+    void OnTriggerStay (Collider other)
 	{
 //		this.gameObject.GetComponent<Collider> ().material.bounciness = 0f;
 		timeInAura += Time.deltaTime;
 //		Debug.Log ("enter time" + timeInAura);
 //		Debug.Log("enter bullet speed" + bulletSpeed);
 
-		if (other.gameObject.tag == "player1Aura") 
+        if (other.gameObject.tag == "PlayerAura") 
 		{
 			
-			player1AuraTriggered = true;
-			auraPlayerOneSlow ();
+			//player1AuraTriggered = true;
+
+            switch (other.gameObject.GetComponent<AuraGenerator>().auraType)
+            {
+                case AuraGenerator.AuraType.projection:
+                    AuraProject(other.gameObject.transform);
+                    break; 
+                case AuraGenerator.AuraType.slowdown: 
+                    auraSlow(); 
+                    break; 
+            }
 		}
 
-		if (other.gameObject.tag == "player2Aura") 
-		{
-//			this.gameObject.GetComponent<Collider> ().material.bounciness = 0f;
-			player2AuraTriggered = true;
-			auraPlayerTwoSlow ();
-		}
+//		if (other.gameObject.tag == "player2Aura") 
+//		{
+////			this.gameObject.GetComponent<Collider> ().material.bounciness = 0f;
+		//	player2AuraTriggered = true;
+		//	auraPlayerTwoSlow ();
+		//}
 
 
 
@@ -228,7 +248,7 @@ public class Bullet : MonoBehaviour {
 
 	}
 
-	void auraPlayerOneSlow ()
+    void auraSlow ()
 	{
 		bulletSpeed = slowBulletSpeed;
 		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
@@ -236,13 +256,16 @@ public class Bullet : MonoBehaviour {
 		//Debug.Log ("bullet speed is" + ""+ r.velocity);
 	}
 
-	void auraPlayerTwoSlow ()
-	{
-		bulletSpeed = slowBulletSpeed;
-		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-		r.velocity = r.velocity.normalized * bulletSpeed;//new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)) * bulletSpeed;
-		//Debug.Log ("bullet speed is" + ""+ r.velocity);
-	}
+    void AuraProject(Transform t1)
+    {
+         
+        Transform auraCenter = t1;
+        float distanceBtwn = Vector3.Distance(transform.position, auraCenter.position);
+        float distancePercent = 1f - (distanceBtwn / initDistance);
+        float projectForce = forceMultiplier * distancePercent;
+        Vector3 auraVector = auraCenter.position - transform.position;
+        r.AddForce(auraVector.normalized * projectForce, ForceMode.Force);
+    }
 
 	void auraStop ()
 	{

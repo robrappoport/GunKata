@@ -10,15 +10,15 @@ public class Cannonball : MonoBehaviour {
 	public Material frozenBullet;
     public Turret myTurret;
     private float bulletHeight;
-
+    private float initDistance;
 	public bool player1AuraTriggered;
 	public bool player2AuraTriggered;
 	public bool prevPlayer1Triggered;
 	public bool prevPlayer2Triggered;
 	private float timeInAura;
-	public float auraSpeedIncrease, slowSpeed, startSpeed, stopSpeed;
+	public float auraSpeedIncrease, slowSpeed, startSpeed, stopSpeed, projectionSpeed;
     public GameObject impactPrefab;
-
+    public float forceMultiplier;
 	Rigidbody r;
 	Renderer render;
 
@@ -75,6 +75,7 @@ public class Cannonball : MonoBehaviour {
 
 			}
 		}
+
 		CancelInvoke ();
 		if (col.gameObject.tag != "Bullet" && col.gameObject.tag != "CannonBall" && col.gameObject.GetComponent<Turret>() != myTurret && !col.GetComponent<AuraGenerator>())
         {
@@ -82,11 +83,17 @@ public class Cannonball : MonoBehaviour {
             //myTurret.cannonBallList.Remove(this);
             SelfDestruct();
         }
+
+        if (col.gameObject.tag == "PlayerAura")
+        {
+            initDistance = Vector3.Distance(transform.position, col.gameObject.transform.position);
+        }
 	}
 
 	void SelfDestruct(){
 		Destroy (gameObject);
 	}
+
 
 	void OnTriggerStay (Collider other)
 	{
@@ -95,22 +102,20 @@ public class Cannonball : MonoBehaviour {
 		//		Debug.Log ("enter time" + timeInAura);
 		//		Debug.Log("enter bullet speed" + bulletSpeed);
 
-		if (other.gameObject.tag == "player1Aura") 
-		{	
-			r = GetComponent<Rigidbody> ();
+        if (other.gameObject.tag == "PlayerAura")
+        {
 
-			player1AuraTriggered = true;
-			auraPlayerOneSlow ();
-		}
+            //player1AuraTriggered = true;
 
-		if (other.gameObject.tag == "player2Aura") 
-		{
-			r = GetComponent<Rigidbody> ();
-
-			//			this.gameObject.GetComponent<Collider> ().material.bounciness = 0f;
-			player2AuraTriggered = true;
-			auraPlayerTwoSlow ();
-		}
+            switch (other.gameObject.GetComponent<AuraGenerator>().auraType)
+            {
+                case AuraGenerator.AuraType.projection: //projection stuff goes here
+                    break;
+                case AuraGenerator.AuraType.slowdown:
+                    auraSlow();
+                    break;
+            }
+        }
 
 	}
 
@@ -138,7 +143,7 @@ public class Cannonball : MonoBehaviour {
 	}
 
 
-	void auraPlayerOneSlow ()
+    void auraSlow ()
 	{
 		speed = slowSpeed;
 		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
@@ -147,15 +152,26 @@ public class Cannonball : MonoBehaviour {
 		//Debug.Log ("bullet speed is" + ""+ r.velocity);
 	}
 
-	void auraPlayerTwoSlow ()
-	{
+    void AuraProject(Transform t1)
+    {
 
-		speed = slowSpeed;
-		//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-		//Debug.Log ("bullet speed is" + ""+ r.velocity);
-		r.velocity = r.velocity.normalized * speed;
+        Transform auraCenter = t1;
+        float distanceBtwn = Vector3.Distance(transform.position, auraCenter.position);
+        float distancePercent = 1f - (distanceBtwn / initDistance);
+        float projectForce = forceMultiplier * distancePercent;
+        Vector3 auraVector = auraCenter.position - transform.position;
+        r.AddForce(auraVector.normalized * projectForce, ForceMode.Force);
+    }
 
-	}
+	//void auraPlayerTwoSlow ()
+	//{
+
+	//	speed = slowSpeed;
+	//	//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+	//	//Debug.Log ("bullet speed is" + ""+ r.velocity);
+	//	r.velocity = r.velocity.normalized * speed;
+
+	//}
 
 	void auraStop ()
 	{
