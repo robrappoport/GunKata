@@ -440,8 +440,8 @@ public class AuraCharacterController : PlayControl {
         float distanceBtwn = Vector3.Distance(transform.position, auraCenter.position);
         float distancePercent = 1f - (distanceBtwn / initDistance);
         float projectForce = forceMultiplier * distancePercent;
-        Vector3 auraVector = auraCenter.position - transform.position;
-        characterCtr.AddForce(auraVector.normalized * projectForce, ForceMode.Force);
+        Vector3 auraVector = transform.position - auraCenter.position;
+        characterCtr.AddForce(auraVector.normalized * projectForce, ForceMode.VelocityChange);
     }
 
 }

@@ -59,7 +59,7 @@ public class AuraGenerator : MonoBehaviour {
         //{
         //    gameObject.tag = "player2Aura";
         //}
-        auraLifeTime = auraSize * 10;
+        auraLifeTime = auraSize * 1000000;
         auraCurLife = 0;
 
     }

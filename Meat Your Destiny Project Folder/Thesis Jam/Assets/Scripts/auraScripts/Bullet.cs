@@ -263,8 +263,8 @@ public class Bullet : MonoBehaviour {
         float distanceBtwn = Vector3.Distance(transform.position, auraCenter.position);
         float distancePercent = 1f - (distanceBtwn / initDistance);
         float projectForce = forceMultiplier * distancePercent;
-        Vector3 auraVector = auraCenter.position - transform.position;
-        r.AddForce(auraVector.normalized * projectForce, ForceMode.Force);
+        Vector3 auraVector = transform.position - auraCenter.position;
+        r.AddForce(auraVector.normalized * projectForce, ForceMode.VelocityChange);
     }
 
 	void auraStop ()
