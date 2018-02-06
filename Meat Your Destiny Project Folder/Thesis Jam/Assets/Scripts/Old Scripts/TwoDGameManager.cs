@@ -27,9 +27,12 @@ public class TwoDGameManager : MonoBehaviour {
     private float displayedPlayer1Score;
     private float displayedPlayer2Score;
     public float maxScore;
+    private float maxScale = 5;
 
     public GameObject player1Prefab, player2Prefab;
     public GameObject player1, player2;
+    public Vector3 player1Scale;
+    public Vector3 player2Scale;
 
     public Transform player1Start;
     public Transform player2Start;
@@ -81,8 +84,14 @@ public class TwoDGameManager : MonoBehaviour {
 
 	}
 
+    private void Start()
+    {
+        player1Scale = player1.transform.localScale;
+        player2Scale = player2.transform.localScale;
+    }
 
-	void Update ()
+
+    void Update ()
 	{
         player1Start.position = player1Spawns[index1];
         player2Start.position = player2Spawns[index2];
@@ -111,6 +120,7 @@ public class TwoDGameManager : MonoBehaviour {
 			//}
             if (playerHealth1.CurrentHealth <= 0 && addedScore2 == false)
             {
+                player1Scale = player1.transform.localScale;
                 StartCoroutine(DelayedSpawnPlayer1());
                 addedScore2 = true;
                 player2ScoreNum += 10f;
@@ -118,6 +128,7 @@ public class TwoDGameManager : MonoBehaviour {
             }
             if (playerHealth2.CurrentHealth <= 0 && addedScore1 == false)
             {
+                player2Scale = player2.transform.localScale;
                 StartCoroutine(DelayedSpawnPlayer2());
                 addedScore1 = true;
                 player1ScoreNum += 10f;
@@ -144,12 +155,29 @@ public class TwoDGameManager : MonoBehaviour {
     {
         //Debug.Log("player 1 score: " + player1ScoreNum + " player2 score: " + player2ScoreNum);
         //Debug.Log(displayedPlayer2Score);
+
         player1ScoreNum = Mathf.Clamp(player1ScoreNum, 0, maxScore);
         player2ScoreNum = Mathf.Clamp(player2ScoreNum, 0, maxScore);
+        float scale1 = remapRange(player1ScoreNum, 0, maxScore, 1, maxScale);
+        float scale2 = remapRange(player2ScoreNum, 0, maxScore, 1, maxScale);
         displayedPlayer1Score = Mathf.Lerp(displayedPlayer1Score, player1ScoreNum / maxScore, Time.deltaTime * lerpTime);
         displayedPlayer2Score = Mathf.Lerp(displayedPlayer2Score, player2ScoreNum / maxScore, Time.deltaTime * lerpTime);
+        scale1 = Mathf.Clamp(scale1, 1, maxScale);
+        scale2 = Mathf.Clamp(scale2, 1, maxScale);
         player1Score.fillAmount = (displayedPlayer1Score);
         player2Score.fillAmount = (displayedPlayer2Score);
+        Vector3 newScale1 = new Vector3(scale1, scale1, scale1);
+        Vector3 newScale2 = new Vector3(scale2, scale2, scale2);
+        player1.transform.localScale = Vector3.Lerp((player1.transform.localScale), (newScale1), Time.deltaTime * lerpTime);
+        player2.transform.localScale = Vector3.Lerp((player2.transform.localScale), (newScale2), Time.deltaTime * lerpTime);
+        //player1.transform.localScale = new Vector3((scale),
+        //                                           (scale),
+        //                                           (scale));
+        //player2.transform.localScale = new Vector3(player2.transform.localScale.x + (displayedPlayer2Score * .01f),
+                                                   //player2.transform.localScale.y + (displayedPlayer2Score * .01f),
+                                                   //player2.transform.localScale.z + (displayedPlayer2Score * .01f));
+   
+
     }
     void setLevel ()
     {
@@ -163,6 +191,7 @@ public class TwoDGameManager : MonoBehaviour {
 		}
         Debug.Log("Spawning player 1");
         player1 = Instantiate(player1Prefab, new Vector3 (player1Spawns[index1].x, player1Spawns[index1].y + 5, player1Spawns[index1].z), Quaternion.identity) as GameObject;
+        player1.transform.localScale = player1Scale;
 		playerHealth1 = player1.GetComponent<auraPlayerHealth>();
 		players[0] = player1.GetComponent<auraGunBehavior>();
 		GetComponent<bulletManagerManager>().bMan1 = player1.GetComponent<BulletManager>();
@@ -184,6 +213,7 @@ public class TwoDGameManager : MonoBehaviour {
         Debug.Log("Spawning player 2");
 
         player2 = Instantiate(player2Prefab, player2Start.position = new Vector3(player2Spawns[index2].x, player2Spawns[index2].y + 5, player2Spawns[index2].z), Quaternion.identity) as GameObject;
+        player2.transform.localScale = player2Scale;
 		playerHealth2 = player2.GetComponent<auraPlayerHealth>();
 		players[1] = player2.GetComponent<auraGunBehavior>();
 		GetComponent<bulletManagerManager>().bMan2 = player2.GetComponent<BulletManager>();
@@ -261,5 +291,14 @@ public class TwoDGameManager : MonoBehaviour {
 
             }
         }
+    }
+
+    public static float remapRange(float oldValue, float oldMin, float oldMax, float newMin, float newMax)
+    {
+        float newValue = 0;
+        float oldRange = (oldMax - oldMin);
+        float newRange = (newMax - newMin);
+        newValue = (((oldValue - oldMin) * newRange) / oldRange) + newMin;
+        return newValue;
     }
 }

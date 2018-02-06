@@ -8,6 +8,7 @@ public class auraPlayerHealth : MonoBehaviour {
 	public float MaxHealth;
 	public float CurrentHealth;
 	public bool takingDamage;
+    public float groundCheckHeight;
 	//public GameObject playerCanvas;
 	public float damageTime;
 	public Renderer render;
@@ -115,7 +116,7 @@ public class auraPlayerHealth : MonoBehaviour {
     {
         Vector3 groundCheck = transform.TransformDirection(Vector3.down);
 
-        if (!Physics.Raycast(transform.position, groundCheck, 20f))
+        if (!Physics.Raycast(transform.position, groundCheck, groundCheckHeight ))
         {
             //Debug.Log("hello?");
             CurrentHealth = 0;
