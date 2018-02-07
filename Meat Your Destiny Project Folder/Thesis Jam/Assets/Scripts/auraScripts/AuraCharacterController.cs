@@ -399,12 +399,19 @@ public class AuraCharacterController : PlayControl {
 
 	}
 
+	bool playerInteractingWithOwnAura(AuraGenerator testAura){
+		if (testAura.auraPlayerNum == playerNum) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	void OnTriggerStay (Collider other)
 	{
 		
 		GameObject otherObj = other.gameObject;
         //Debug.Log(otherObj.tag);
-		if (otherObj.tag == "PlayerAura"  && otherObj.gameObject.GetComponent<AuraGenerator>().auraPlayerNum != playerNum){
+		if (otherObj.tag == "PlayerAura"  && !playerInteractingWithOwnAura(other.gameObject.GetComponent<AuraGenerator>())){
 			
             switch (otherObj.gameObject.GetComponent<AuraGenerator>().auraType)
             {
