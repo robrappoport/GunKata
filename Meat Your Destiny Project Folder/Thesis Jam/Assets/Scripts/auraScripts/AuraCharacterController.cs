@@ -404,15 +404,15 @@ public class AuraCharacterController : PlayControl {
 		
 		GameObject otherObj = other.gameObject;
         //Debug.Log(otherObj.tag);
-        if (otherObj.tag == "PlayerAura") {
+		if (otherObj.tag == "PlayerAura"  && otherObj.gameObject.GetComponent<AuraGenerator>().auraPlayerNum != playerNum){
 			
             switch (otherObj.gameObject.GetComponent<AuraGenerator>().auraType)
             {
                 case AuraGenerator.AuraType.slowdown: 
                     characterCtr.AddForce((moveDirForward + moveDirSides).normalized * -slowForce);
                     break;
-                case AuraGenerator.AuraType.projection:
-                    AuraProject(otherObj.transform);
+			case AuraGenerator.AuraType.projection:
+				AuraProject (otherObj.transform);
                     break;
             }
 				
@@ -439,9 +439,9 @@ public class AuraCharacterController : PlayControl {
         Transform auraCenter = t1;
         float distanceBtwn = Vector3.Distance(transform.position, auraCenter.position);
         float distancePercent = 1f - (distanceBtwn / initDistance);
-        float projectForce = forceMultiplier * distancePercent;
+		float projectForce = Mathf.Abs(forceMultiplier * distancePercent);
         Vector3 auraVector = transform.position - auraCenter.position;
-        characterCtr.AddForce(auraVector.normalized * projectForce, ForceMode.VelocityChange);
+		characterCtr.AddForce(auraVector.normalized * projectForce, ForceMode.Impulse);
     }
 
 }
