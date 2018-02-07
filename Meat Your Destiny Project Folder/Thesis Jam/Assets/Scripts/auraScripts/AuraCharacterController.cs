@@ -399,7 +399,7 @@ public class AuraCharacterController : PlayControl {
 
 	}
 
-	bool playerInteractingWithOwnAura(AuraGenerator testAura){
+	public bool playerInteractingWithOwnAura(AuraGenerator testAura){//use this to exclude auras that don't interact with their owner
 		if (testAura.auraPlayerNum == playerNum) {
 			return true;
 		} else {
@@ -411,7 +411,7 @@ public class AuraCharacterController : PlayControl {
 		
 		GameObject otherObj = other.gameObject;
         //Debug.Log(otherObj.tag);
-		if (otherObj.tag == "PlayerAura"  && !playerInteractingWithOwnAura(other.gameObject.GetComponent<AuraGenerator>())){
+		if (otherObj.tag == "PlayerAura"){
 			
             switch (otherObj.gameObject.GetComponent<AuraGenerator>().auraType)
             {
@@ -419,7 +419,9 @@ public class AuraCharacterController : PlayControl {
                     characterCtr.AddForce((moveDirForward + moveDirSides).normalized * -slowForce);
                     break;
 			case AuraGenerator.AuraType.projection:
-				AuraProject (otherObj.transform);
+				if (!playerInteractingWithOwnAura(otherObj.gameObject.GetComponent<AuraGenerator>())) {//excludes this aura from interacting with its owner
+					AuraProject (otherObj.transform);
+				}
                     break;
             }
 				
