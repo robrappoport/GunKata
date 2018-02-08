@@ -88,7 +88,7 @@ public class AuraCharacterController : PlayControl {
 
 	}
 
-	public void OnShot(){
+	public void shootSlowDown(){
         //prevMoveForce = moveForce;
         moveForce = shootForce;
 	}
@@ -252,9 +252,23 @@ public class AuraCharacterController : PlayControl {
 		if (controlType == ControlType.Controller) {
 			return (myController.RightTrigger.IsPressed);
 		} else {
-			return (Input.GetKey (KeyCode.V));
+            return (Input.GetKeyDown (KeyCode.V));
 		}
 	} 
+    public bool primaryFireUp (){
+        if (controlType == ControlType.Controller) {
+            return (myController.RightTrigger.WasReleased);
+        } else {
+            return (Input.GetKeyUp (KeyCode.V));
+        }
+    } 
+    public bool primaryFireDown (){
+        if (controlType == ControlType.Controller) {
+            return (myController.RightTrigger.WasPressed);
+        } else {
+            return (Input.GetKey (KeyCode.V));
+        }
+    } 
 
 	public bool bButtonUp (){
 		if (controlType == ControlType.Controller) {

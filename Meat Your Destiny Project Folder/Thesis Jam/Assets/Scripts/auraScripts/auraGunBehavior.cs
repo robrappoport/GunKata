@@ -9,6 +9,7 @@ public class auraGunBehavior : MonoBehaviour
     public Turret turretMan;
     //Drag in the Bullet Prefab from the Component Inspector.
     public GameObject RyuBullet;
+    public GameObject LaserBullet;
     public GameObject AuraObj;
     public GameObject ProjectAuraObj;
     public GameObject SlowAuraobj;
@@ -50,6 +51,12 @@ public class auraGunBehavior : MonoBehaviour
     private float tempAuraScaleCurrent;
     public float tempAuraGrowthRate;
 
+    [Header("Charge Shot Vars")]
+    public float buttonDownTime;
+    public float initchargeThreshold;
+    public float chargeTime;
+    public float loadedChargeTime;
+    public float laserLengthPercent;
     //Cave Story Gun Behavior Bools//
     bool gunLevel1, gunLevel2, gunLevel3;
 
@@ -136,22 +143,50 @@ public class auraGunBehavior : MonoBehaviour
 
         if (CurrentBullets > 0)
         {
-            if (myCont.primaryFire() == true)
+            if (myCont.primaryFireDown() == true)
             {
-                myCont.OnShot();
+                buttonDownTime += Time.deltaTime;
                 //              Debug.Log ("is pressing button");
                 if (shootTime <= 0)
                 {
-                    
                     isFiring = true;
                     shootTime = initShootTime;
                     PrimaryFire();
-                    StartCoroutine(ShootSound()); 
+                    StartCoroutine(ShootSound());
+                    if (myCont.primaryFire() == true && buttonDownTime >= initchargeThreshold)
+                    {
+                        chargeTime += Time.deltaTime;
+                        int wingMatChangeValue = Mathf.FloorToInt((chargeTime / loadedChargeTime) * 5f);
+                        myCont.shootSlowDown();
+                        for (int i = 0; i < wingMatChangeValue; i++)
+                        {
+                            if (i < wingMatChangeValue)
+                            {
+                                //change the color of i
+                                laserLengthPercent = chargeTime / loadedChargeTime;
+                            }
+                        }
+                        if (chargeTime >= loadedChargeTime)
+                        {
+                            //play charge sound
+                        }
+                        if (myCont.primaryFireUp())
+                        {
+                            bulletManager.CreateBullet(
+                                LaserBullet,
+                                Bullet_Emitter.transform.position,
+                                Quaternion.Euler(new Vector3(0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
+                            
+                        }
+
+                    }
+
                 }
             }
             else
             {
                 myCont.NotShot();
+                buttonDownTime = 0f;
             }
         }
 
@@ -173,24 +208,15 @@ public class auraGunBehavior : MonoBehaviour
 
     void PrimaryFire()
     {
-        gunLevel1 = true;
-        if (gunLevel1)
-        {
+       
             CurrentBullets -= 1;
             //myCont.OnShot();
             bulletManager.CreateBullet(
                 RyuBullet,
                 Bullet_Emitter.transform.position,
                 Quaternion.Euler(new Vector3(0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
-        }
-        else if (gunLevel2)
-        {
-            
-        }
-        else if (gunLevel3)
-        {
-            
-        }
+        
+      
     }
 
     void auraProject()

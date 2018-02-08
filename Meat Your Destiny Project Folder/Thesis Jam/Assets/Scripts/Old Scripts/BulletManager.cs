@@ -31,7 +31,13 @@ public class BulletManager : MonoBehaviour {
 //		Debug.Log (velocityOffset);
 		bulletList.Add(bullet);
 		bullet.BMan = this;
-
+        if (bulletObj.GetComponent<LaserShotScript>())
+        {
+            bulletObj.GetComponent<LaserShotScript>().endPos.position = new Vector3 ((bulletObj.GetComponent<LaserShotScript>().endPosExtendedPos.x
+                                                                            * GetComponent<auraGunBehavior>().laserLengthPercent),
+                                                                            bulletObj.GetComponent<LaserShotScript>().endPos.position.y, 
+                                                                            bulletObj.GetComponent<LaserShotScript>().endPos.position.z);
+        }
 	}
 
 	public void DestroyBullet(Bullet bullet)
