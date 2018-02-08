@@ -88,7 +88,7 @@ public class Turret : MonoBehaviour
 		DetermineDegreeOfOwnership();
 		if (completelyOwned) {
 			CancelInvoke ();
-			InvokeRepeating ("Fire", startTime, repeatTime);
+			InvokeRepeating ("Fire", repeatTime - (Time.timeSinceLevelLoad % repeatTime), repeatTime);
 			contestable = false;
 			//myShooter.StartShotRoutine ();
 			if (owner == Owner.Player1) {
