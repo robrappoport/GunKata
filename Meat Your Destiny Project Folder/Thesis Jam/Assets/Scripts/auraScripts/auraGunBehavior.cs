@@ -143,50 +143,59 @@ public class auraGunBehavior : MonoBehaviour
 
         if (CurrentBullets > 0)
         {
-            if (myCont.primaryFireDown() == true)
+            if (myCont.primaryFireDown() == true || myCont.primaryFire() == true)
             {
-                buttonDownTime += Time.deltaTime;
-                //              Debug.Log ("is pressing button");
-                if (shootTime <= 0)
+                if (myCont.primaryFireDown() == true)
                 {
+
+                    //              Debug.Log ("is pressing button");
+                    //if (shootTime <= 0)
+                    //{
                     isFiring = true;
                     shootTime = initShootTime;
                     PrimaryFire();
                     StartCoroutine(ShootSound());
-                    if (myCont.primaryFire() == true && buttonDownTime >= initchargeThreshold)
+                }
+                if (myCont.primaryFire() == true)
+                {
+                    Debug.Log(chargeTime + " " + "chargetime");
+                    chargeTime += Time.deltaTime;
+                    int wingMatChangeValue = Mathf.FloorToInt((chargeTime / loadedChargeTime) * 5f);
+                    myCont.shootSlowDown();
+                    for (int i = 0; i < wingMatChangeValue; i++)
                     {
-                        chargeTime += Time.deltaTime;
-                        int wingMatChangeValue = Mathf.FloorToInt((chargeTime / loadedChargeTime) * 5f);
-                        myCont.shootSlowDown();
-                        for (int i = 0; i < wingMatChangeValue; i++)
+                        if (i < wingMatChangeValue)
                         {
-                            if (i < wingMatChangeValue)
-                            {
-                                //change the color of i
-                                laserLengthPercent = chargeTime / loadedChargeTime;
-                            }
+                            //change the color of i
+                            laserLengthPercent = chargeTime / loadedChargeTime;
                         }
-                        if (chargeTime >= loadedChargeTime)
-                        {
-                            //play charge sound
-                        }
-                        if (myCont.primaryFireUp())
-                        {
-                            bulletManager.CreateBullet(
-                                LaserBullet,
-                                Bullet_Emitter.transform.position,
-                                Quaternion.Euler(new Vector3(0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
-                            
-                        }
-
+                    }
+                    if (chargeTime >= loadedChargeTime)
+                    {
+                        Debug.Log("laser fully charged");
+                        //play charge sound
                     }
 
+
                 }
+
+
+                //}
+                //}
             }
             else
             {
+                chargeTime = 0f;
                 myCont.NotShot();
-                buttonDownTime = 0f;
+            }
+            if (myCont.primaryFireUp() == true)
+            {
+                Debug.Log("Firing laser");
+                bulletManager.CreateBullet(
+                    LaserBullet,
+                    Bullet_Emitter.transform.position,
+                    Quaternion.Euler(new Vector3(0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
+
             }
         }
 
