@@ -57,6 +57,9 @@ public class auraGunBehavior : MonoBehaviour
     public float chargeTime;
     public float loadedChargeTime;
     public float laserLengthPercent;
+    public GameObject[] wings;
+    public Color inactiveWingColor;
+    public Color activeWingColor;
     //Cave Story Gun Behavior Bools//
     bool gunLevel1, gunLevel2, gunLevel3;
 
@@ -66,6 +69,8 @@ public class auraGunBehavior : MonoBehaviour
 
     private TwoDGameManager gameManager;
     private AuraCharacterController myCont;
+
+    private int tempValue;
 
     void Start()
     {
@@ -143,14 +148,16 @@ public class auraGunBehavior : MonoBehaviour
 
         if (CurrentBullets > 0)
         {
+            if (chargeTime >= loadedChargeTime)
+            {
+                chargeTime = loadedChargeTime;
+                Debug.Log("laser fully charged");
+                //play charge sound
+            }
             if (myCont.primaryFireDown() == true || myCont.primaryFire() == true)
             {
                 if (myCont.primaryFireDown() == true)
                 {
-
-                    //              Debug.Log ("is pressing button");
-                    //if (shootTime <= 0)
-                    //{
                     isFiring = true;
                     shootTime = initShootTime;
                     PrimaryFire();
@@ -158,30 +165,29 @@ public class auraGunBehavior : MonoBehaviour
                 }
                 if (myCont.primaryFire() == true)
                 {
-                    Debug.Log(chargeTime + " " + "chargetime");
+                    Debug.Log(chargeTime);
+                    Debug.Log(loadedChargeTime);
+                    //Debug.Log(chargeTime + " " + "chargetime");
                     chargeTime += Time.deltaTime;
                     int wingMatChangeValue = Mathf.FloorToInt((chargeTime / loadedChargeTime) * 5f);
                     myCont.shootSlowDown();
-                    for (int i = 0; i < wingMatChangeValue; i++)
-                    {
-                        if (i < wingMatChangeValue)
+                    if (wingMatChangeValue != tempValue){
+                        for (int i = 0; i < wingMatChangeValue; i++)
                         {
-                            //change the color of i
+                            Debug.Log("wingvalue " + wingMatChangeValue);
+                            Debug.Log("temp value" + tempValue);
+                            wings[i].GetComponent<Renderer>().material.color = Color.Lerp(inactiveWingColor, activeWingColor, .5f * Time.deltaTime);
                             laserLengthPercent = chargeTime / loadedChargeTime;
+
                         }
+                        tempValue = wingMatChangeValue;
                     }
-                    if (chargeTime >= loadedChargeTime)
-                    {
-                        Debug.Log("laser fully charged");
-                        //play charge sound
-                    }
+                   
+
 
 
                 }
 
-
-                //}
-                //}
             }
             else
             {
