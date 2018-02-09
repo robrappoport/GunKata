@@ -60,6 +60,11 @@ public class auraGunBehavior : MonoBehaviour
     public GameObject[] wings;
     public Color inactiveWingColor;
     public Color activeWingColor;
+    public float totalLaserShotTime;
+    public int wingMatChangeValue;
+    private float laserFiring = 0f;
+    private bool laserIsFiring = false;
+    private GameObject laserObj;
     //Cave Story Gun Behavior Bools//
     bool gunLevel1, gunLevel2, gunLevel3;
 
@@ -74,6 +79,10 @@ public class auraGunBehavior : MonoBehaviour
 
     void Start()
     {
+        foreach (GameObject g in wings)
+        {
+            g.GetComponent<Renderer>().material.color = inactiveWingColor;
+        }
         //find all its own components and static objects 
         gameManager = FindObjectOfType<TwoDGameManager>();
         myCont = GetComponent<AuraCharacterController>();
@@ -148,7 +157,7 @@ public class auraGunBehavior : MonoBehaviour
 
         if (CurrentBullets > 0)
         {
-            if (chargeTime >= loadedChargeTime)
+            if (chargeTime >= loadedChargeTime && !laserIsFiring)
             {
                 chargeTime = loadedChargeTime;
                 Debug.Log("laser fully charged");
@@ -165,19 +174,17 @@ public class auraGunBehavior : MonoBehaviour
                 }
                 if (myCont.primaryFire() == true)
                 {
-                    Debug.Log(chargeTime);
-                    Debug.Log(loadedChargeTime);
+                    //Debug.Log(chargeTime);
+                    //Debug.Log(loadedChargeTime);
                     //Debug.Log(chargeTime + " " + "chargetime");
                     chargeTime += Time.deltaTime;
-                    int wingMatChangeValue = Mathf.FloorToInt((chargeTime / loadedChargeTime) * 5f);
+                    wingMatChangeValue = Mathf.FloorToInt((chargeTime / loadedChargeTime) * 5f);
                     myCont.shootSlowDown();
                     if (wingMatChangeValue != tempValue){
                         for (int i = 0; i < wingMatChangeValue; i++)
                         {
-                            Debug.Log("wingvalue " + wingMatChangeValue);
-                            Debug.Log("temp value" + tempValue);
-                            wings[i].GetComponent<Renderer>().material.color = Color.Lerp(inactiveWingColor, activeWingColor, .5f * Time.deltaTime);
-                            laserLengthPercent = chargeTime / loadedChargeTime;
+                            wings[i].GetComponent<Renderer>().material.color = activeWingColor;
+
 
                         }
                         tempValue = wingMatChangeValue;
@@ -191,17 +198,41 @@ public class auraGunBehavior : MonoBehaviour
             }
             else
             {
-                chargeTime = 0f;
                 myCont.NotShot();
             }
-            if (myCont.primaryFireUp() == true)
+            if (myCont.primaryFireUp() == true && chargeTime >= 1f)
             {
+                laserIsFiring = true;
+                chargeTime = 0f;
                 Debug.Log("Firing laser");
-                bulletManager.CreateBullet(
-                    LaserBullet,
-                    Bullet_Emitter.transform.position,
-                    Quaternion.Euler(new Vector3(0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
 
+                laserObj = Instantiate(LaserBullet, 
+                                      Bullet_Emitter.transform.position, 
+                                       gameObject.transform.rotation) 
+                                                    as GameObject;
+                laserObj.transform.parent = gameObject.transform;
+                laserObj.GetComponent<LaserShotScript>().on = true;
+            }
+            if (laserIsFiring)
+            {
+                gameObject.GetComponent<AuraCharacterController>().turnSpeed = 2f;
+                gameObject.GetComponent<AuraCharacterController>().prevMoveForce = 1f;
+                laserFiring += Time.deltaTime;
+               //play laser sound
+
+                if (laserFiring >= totalLaserShotTime)
+                {
+                    gameObject.GetComponent<AuraCharacterController>().turnSpeed = 20f;
+                    gameObject.GetComponent<AuraCharacterController>().prevMoveForce = 4f;
+                    foreach (GameObject g in wings)
+                    {
+                        g.GetComponent<Renderer>().material.color = inactiveWingColor;
+                    }
+                    Debug.Log("laser not shooting");
+                    laserFiring = 0f;
+                    laserIsFiring = false;
+                    laserObj.GetComponent<LaserShotScript>().on = false;
+                }
             }
         }
 

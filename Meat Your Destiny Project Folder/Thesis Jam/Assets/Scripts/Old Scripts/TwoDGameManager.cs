@@ -120,7 +120,7 @@ public class TwoDGameManager : MonoBehaviour {
 			//}
             if (playerHealth1.CurrentHealth <= 0 && addedScore2 == false)
             {
-                player1Scale = player1.transform.localScale;
+                //player1Scale = player1.transform.localScale;
                 StartCoroutine(DelayedSpawnPlayer1());
                 addedScore2 = true;
                 player2ScoreNum += 10f;
@@ -128,7 +128,7 @@ public class TwoDGameManager : MonoBehaviour {
             }
             if (playerHealth2.CurrentHealth <= 0 && addedScore1 == false)
             {
-                player2Scale = player2.transform.localScale;
+                //player2Scale = player2.transform.localScale;
                 StartCoroutine(DelayedSpawnPlayer2());
                 addedScore1 = true;
                 player1ScoreNum += 10f;
@@ -168,8 +168,12 @@ public class TwoDGameManager : MonoBehaviour {
         player2Score.fillAmount = (displayedPlayer2Score);
         Vector3 newScale1 = new Vector3(scale1, scale1, scale1);
         Vector3 newScale2 = new Vector3(scale2, scale2, scale2);
-        player1.transform.localScale = Vector3.Lerp((player1.transform.localScale), (newScale1), Time.deltaTime * lerpTime);
-        player2.transform.localScale = Vector3.Lerp((player2.transform.localScale), (newScale2), Time.deltaTime * lerpTime);
+        //player1.transform.localScale = Vector3.Lerp((player1.transform.localScale), (newScale1), Time.deltaTime * lerpTime);
+        //player2.transform.localScale = Vector3.Lerp((player2.transform.localScale), (newScale2), Time.deltaTime * lerpTime);
+
+
+
+
         //player1.transform.localScale = new Vector3((scale),
         //                                           (scale),
         //                                           (scale));
@@ -191,7 +195,7 @@ public class TwoDGameManager : MonoBehaviour {
 		}
         Debug.Log("Spawning player 1");
         player1 = Instantiate(player1Prefab, new Vector3 (player1Spawns[index1].x, player1Spawns[index1].y + 5, player1Spawns[index1].z), Quaternion.identity) as GameObject;
-        player1.transform.localScale = player1Scale;
+        //player1.transform.localScale = player1Scale;
 		playerHealth1 = player1.GetComponent<auraPlayerHealth>();
 		players[0] = player1.GetComponent<auraGunBehavior>();
 		GetComponent<bulletManagerManager>().bMan1 = player1.GetComponent<BulletManager>();
@@ -213,7 +217,7 @@ public class TwoDGameManager : MonoBehaviour {
         Debug.Log("Spawning player 2");
 
         player2 = Instantiate(player2Prefab, player2Start.position = new Vector3(player2Spawns[index2].x, player2Spawns[index2].y + 5, player2Spawns[index2].z), Quaternion.identity) as GameObject;
-        player2.transform.localScale = player2Scale;
+        //player2.transform.localScale = player2Scale;
 		playerHealth2 = player2.GetComponent<auraPlayerHealth>();
 		players[1] = player2.GetComponent<auraGunBehavior>();
 		GetComponent<bulletManagerManager>().bMan2 = player2.GetComponent<BulletManager>();

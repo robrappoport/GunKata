@@ -79,7 +79,7 @@ public class Cannonball : MonoBehaviour {
 		CancelInvoke ();
 		if (col.gameObject.tag != "Bullet" && col.gameObject.tag != "CannonBall" && col.gameObject.GetComponent<Turret>() != myTurret && !col.GetComponent<AuraGenerator>())
         {
-            Instantiate(impactPrefab, transform.position, Quaternion.identity);
+            //Instantiate(impactPrefab, transform.position, Quaternion.identity);
             //myTurret.cannonBallList.Remove(this);
             SelfDestruct();
         }
@@ -90,7 +90,8 @@ public class Cannonball : MonoBehaviour {
         }
 	}
 
-	void SelfDestruct(){
+	public void SelfDestruct(){
+        Instantiate(impactPrefab, transform.position, Quaternion.identity);
 		Destroy (gameObject);
 	}
 
