@@ -55,23 +55,22 @@ public class auraPlayerHealth : MonoBehaviour {
 	}
 
 
-	public void takeDamage (int amount)
+	public void takeDamage (float amount)
 	{
         if (!invincibilityFramesActive && CurrentHealth > 0) {
 			takingDamage = true;
-			
+			print ("taking damage");	
             //SetHealth ();
             CurrentHealth += amount;
 
             if (CurrentHealth > 0)
             {
                 Sound.me.Play(damageSnd, 1f, true);
-                invincibilityFramesActive = true;
                 GetComponent<AuraCharacterController>().hitStunnedTimer = hitStun;
                 //standardHalo.Clear();
                 //standardHalo.Stop();
                 //DamagedHalo.Play();
-                StartCoroutine(colorChange());
+				StartCoroutine(colorChange(damageTime, flashNum));
             }
 
 			//if (CurrentHealth <= 0f) {
@@ -93,8 +92,10 @@ public class auraPlayerHealth : MonoBehaviour {
 	//}
 
 
-	private IEnumerator colorChange()
+	public IEnumerator colorChange(float damageTime, float flashNum)
 	{
+		invincibilityFramesActive = true;
+
 		for (int i = 0; i < flashNum; i++) {
 
 

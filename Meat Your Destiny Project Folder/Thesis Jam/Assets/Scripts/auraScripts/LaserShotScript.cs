@@ -108,7 +108,7 @@ public class LaserShotScript : MonoBehaviour {
 
         else if (collision.gameObject.GetComponent<auraPlayerHealth>())
         {
-            collision.gameObject.GetComponent<auraPlayerHealth>().CurrentHealth = 0f;
+			collision.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (-collision.gameObject.GetComponent<auraPlayerHealth> ().MaxHealth);
         }
     }
 }

@@ -50,6 +50,8 @@ public class TwoDGameManager : MonoBehaviour {
 
     public GameObject textPrefab;
 
+	public int iFrameNumber = 10;
+	public float iFrameFlashDuration = .1f;
 
 //	GameObject audioManagerClone;
 //	public GameObject audioManagerPrefab;
@@ -207,7 +209,8 @@ public class TwoDGameManager : MonoBehaviour {
 
 		addedScore2 = false;
 
-
+		//add invincibility on spawn
+		playerHealth1.StartCoroutine(playerHealth1.colorChange(iFrameFlashDuration, iFrameNumber));
 	}
 
     void SpawnPlayer2(){
@@ -228,6 +231,9 @@ public class TwoDGameManager : MonoBehaviour {
 		player2Tracker.Player = player2.transform;
 
 		addedScore1 = false;
+
+		//add invincibility on spawn
+		playerHealth2.StartCoroutine(playerHealth2.colorChange(iFrameFlashDuration, iFrameNumber));
 
 	}
 
