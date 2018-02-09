@@ -94,21 +94,24 @@ public class LaserShotScript : MonoBehaviour {
     }
 
     private void OnTriggerEnter(Collider collision)
-    {
+	{
+		Trigger (collision);
+	}
 
-        if (collision.gameObject.GetComponent<Bullet>())
-        {
-            print("destroying");
-            Destroy(collision.gameObject);
-        }
-        else if (collision.gameObject.GetComponent<Cannonball>())
-        {
-            collision.gameObject.GetComponent<Cannonball>().SelfDestruct();
-        }
-
-        else if (collision.gameObject.GetComponent<auraPlayerHealth>())
-        {
-			collision.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (-collision.gameObject.GetComponent<auraPlayerHealth> ().MaxHealth);
-        }
-    }
+	void OnTriggerStay(Collider collision){
+		Trigger (collision);
+	}
+	private void Trigger(Collider collision){
+		if (collision.gameObject) {
+			if (collision.gameObject.GetComponent<Bullet> ()) {
+				print ("destroying");
+				Destroy (collision.gameObject);
+			} else if (collision.gameObject.GetComponent<Cannonball> ()) {
+				collision.gameObject.GetComponent<Cannonball> ().SelfDestruct ();
+			} else if (collision.gameObject.GetComponent<auraPlayerHealth> ()) {
+				collision.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (-collision.gameObject.GetComponent<auraPlayerHealth> ().MaxHealth);
+			}
+		}
+	
+	}
 }
