@@ -39,6 +39,10 @@ public class Turret : MonoBehaviour
     //I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
     void Awake(){	
 
+
+		//set emitters
+		Emitter[0] = GameObject.Find(name + "/N_Emitter");
+		Emitter[1] = GameObject.Find(name + "/E_Emitter"); 
 		charge = 0;
 		ownerNum = 2;
         gm = FindObjectOfType<TwoDGameManager>();
@@ -66,8 +70,8 @@ public class Turret : MonoBehaviour
 		if (charging && contestable) {
 			charge = Mathf.Clamp (charge + chargeIncrementSign * Time.deltaTime * chargeSpeed, 0, 3);
 		}
-        Vector3 curRotation = transform.localRotation.eulerAngles;
-        transform.localRotation = Quaternion.Euler(curRotation.x, curRotation.y + spinSpeed, curRotation.z);
+//        Vector3 curRotation = transform.localRotation.eulerAngles;
+//        transform.localRotation = Quaternion.Euler(curRotation.x, curRotation.y + spinSpeed, curRotation.z);
 //        if (completelyOwned)
 //        {
 //            Debug.Log("checking");
@@ -293,12 +297,12 @@ public class Turret : MonoBehaviour
 	}
     void Fire()
 	{	 
-
+		print ("firing");
 		CleanCannonballList ();
 			
         foreach (GameObject Em in Emitter)
         {
-            Debug.Log(Em.transform.position);
+			print ("firing");
             GameObject cannonBall = Instantiate(CannonballPrefab, Em.transform.position, Em.transform.rotation, null) as GameObject;
             cannonBallList.Add(cannonBall.GetComponent<Cannonball>());
             Cannonball newBall = cannonBall.GetComponent<Cannonball>();

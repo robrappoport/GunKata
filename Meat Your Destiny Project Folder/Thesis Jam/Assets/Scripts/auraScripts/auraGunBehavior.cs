@@ -79,6 +79,8 @@ public class auraGunBehavior : MonoBehaviour
 
     void Start()
     {
+
+	
         foreach (GameObject g in wings)
         {
             g.GetComponent<Renderer>().material.color = inactiveWingColor;
