@@ -49,10 +49,10 @@ public class LaserShotScript : MonoBehaviour {
         {
             timeOn += Time.deltaTime / extendDuration; //goes to 1.0 after 5 seconds
             timeOn = Mathf.Clamp01((timeOn));
-            Debug.Log("start position "+startPos.position);
-            Debug.Log("start local position " + startPos.localPosition);
-            Debug.Log("end position " + endPos.position);
-            Debug.Log("end local position " + endPos.localPosition);
+//            Debug.Log("start position "+startPos.position);
+//            Debug.Log("start local position " + startPos.localPosition);
+//            Debug.Log("end position " + endPos.position);
+//            Debug.Log("end local position " + endPos.localPosition);
             //endPos.localPosition = Vector3.Lerp(endPos.localPosition, endPosExtendedPos, Time.deltaTime * extendDuration);
             endPos.localPosition = Vector3.Lerp(startPos.localPosition, endPosExtendedPos, timeOn);    
            

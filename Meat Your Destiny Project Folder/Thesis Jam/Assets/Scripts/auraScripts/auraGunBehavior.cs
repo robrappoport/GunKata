@@ -54,7 +54,9 @@ public class auraGunBehavior : MonoBehaviour
     [Header("Charge Shot Vars")]
     public float buttonDownTime;
     public float initchargeThreshold;
-    public float chargeTime;
+	public float chargeTime; 
+	[Tooltip("The length of the buffer before the initial charge. Higher value results in a longer time before charge.")]
+	public float initialChargeBuffer;
     public float loadedChargeTime;
     public float laserLengthPercent;
     public GameObject[] wings;
@@ -179,7 +181,11 @@ public class auraGunBehavior : MonoBehaviour
                     //Debug.Log(chargeTime);
                     //Debug.Log(loadedChargeTime);
                     //Debug.Log(chargeTime + " " + "chargetime");
-                    chargeTime += Time.deltaTime;
+					if (wingMatChangeValue == 0) {
+						chargeTime += Time.deltaTime / initialChargeBuffer;
+					} else {
+						chargeTime += Time.deltaTime;
+					}
                     wingMatChangeValue = Mathf.FloorToInt((chargeTime / loadedChargeTime) * 5f);
                     myCont.shootSlowDown();
                     if (wingMatChangeValue != tempValue){
@@ -202,19 +208,23 @@ public class auraGunBehavior : MonoBehaviour
             {
                 myCont.NotShot();
             }
-            if (myCont.primaryFireUp() == true && chargeTime >= 1f)
-            {
-                laserIsFiring = true;
-                chargeTime = 0f;
-                Debug.Log("Firing laser");
+			if (myCont.primaryFireUp ())
+			if (wingMatChangeValue== 0) {
+				chargeTime = 0;
+			} else {
+				if (chargeTime >= 1) {
+					laserIsFiring = true;
+					chargeTime = 0f;
+					Debug.Log ("Firing laser");
 
-                laserObj = Instantiate(LaserBullet, 
-                                      Bullet_Emitter.transform.position, 
-                                       gameObject.transform.rotation) 
+					laserObj = Instantiate (LaserBullet, 
+						Bullet_Emitter.transform.position, 
+						gameObject.transform.rotation) 
                                                     as GameObject;
-                laserObj.transform.parent = gameObject.transform;
-                laserObj.GetComponent<LaserShotScript>().on = true;
-            }
+					laserObj.transform.parent = gameObject.transform;
+					laserObj.GetComponent<LaserShotScript> ().on = true;
+				}
+			}
             if (laserIsFiring)
             {
                 gameObject.GetComponent<AuraCharacterController>().turnSpeed = 2f;
