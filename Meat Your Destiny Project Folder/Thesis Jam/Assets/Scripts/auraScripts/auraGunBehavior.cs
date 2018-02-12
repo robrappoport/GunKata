@@ -283,6 +283,8 @@ public class auraGunBehavior : MonoBehaviour
 
         if (myCont.secondaryFireDown() && 100 - curStamina < .00000001/*&& !isExhausted && !isProjecting && !isContracting*/)
         {
+
+			
             standardHalo.Clear();
             standardHalo.Pause();
             DamagedHalo.Play();
@@ -298,7 +300,7 @@ public class auraGunBehavior : MonoBehaviour
         }
 
         if (myCont.secondaryFireUp())
-        {
+		{print ("projecting aura");
             if (isProjecting)
             {
                 sprAura.GetComponent<Renderer>().enabled = false;

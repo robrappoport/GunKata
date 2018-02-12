@@ -41,7 +41,7 @@ public class AuraCharacterController : PlayControl {
     public float forceMultiplier;
 	/// Keyboard controls are as follows: WASD to move, YGHJ to rotate, V to shoot, left shift to project aura.
 	/// </summary>
-	ControlType controlType;
+	public ControlType controlType;
 
 	private auraGunBehavior gunBehave;
     public float hitStunnedTimer;
@@ -215,10 +215,20 @@ public class AuraCharacterController : PlayControl {
 	}
 
 	public bool yButton (){
-		return (myController.Action4.WasPressed);
+		if (controlType == ControlType.Controller) {
+			return (myController.Action4.WasPressed);
+		} else {
+			return (Input.GetKeyDown(KeyCode.B));
+		}
+
 	}
 	public bool xButton (){
-		return (myController.Action3.WasPressed);
+		if (myController != null) {
+			return (myController.Action3.WasPressed);
+		} else {
+			return false;
+		}
+
 	} 
 
 	public bool xButtonUp (){
@@ -232,7 +242,7 @@ public class AuraCharacterController : PlayControl {
 		if (controlType == ControlType.Controller) {
 			return (myController.LeftTrigger.IsPressed);
 		} else {
-			return (Input.GetKey (KeyCode.LeftShift));
+			return (Input.GetKey (KeyCode.X));
 		}
 	}
 
@@ -240,19 +250,24 @@ public class AuraCharacterController : PlayControl {
 		if (controlType == ControlType.Controller) {
 			return (myController.LeftTrigger.WasPressed);
 		} else {
-			return (Input.GetKeyDown (KeyCode.LeftShift));
-		}	}
+			print ("spawning aura");
+			return (Input.GetKeyDown (KeyCode.X));
+
+		}	
+	}
 	public bool secondaryFireUp (){
 		if (controlType == ControlType.Controller) {
             return (myController.LeftTrigger.WasReleased);
 		} else {
-			return (Input.GetKeyUp (KeyCode.LeftShift));
-		}	}
+			return (Input.GetKeyUp (KeyCode.X));
+		}	
+	}
+	
 	public bool primaryFire (){
 		if (controlType == ControlType.Controller) {
 			return (myController.RightTrigger.IsPressed);
 		} else {
-            return (Input.GetKeyDown (KeyCode.V));
+            return (Input.GetKey(KeyCode.V));
 		}
 	} 
     public bool primaryFireUp (){
@@ -266,7 +281,7 @@ public class AuraCharacterController : PlayControl {
         if (controlType == ControlType.Controller) {
             return (myController.RightTrigger.WasPressed);
         } else {
-            return (Input.GetKey (KeyCode.V));
+			return (Input.GetKeyDown (KeyCode.V));
         }
     } 
 
