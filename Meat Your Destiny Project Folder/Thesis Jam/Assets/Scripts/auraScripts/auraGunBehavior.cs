@@ -215,7 +215,6 @@ public class auraGunBehavior : MonoBehaviour
 				if (chargeTime >= 1) {
 					laserIsFiring = true;
 					chargeTime = 0f;
-					Debug.Log ("Firing laser");
 
 					laserObj = Instantiate (LaserBullet, 
 						Bullet_Emitter.transform.position, 
@@ -223,6 +222,7 @@ public class auraGunBehavior : MonoBehaviour
                                                     as GameObject;
 					laserObj.transform.parent = gameObject.transform;
 					laserObj.GetComponent<LaserShotScript> ().on = true;
+					laserObj.GetComponent<LaserShotScript> ().owner = myCont;
 				}
 			}
             if (laserIsFiring)
@@ -240,7 +240,6 @@ public class auraGunBehavior : MonoBehaviour
                     {
                         g.GetComponent<Renderer>().material.color = inactiveWingColor;
                     }
-                    Debug.Log("laser not shooting");
                     laserFiring = 0f;
                     laserIsFiring = false;
                     laserObj.GetComponent<LaserShotScript>().on = false;

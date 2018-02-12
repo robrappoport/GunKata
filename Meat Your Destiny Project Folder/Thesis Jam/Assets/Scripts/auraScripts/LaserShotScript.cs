@@ -7,6 +7,7 @@ public class LaserShotScript : MonoBehaviour {
     LineRenderer lineRend;
     public Transform startPos;
     public Transform endPos;
+	public AuraCharacterController owner;
     public int ownerNumber;
     private float textureOffset = 0f;
     public bool on = false;
@@ -18,12 +19,30 @@ public class LaserShotScript : MonoBehaviour {
     float timeOn;
 	// Use this for initialization
 	void Start () {
+
         timeOn = 0;
         lineRend = GetComponent<LineRenderer>();
         col = GetComponent<BoxCollider>();
+		ownerNumber = owner.playerNum;
+		Color myColor = Color.black;
+		if (ownerNumber == 0) {
+			myColor = Color.cyan;
+		} else if (ownerNumber == 1) {
+			myColor = Color.red;
+		}
         float dist = Vector3.Distance(endPos.position, startPos.position);
         endPosExtendedPos = Vector3.forward * dist *( GetComponentInParent<auraGunBehavior>().wingMatChangeValue)/5;
         lifeTime = GetComponentInParent<auraGunBehavior>().totalLaserShotTime;
+		float alpha = 1.0f;
+		Gradient gradient = new Gradient ();
+		gradient.SetKeys (
+			new GradientColorKey[] {
+				new GradientColorKey (myColor, 0.0f),
+				new GradientColorKey (myColor, 1f)
+			},
+			new GradientAlphaKey[]{ new GradientAlphaKey (alpha, 0.0f), new GradientAlphaKey (alpha, 1.0f) }
+		);
+		lineRend.colorGradient = gradient;
 	}
 
     private void OnDrawGizmos()

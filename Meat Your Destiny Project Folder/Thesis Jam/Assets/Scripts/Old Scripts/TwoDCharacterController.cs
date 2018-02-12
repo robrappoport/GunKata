@@ -97,7 +97,6 @@ public class TwoDCharacterController : MonoBehaviour {
 	}
 	public Vector3 RightStickMove (){
 		return new Vector3 (myController.RightStickX, 0, myController.RightStickY); 
-		print (myController.RightStickX);
 	}
 
 	public bool startButton ()
