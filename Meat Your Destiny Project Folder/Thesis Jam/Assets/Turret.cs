@@ -14,7 +14,7 @@ public class Turret : MonoBehaviour
     public bool scoreIncrease;
     public GameObject textPrefab;
 	public List<Renderer> SegmentsList;
-
+	public EZObjectPools.EZObjectPool objectPool;
 	public float charge, chargeSpeed = 1;
 	public bool charging = false, withinTimerLimits = true;
 
@@ -63,6 +63,10 @@ public class Turret : MonoBehaviour
         //InvokeRepeating("Fire", startTime, repeatTime);
         //amountOwnedIncrease = false;
     }
+
+	void Start(){
+		objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
+	}
 
     // Update is called once per frame
     void Update()
@@ -303,64 +307,57 @@ public class Turret : MonoBehaviour
         foreach (GameObject Em in Emitter)
         {
 			print ("firing");
-            GameObject cannonBall = Instantiate(CannonballPrefab, Em.transform.position, Em.transform.rotation, null) as GameObject;
-            cannonBallList.Add(cannonBall.GetComponent<Cannonball>());
-            Cannonball newBall = cannonBall.GetComponent<Cannonball>();
-			print (impactPrefabs.Length);
-            newBall.impactPrefab = impactPrefabs[ownerNum];
+			GameObject cannonBall;
 
-            if (completelyOwned)
-            {
+			if (objectPool.TryGetNextObject (Em.transform.position, Em.transform.rotation, out cannonBall)) {
+				cannonBallList.Add (cannonBall.GetComponent<Cannonball> ());
+				cannonBall.GetComponent<Cannonball> ().myTurret = this;
+				Cannonball newBall = cannonBall.GetComponent<Cannonball> ();
+				print (impactPrefabs.Length);
+				newBall.impactPrefab = impactPrefabs [ownerNum];
+
+				if (completelyOwned) {
                 
-                newBall.ownerNum = ownerNum;
+					newBall.ownerNum = ownerNum;
 
-            }
-            else
-            {
-                newBall.ownerNum = 2;
-            }
-            Cannonball cball = cannonBall.GetComponent<Cannonball>();
-            //cannonBallList.Add(cball);
+				} else {
+					newBall.ownerNum = 2;
+				}
+				Cannonball cball = cannonBall.GetComponent<Cannonball> ();
+				//cannonBallList.Add(cball);
 //            if (completelyOwned)
 //            {
 
-                if (ownerNum == 0)
-                {
-                    cannonBall.GetComponent<Renderer>().material = cannonBall.GetComponent<Cannonball>().player1BulletMaterial;
-                    Physics.IgnoreCollision(gm.player1.GetComponentInChildren<Collider>(), cannonBall.GetComponent<Collider>());
-                    cannonBall.layer = LayerMask.NameToLayer("Player1OwnsTurret");
-                    if (!scoreIncrease)
-                    {
-                        TwoDGameManager.player1ScoreNum+=2;
-                        TextManager txt = ((GameObject)Instantiate(textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager>();
-                        txt.color = playerColors[ownerNum];
-                        txt.pointString = "50";
-                        scoreIncrease = true;
-                    }
+				if (ownerNum == 0) {
+					cannonBall.GetComponent<Renderer> ().material = cannonBall.GetComponent<Cannonball> ().player1BulletMaterial;
+					Physics.IgnoreCollision (gm.player1.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
+					cannonBall.layer = LayerMask.NameToLayer ("Player1OwnsTurret");
+					if (!scoreIncrease) {
+						TwoDGameManager.player1ScoreNum += 2;
+						TextManager txt = ((GameObject)Instantiate (textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager> ();
+						txt.color = playerColors [ownerNum];
+						txt.pointString = "50";
+						scoreIncrease = true;
+					}
 
                    
 
-                }
-                else if (ownerNum == 1)
-                {
-                    cannonBall.GetComponent<Renderer>().material = cannonBall.GetComponent<Cannonball>().player2BulletMaterial;
-                    Physics.IgnoreCollision(gm.player2.GetComponentInChildren<Collider>(), cannonBall.GetComponent<Collider>());
-                    cannonBall.layer = LayerMask.NameToLayer("Player2OwnsTurret");
-                    if (!scoreIncrease)
-                    {
-                        TextManager txt = ((GameObject)Instantiate(textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager>();
-                        txt.color = playerColors[ownerNum];
-                        txt.pointString = "50";
-                        TwoDGameManager.player2ScoreNum+=2;
-                        scoreIncrease = true;
-                    }
-                }
-                else
-                {
-                    cannonBall.GetComponent<Renderer>().material.color = neutralColor;
+				} else if (ownerNum == 1) {
+					cannonBall.GetComponent<Renderer> ().material = cannonBall.GetComponent<Cannonball> ().player2BulletMaterial;
+					Physics.IgnoreCollision (gm.player2.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
+					cannonBall.layer = LayerMask.NameToLayer ("Player2OwnsTurret");
+					if (!scoreIncrease) {
+						TextManager txt = ((GameObject)Instantiate (textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager> ();
+						txt.color = playerColors [ownerNum];
+						txt.pointString = "50";
+						TwoDGameManager.player2ScoreNum += 2;
+						scoreIncrease = true;
+					}
+				} else {
+					cannonBall.GetComponent<Renderer> ().material.color = neutralColor;
 
-                }
-           // }
+				}
+			}
         }
 
     }

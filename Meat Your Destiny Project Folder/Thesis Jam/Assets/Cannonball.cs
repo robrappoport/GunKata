@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Cannonball : MonoBehaviour {
-	public float speed, lifetime = 10;
+	public float speed, lifetime = 10, age;
 	public int damage;
 	public int ownerNum;
 	public Material player1BulletMaterial, player2BulletMaterial;
@@ -23,7 +23,7 @@ public class Cannonball : MonoBehaviour {
 	Renderer render;
 
 	void Start(){
-		
+		age += Time.deltaTime;
 //		myTurret = GetComponentInParent<Turret> ();
 //		ownerNum = myTurret.ownerNum;
 //		impactPrefab = myTurret.impactPrefabs [ownerNum];
@@ -32,9 +32,8 @@ public class Cannonball : MonoBehaviour {
 //			render.material.color = myTurret.playerColors [ownerNum];
 //		}
 
-        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         bulletHeight = transform.position.y;
-		Invoke ("SelfDestruct", lifetime);
+
 		r = GetComponent<Rigidbody> ();
 	
 		speed = startSpeed;
@@ -43,6 +42,25 @@ public class Cannonball : MonoBehaviour {
 
 //		r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos(angle)) * speed;
 
+	}
+	void OnEnable(){
+		age += Time.deltaTime;
+		render = GetComponent<Renderer> ();
+		bulletHeight = transform.position.y;
+		r = GetComponent<Rigidbody> ();
+
+		speed = startSpeed;
+		float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+		r.velocity = transform.forward * speed;
+
+
+	}
+	void Update(){
+		if (age >= lifetime) {
+			SelfDestruct ();
+		} else {
+			age += Time.deltaTime;
+		}
 	}
 
 	void FixedUpdate(){
@@ -91,8 +109,10 @@ public class Cannonball : MonoBehaviour {
 	}
 
 	public void SelfDestruct(){
+		age = 0;
+
         Instantiate(impactPrefab, transform.position, Quaternion.identity);
-		Destroy (gameObject);
+		gameObject.SetActive (false);
 	}
 
 
@@ -185,7 +205,7 @@ public class Cannonball : MonoBehaviour {
 
     public void checkHit()
     {
-        Destroy(gameObject);
+		gameObject.SetActive (false);
     }
 
 }
