@@ -31,7 +31,7 @@ public class LaserShotScript : MonoBehaviour {
 			myColor = Color.red;
 		}
         float dist = Vector3.Distance(endPos.position, startPos.position);
-        endPosExtendedPos = Vector3.forward * dist *( GetComponentInParent<auraGunBehavior>().wingMatChangeValue)/5;
+        endPosExtendedPos = Vector3.forward * dist *( GetComponentInParent<auraGunBehavior>().wingMatChangeValue)/3;
         lifeTime = GetComponentInParent<auraGunBehavior>().totalLaserShotTime;
 		float alpha = 1.0f;
 		Gradient gradient = new Gradient ();

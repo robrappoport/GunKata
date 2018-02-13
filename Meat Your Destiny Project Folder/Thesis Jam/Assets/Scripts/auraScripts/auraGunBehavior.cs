@@ -186,7 +186,7 @@ public class auraGunBehavior : MonoBehaviour
 					} else {
 						chargeTime += Time.deltaTime;
 					}
-                    wingMatChangeValue = Mathf.FloorToInt((chargeTime / loadedChargeTime) * 5f);
+                    wingMatChangeValue = Mathf.FloorToInt((chargeTime / loadedChargeTime) * 3f);
                     myCont.shootSlowDown();
                     if (wingMatChangeValue != tempValue){
                         for (int i = 0; i < wingMatChangeValue; i++)
