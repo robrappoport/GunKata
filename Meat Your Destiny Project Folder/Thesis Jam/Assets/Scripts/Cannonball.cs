@@ -16,7 +16,7 @@ public class Cannonball : MonoBehaviour {
 	public bool prevPlayer1Triggered;
 	public bool prevPlayer2Triggered;
 	private float timeInAura;
-	public float auraSpeedIncrease, slowSpeed, startSpeed, stopSpeed, projectionSpeed;
+	public float auraSpeedIncrease, slowSpeed, startSpeed, stopSpeed, projectionSpeed, deformingForceModifier;
     public GameObject impactPrefab;
     public float forceMultiplier;
 	Rigidbody r;
@@ -83,9 +83,10 @@ public class Cannonball : MonoBehaviour {
 		player2AuraTriggered = false;
 
 	}
-
-
 	void OnTriggerEnter(Collider col){
+		deformingForceModifier = deformingForceModifier * 5;
+		Deform (col);
+		deformingForceModifier = deformingForceModifier / 5;
 		if (col.gameObject.GetComponent<auraPlayerHealth> ()) {
 			if (col.gameObject.GetComponent<AuraCharacterController> ().playerNum != ownerNum) {
 				col.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (damage);
@@ -93,6 +94,7 @@ public class Cannonball : MonoBehaviour {
 
 			}
 		}
+
 
 		CancelInvoke ();
 		if (col.gameObject.tag != "Bullet" && col.gameObject.tag != "CannonBall" && col.gameObject.GetComponent<Turret>() != myTurret && !col.GetComponent<AuraGenerator>())
@@ -142,7 +144,8 @@ public class Cannonball : MonoBehaviour {
 	}
 
 	void OnTriggerExit (Collider other)
-	{
+	{	
+		
 		print ("exiting aura");
 			//		this.gameObject.GetComponent<Collider> ().material.bounciness = 1f;
 			if (prevPlayer1Triggered) {
@@ -160,10 +163,23 @@ public class Cannonball : MonoBehaviour {
 			//		Debug.Log ("exit bullet speed" + bulletSpeed);
 			//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 			r.velocity = r.velocity.normalized * speed;
+		Deform (other);
 
 
 	}
 
+	void Deform(Collider col){
+		if (col.gameObject.GetComponent<MeshDeformer> ()) {
+			RaycastHit hit;
+			if (Physics.Raycast (transform.position, (col.transform.position - transform.position), out hit, GetComponent<SphereCollider> ().radius * 20, 1 << LayerMask.NameToLayer("Aura"), QueryTriggerInteraction.Collide)) {
+				col.gameObject.GetComponent<MeshDeformer> ().AddDeformingForce (hit.point, r.velocity.magnitude * deformingForceModifier);
+				//print (hit.collider.name);
+
+			}
+
+		}
+
+	}
 
     void auraSlow ()
 	{

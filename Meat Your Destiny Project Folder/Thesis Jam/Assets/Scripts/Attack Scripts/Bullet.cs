@@ -10,7 +10,7 @@ public class Bullet : MonoBehaviour {
 	public float slowBulletSpeed;
     public float projectionBulletSpeed;
 	public float bulletStartSpeed;
-    public float forceMultiplier;
+    public float forceMultiplier, deformingForceModifier;
 	public float prevSpeed;
 	public float fastBulletSpeed;
 	public float stopBulletSpeed;
@@ -185,6 +185,8 @@ public class Bullet : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
+		Deform (other);
+
         if (other.gameObject.tag == "PlayerAura")
         {
             initDistance = Vector3.Distance(transform.position, other.gameObject.transform.position);
@@ -245,6 +247,19 @@ public class Bullet : MonoBehaviour {
 			//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 		r.velocity = r.velocity.normalized * bulletSpeed;
 
+		Deform (other);
+
+	}
+	void Deform(Collider col){
+		if (col.gameObject.GetComponent<MeshDeformer> ()) {
+			RaycastHit hit;
+			if (Physics.Raycast (transform.position, (col.transform.position - transform.position), out hit, GetComponent<SphereCollider> ().radius * 20, 1 << LayerMask.NameToLayer("Aura"), QueryTriggerInteraction.Collide)) {
+				col.gameObject.GetComponent<MeshDeformer> ().AddDeformingForce (hit.point, r.velocity.magnitude * deformingForceModifier);
+				print (hit.collider.name);
+
+			}
+
+		}
 
 	}
 
