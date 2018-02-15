@@ -120,7 +120,7 @@ public class AuraCharacterController : PlayControl {
         {
             TwoDGameManager.player1ScoreNum = 0;
             TwoDGameManager.player2ScoreNum = 0;
-			SceneManager.LoadScene("AuraVersion");
+            SceneManager.LoadScene("LevelSelectScreen");
 		}
 	}
 
