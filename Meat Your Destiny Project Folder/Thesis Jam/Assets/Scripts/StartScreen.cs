@@ -44,7 +44,7 @@ public class StartScreen : MonoBehaviour {
 					controls.SetActive (false);
 				}
 			} else {
-				SceneManager.LoadScene ("AuraVersion");
+				SceneManager.LoadScene ("Level Select Screen");
 
 			}
 		}
