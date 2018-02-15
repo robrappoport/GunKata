@@ -1,0 +1,207 @@
+fileFormatVersion: 2
+guid: 182c4cc99eac022498a745fa2d9306c3
+timeCreated: 1518704144
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: Armature
+    100002: Bone
+    100004: Bone_001
+    100006: Bone_002
+    100008: Bone_003
+    100010: Bone_004
+    100012: Bone_005
+    100014: Bone_006
+    100016: Bone_007
+    100018: Bone_008
+    100020: Bone_009
+    100022: Bone_010
+    100024: Bone_011
+    100026: Bone_012
+    100028: Bone_013
+    100030: Bone_014
+    100032: Bone_015
+    100034: Bone_017
+    100036: Bone_018
+    100038: Bone_019
+    100040: Bone_021
+    100042: Bone_022
+    100044: Bone_023
+    100046: Bone_024
+    100048: Bone_025
+    100050: Bone_026
+    100052: Bone_027
+    100054: Bone_028
+    100056: Bone_029
+    100058: Bone_030
+    100060: Bone_031
+    100062: LWing_Mid
+    100064: LWing_Tip
+    100066: LWingBot
+    100068: //RootNode
+    100070: RWingBot
+    100072: RWingMid
+    100074: RWingTip
+    100076: Top_Half
+    100078: Top_Half_001
+    100080: Top_Half_002
+    100082: Wing_Bot_Mid
+    400000: Armature
+    400002: Bone
+    400004: Bone_001
+    400006: Bone_002
+    400008: Bone_003
+    400010: Bone_004
+    400012: Bone_005
+    400014: Bone_006
+    400016: Bone_007
+    400018: Bone_008
+    400020: Bone_009
+    400022: Bone_010
+    400024: Bone_011
+    400026: Bone_012
+    400028: Bone_013
+    400030: Bone_014
+    400032: Bone_015
+    400034: Bone_017
+    400036: Bone_018
+    400038: Bone_019
+    400040: Bone_021
+    400042: Bone_022
+    400044: Bone_023
+    400046: Bone_024
+    400048: Bone_025
+    400050: Bone_026
+    400052: Bone_027
+    400054: Bone_028
+    400056: Bone_029
+    400058: Bone_030
+    400060: Bone_031
+    400062: LWing_Mid
+    400064: LWing_Tip
+    400066: LWingBot
+    400068: //RootNode
+    400070: RWingBot
+    400072: RWingMid
+    400074: RWingTip
+    400076: Top_Half
+    400078: Top_Half_001
+    400080: Top_Half_002
+    400082: Wing_Bot_Mid
+    2100000: Material_002
+    2100002: Material_003
+    2100004: Material_005
+    2100006: Material_001
+    2100008: Material_004
+    2100010: unnamed
+    2300000: LWing_Mid
+    2300002: LWing_Tip
+    2300004: LWingBot
+    2300006: RWingBot
+    2300008: RWingMid
+    2300010: RWingTip
+    2300012: Wing_Bot_Mid
+    3300000: LWing_Mid
+    3300002: LWing_Tip
+    3300004: LWingBot
+    3300006: RWingBot
+    3300008: RWingMid
+    3300010: RWingTip
+    3300012: Wing_Bot_Mid
+    4300000: Top_Half_002
+    4300002: Top_Half_001
+    4300004: Top_Half
+    4300006: LWing_Mid
+    4300008: LWing_Tip
+    4300010: LWingBot
+    4300012: RWingBot
+    4300014: RWingMid
+    4300016: RWingTip
+    4300018: Wing_Bot_Mid
+    7400000: Default Take
+    7400002: PoseLib
+    9500000: //RootNode
+    13700000: Top_Half
+    13700002: Top_Half_001
+    13700004: Top_Half_002
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
