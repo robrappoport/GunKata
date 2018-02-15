@@ -85,7 +85,12 @@ public class auraGunBehavior : MonoBehaviour
 	
         foreach (GameObject g in wings)
         {
-            g.GetComponent<Renderer>().material.color = inactiveWingColor;
+            Renderer [] wingArray = g.GetComponentsInChildren<Renderer>();
+
+            foreach (Renderer r in wingArray)
+            {
+                r.material.color = inactiveWingColor;
+            }
         }
         //find all its own components and static objects 
         gameManager = FindObjectOfType<TwoDGameManager>();
@@ -191,7 +196,11 @@ public class auraGunBehavior : MonoBehaviour
                     if (wingMatChangeValue != tempValue){
                         for (int i = 0; i < wingMatChangeValue; i++)
                         {
-                            wings[i].GetComponent<Renderer>().material.color = activeWingColor;
+                            Renderer [] wingArray = wings[i].GetComponentsInChildren<Renderer>();
+                            foreach (Renderer r in wingArray)
+                            {
+                                r.material.color = activeWingColor;
+                            }
 
 
                         }
@@ -227,8 +236,8 @@ public class auraGunBehavior : MonoBehaviour
 			}
             if (laserIsFiring)
             {
-                gameObject.GetComponent<AuraCharacterController>().turnSpeed = 2f;
-                gameObject.GetComponent<AuraCharacterController>().prevMoveForce = 1f;
+                gameObject.GetComponent<AuraCharacterController>().turnSpeed = .2f;
+                gameObject.GetComponent<AuraCharacterController>().prevMoveForce = .2f;
                 laserFiring += Time.deltaTime;
                //play laser sound
 
@@ -238,7 +247,11 @@ public class auraGunBehavior : MonoBehaviour
                     gameObject.GetComponent<AuraCharacterController>().prevMoveForce = 4f;
                     foreach (GameObject g in wings)
                     {
-                        g.GetComponent<Renderer>().material.color = inactiveWingColor;
+                        Renderer [] wingArray = g.GetComponentsInChildren<Renderer>();
+                        foreach (Renderer r  in wingArray)
+                        {
+                            r.material.color = inactiveWingColor;
+                        }
                     }
                     laserFiring = 0f;
                     laserIsFiring = false;

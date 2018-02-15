@@ -45,6 +45,7 @@ public class auraPlayerHealth : MonoBehaviour {
         GroundCheck();
         if (CurrentHealth <= 0f)
         {
+            
             Instantiate(explosionPrefab, transform.position, transform.rotation);
             TextManager text = ((GameObject)Instantiate(textPrefab, transform.position, Quaternion.identity)).GetComponent<TextManager>();
             text.color = enemyPlayerColor;
