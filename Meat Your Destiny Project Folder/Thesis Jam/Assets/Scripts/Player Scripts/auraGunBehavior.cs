@@ -53,7 +53,6 @@ public class auraGunBehavior : MonoBehaviour
 
     [Header("Charge Shot Vars")]
     public float buttonDownTime;
-    public float initchargeThreshold;
 	public float chargeTime; 
 	[Tooltip("The length of the buffer before the initial charge. Higher value results in a longer time before charge.")]
 	public float initialChargeBuffer;

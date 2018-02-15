@@ -88,11 +88,16 @@ public class Cannonball : MonoBehaviour {
 		Deform (col);
 		deformingForceModifier = deformingForceModifier / 5;
 		if (col.gameObject.GetComponent<auraPlayerHealth> ()) {
-			if (col.gameObject.GetComponent<AuraCharacterController> ().playerNum != ownerNum) {
-				col.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (damage);
-				SelfDestruct();
+            if (col.gameObject.GetComponent<AuraCharacterController>().playerNum != ownerNum)
+            {
+                col.gameObject.GetComponent<auraPlayerHealth>().takeDamage(damage);
+                SelfDestruct();
 
-			}
+            }
+            if (col.gameObject.tag == "Stage")
+            {
+                SelfDestruct();
+            }
 		}
 
 
