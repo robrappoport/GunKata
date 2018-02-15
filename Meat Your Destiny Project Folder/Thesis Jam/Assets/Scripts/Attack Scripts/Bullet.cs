@@ -172,10 +172,7 @@ public class Bullet : MonoBehaviour {
                     //ignore collision
                 }
             }
-			if (other.gameObject.tag == "Player") {
-				other.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (BulletDmg);
-				BMan.DestroyBullet (this);
-			}
+			
             else
             {
                 BMan.DestroyBullet(this);
@@ -185,6 +182,10 @@ public class Bullet : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.tag == "Player") {
+                other.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (BulletDmg);
+                BMan.DestroyBullet (this);
+            }
 		Deform (other);
 
         if (other.gameObject.tag == "PlayerAura")
