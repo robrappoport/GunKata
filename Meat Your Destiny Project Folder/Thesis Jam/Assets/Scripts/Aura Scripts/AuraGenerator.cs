@@ -8,8 +8,7 @@ public class AuraGenerator : MonoBehaviour {
     public float auraGrowthRate;
     public int auraPlayerNum;
 	public float auraLifeTime;
-    private float auraCurLife;
-    private Vector3 auraSizeMax;
+    public float auraCurLife;
     public AuraType auraType;
 	public GameObject ps;
 	// Use this for initialization
@@ -25,21 +24,17 @@ public class AuraGenerator : MonoBehaviour {
         if (auraCurLife <= 0)
         {
             auraCurLife = 0;
-            Destroy(gameObject,2f);
+            Destroy(gameObject);
         }
         if (auraCurLife >= auraLifeTime)
         {
             auraCurLife = auraLifeTime;
+            Destroy(gameObject);
         }
-        if (auraCurLife > (.5f * auraLifeTime))
+        if (auraCurLife > (.98f * auraLifeTime))
         {
 
-            gameObject.transform.localScale = Vector3.Lerp((auraSizeMax), new Vector3 (0,0,0), auraCurLife/auraLifeTime);
-
-            gameObject.transform.localScale = Vector3.Lerp(auraSizeMax, new Vector3 (auraSizeMax.x+10, auraSizeMax.y+10, auraSizeMax.z+10), auraCurLife/auraLifeTime);
-			if (transform.localScale.magnitude <= 1) {
-				Destroy (gameObject);
-			}
+            gameObject.transform.localScale = Vector3.Lerp(gameObject.transform.localScale, new Vector3 (gameObject.transform.localScale.x+1, gameObject.transform.localScale.y+1, gameObject.transform.localScale.z+1), auraCurLife/auraLifeTime);
 
         }
 	}
@@ -73,7 +68,6 @@ public class AuraGenerator : MonoBehaviour {
 
         gameObject.transform.localScale = new Vector3(1, 1, 1);
         gameObject.transform.localScale *= (auraSize * 100);
-        auraSizeMax = gameObject.transform.localScale;
         //if (auraPlayerNum == 0)
         //{
         //    gameObject.tag = "player1Aura";
