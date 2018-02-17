@@ -186,7 +186,6 @@ public class Bullet : MonoBehaviour {
                 other.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (BulletDmg);
                 BMan.DestroyBullet (this);
             }
-		Deform (other);
 
         if (other.gameObject.tag == "PlayerAura")
         {
@@ -248,20 +247,7 @@ public class Bullet : MonoBehaviour {
 			//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 		r.velocity = r.velocity.normalized * bulletSpeed;
 
-		Deform (other);
 
-	}
-	void Deform(Collider col){
-//		if (col.gameObject.GetComponent<MeshDeformer> ()) {
-//			RaycastHit hit;
-//			if (Physics.Raycast (transform.position, (col.transform.position - transform.position), out hit, GetComponent<SphereCollider> ().radius * 20, 1 << LayerMask.NameToLayer("Aura"), QueryTriggerInteraction.Collide)) {
-//				col.gameObject.GetComponent<MeshDeformer> ().AddDeformingForce (hit.point, r.velocity.magnitude * deformingForceModifier);
-//				print (hit.collider.name);
-//
-//			}
-//
-//		}
-//
 	}
 
     void auraSlow ()
