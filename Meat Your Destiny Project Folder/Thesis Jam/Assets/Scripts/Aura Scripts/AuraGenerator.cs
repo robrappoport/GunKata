@@ -11,6 +11,7 @@ public class AuraGenerator : MonoBehaviour {
     private float auraCurLife;
     private Vector3 auraSizeMax;
     public AuraType auraType;
+	public GameObject ps;
 	// Use this for initialization
 	void Start () {
         
@@ -43,6 +44,28 @@ public class AuraGenerator : MonoBehaviour {
         }
 	}
 
+	void OnTriggerEnter(Collider col){
+		MakeParticles (col, true);
+	}
+	void OnTriggerExit(Collider col){
+		MakeParticles (col, false);
+
+	}
+	void MakeParticles(Collider col, bool entering){
+		if (col.GetComponent<Bullet>() || col.GetComponent<Cannonball> ()) {
+			
+			GameObject newPs = Instantiate (ps, col.transform.position, col.transform.rotation, null) as GameObject;
+			newPs.transform.LookAt(gameObject.transform);
+			if (entering) {
+				newPs.transform.Rotate (0, 180, 0);
+			}
+			Invoke ("DestroyParticles (newPs)", newPs.GetComponent<ParticleSystem> ().main.duration);
+		}
+
+	}
+	void DestroyParticles(GameObject oldPs){
+		Destroy (oldPs);
+	}
    public void Init (int playerNum, float auraSize)
     {
         auraPlayerNum = playerNum;

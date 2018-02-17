@@ -174,15 +174,15 @@ public class Cannonball : MonoBehaviour {
 	}
 
 	void Deform(Collider col){
-		if (col.gameObject.GetComponent<MeshDeformer> ()) {
-			RaycastHit hit;
-			if (Physics.Raycast (transform.position, (col.transform.position - transform.position), out hit, GetComponent<SphereCollider> ().radius * 20, 1 << LayerMask.NameToLayer("Aura"), QueryTriggerInteraction.Collide)) {
-				col.gameObject.GetComponent<MeshDeformer> ().AddDeformingForce (hit.point, r.velocity.magnitude * deformingForceModifier);
-				//print (hit.collider.name);
-
-			}
-
-		}
+//		if (col.gameObject.GetComponent<MeshDeformer> ()) {
+//			RaycastHit hit;
+//			if (Physics.Raycast (transform.position, (col.transform.position - transform.position), out hit, GetComponent<SphereCollider> ().radius * 20, 1 << LayerMask.NameToLayer("Aura"), QueryTriggerInteraction.Collide)) {
+//				col.gameObject.GetComponent<MeshDeformer> ().AddDeformingForce (hit.point, r.velocity.magnitude * deformingForceModifier);
+//				//print (hit.collider.name);
+//
+//			}
+//
+//		}
 
 	}
 
