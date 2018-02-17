@@ -36,7 +36,7 @@ public class AuraGenerator : MonoBehaviour {
 
             gameObject.transform.localScale = Vector3.Lerp((auraSizeMax), new Vector3 (0,0,0), auraCurLife/auraLifeTime);
 
-            gameObject.transform.localScale = Vector3.Lerp(auraSizeMax, new Vector3 (0,0,0), auraCurLife/auraLifeTime);
+            gameObject.transform.localScale = Vector3.Lerp(auraSizeMax, new Vector3 (auraSizeMax.x+10, auraSizeMax.y+10, auraSizeMax.z+10), auraCurLife/auraLifeTime);
 			if (transform.localScale.magnitude <= 1) {
 				Destroy (gameObject);
 			}
