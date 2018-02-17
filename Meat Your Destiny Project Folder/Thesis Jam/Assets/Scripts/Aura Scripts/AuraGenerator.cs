@@ -6,7 +6,7 @@ public class AuraGenerator : MonoBehaviour {
     public float auraScaleMin;
     private float auraScaleCurrent;
     public float auraGrowthRate;
-	public float deformingForceModifier;
+	public float deformingForceModifier, deformingLimit;
     public int auraPlayerNum;
 	public float auraLifeTime;
     public float auraCurLife;
@@ -20,6 +20,10 @@ public class AuraGenerator : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (auraCurLife >0.5f && !GetComponent<MeshDeformer> ()) {
+			gameObject.AddComponent<MeshDeformer> ();
+			GetComponent<MeshDeformer> ().damping = 2;
+		}
         auraCurLife = Mathf.Clamp(auraCurLife, 0, auraLifeTime);
         auraCurLife += Time.deltaTime;
 //        Debug.Log(auraCurLife);
@@ -53,8 +57,9 @@ public class AuraGenerator : MonoBehaviour {
 	}
 
 	void Deform(Collider col){
-		
-		GetComponent<MeshDeformer> ().AddDeformingForce (GetComponent<Collider> ().ClosestPointOnBounds (col.transform.position), -deformingForceModifier);
+		if (GetComponent<MeshDeformer> ()) {
+			GetComponent<MeshDeformer> ().AddDeformingForce (GetComponent<Collider> ().ClosestPointOnBounds (col.transform.position), -Mathf.Clamp(GetComponent<Rigidbody>().velocity.magnitude * deformingForceModifier, 5000, deformingLimit ));
+		}
 	}
 	void MakeParticles(Collider col, bool entering){
 		if (col.GetComponent<Bullet>() || col.GetComponent<Cannonball> ()) {
