@@ -84,9 +84,6 @@ public class Cannonball : MonoBehaviour {
 
 	}
 	void OnTriggerEnter(Collider col){
-		deformingForceModifier = deformingForceModifier * 5;
-		Deform (col);
-		deformingForceModifier = deformingForceModifier / 5;
 		if (col.gameObject.GetComponent<auraPlayerHealth> ()) {
             if (col.gameObject.GetComponent<AuraCharacterController>().playerNum != ownerNum)
             {
@@ -168,23 +165,11 @@ public class Cannonball : MonoBehaviour {
 			//		Debug.Log ("exit bullet speed" + bulletSpeed);
 			//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 			r.velocity = r.velocity.normalized * speed;
-		Deform (other);
 
 
 	}
 
-	void Deform(Collider col){
-//		if (col.gameObject.GetComponent<MeshDeformer> ()) {
-//			RaycastHit hit;
-//			if (Physics.Raycast (transform.position, (col.transform.position - transform.position), out hit, GetComponent<SphereCollider> ().radius * 20, 1 << LayerMask.NameToLayer("Aura"), QueryTriggerInteraction.Collide)) {
-//				col.gameObject.GetComponent<MeshDeformer> ().AddDeformingForce (hit.point, r.velocity.magnitude * deformingForceModifier);
-//				//print (hit.collider.name);
-//
-//			}
-//
-//		}
 
-	}
 
     void auraSlow ()
 	{

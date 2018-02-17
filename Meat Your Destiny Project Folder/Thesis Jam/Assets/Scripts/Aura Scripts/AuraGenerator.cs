@@ -6,12 +6,14 @@ public class AuraGenerator : MonoBehaviour {
     public float auraScaleMin;
     private float auraScaleCurrent;
     public float auraGrowthRate;
+	public float deformingForceModifier;
     public int auraPlayerNum;
 	public float auraLifeTime;
     private float auraCurLife;
     private Vector3 auraSizeMax;
     public AuraType auraType;
 	public GameObject ps;
+
 	// Use this for initialization
 	void Start () {
         
@@ -45,11 +47,19 @@ public class AuraGenerator : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider col){
-		MakeParticles (col, true);
+		Deform (col);
+
+		//		MakeParticles (col, true);
 	}
 	void OnTriggerExit(Collider col){
-		MakeParticles (col, false);
+//		MakeParticles (col, false);
+		Deform(col);
+	
+	}
 
+	void Deform(Collider col){
+		
+		GetComponent<MeshDeformer> ().AddDeformingForce (GetComponent<Collider> ().ClosestPointOnBounds (col.transform.position), -deformingForceModifier);
 	}
 	void MakeParticles(Collider col, bool entering){
 		if (col.GetComponent<Bullet>() || col.GetComponent<Cannonball> ()) {
