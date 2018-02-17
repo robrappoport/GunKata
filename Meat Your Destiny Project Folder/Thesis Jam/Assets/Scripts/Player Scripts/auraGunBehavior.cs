@@ -99,7 +99,7 @@ public class auraGunBehavior : MonoBehaviour
         curStamina = staminaTotal;
         //auraBaseScale = AuraObj.transform.localScale;
         //auraInitScale = auraBaseScale;
-        sprAura.GetComponent<Renderer>().enabled = false;
+        sprAura.SetActive(false);
         sprAura.transform.localScale *= tempAuraScaleMin;
         isFiring = false;
         shootTime = 0;
@@ -307,14 +307,15 @@ public class auraGunBehavior : MonoBehaviour
             //auraInitScale = AuraObj.transform.localScale;
             pressedWhileExhausted = false;
             tempAuraScaleCurrent = tempAuraScaleMin;
-            sprAura.GetComponent<Renderer>().enabled = true;
+            sprAura.SetActive(true);
+
         }
 
         if (myCont.secondaryFireUp())
 		{print ("projecting aura");
             if (isProjecting)
             {
-                sprAura.GetComponent<Renderer>().enabled = false;
+                sprAura.SetActive(false);
                 isProjecting = false;
                 AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position,
                             Quaternion.Euler(0, 0, 0))
@@ -342,7 +343,7 @@ public class auraGunBehavior : MonoBehaviour
                     isProjecting = false;
                     pressedWhileExhausted = true;
                     isContracting = true;
-                    sprAura.GetComponent<Renderer>().enabled = false;
+                    sprAura.SetActive(false);
                 }
                 tempAuraScaleCurrent += tempAuraGrowthRate * Time.deltaTime;
                 if (tempAuraScaleCurrent >= 1f)

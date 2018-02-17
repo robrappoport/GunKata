@@ -91,5 +91,10 @@ public class AuraGenerator : MonoBehaviour {
     {
         slowdown, projection
     }
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("we done had a collision");
+    }
 }
 
