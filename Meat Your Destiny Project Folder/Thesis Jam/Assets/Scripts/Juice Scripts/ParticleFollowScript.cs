@@ -36,7 +36,7 @@ public class ParticleFollowScript : MonoBehaviour {
         {
             if (respawning == false){
                 respawning = true;
-                StartCoroutine(PlayerIsDead());
+                StartCoroutine(PlayerSeek());
 
             }
             return;
@@ -105,11 +105,15 @@ public class ParticleFollowScript : MonoBehaviour {
             }
    
         }
+        if (particleCount <= 0)
+        {
+            Destroy(gameObject);
+        }
         //this is where you set the particles back into the system
         psys.SetParticles(m_Particles, particleCount);
     }
 
-    IEnumerator PlayerIsDead ()
+    IEnumerator PlayerSeek ()
     {
         yield return new WaitForSeconds(2f);
             if (owner == 0)
