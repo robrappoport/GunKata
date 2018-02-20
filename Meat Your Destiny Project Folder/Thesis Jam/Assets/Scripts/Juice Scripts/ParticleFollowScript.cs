@@ -77,7 +77,14 @@ public class ParticleFollowScript : MonoBehaviour {
 
             //this is where you add the forces
             //m_Particles[i].rotation = targetRot;
-            m_Particles[i].velocity += Vector3.ClampMagnitude(seekForce * dist, 1f);
+            m_Particles[i].velocity += seekForce * 30f;
+            m_Particles[i].velocity = Vector3.ClampMagnitude(m_Particles[i].velocity, 150f);
+            if (dist<15f) { //player absorbed particle
+                m_Particles[i].remainingLifetime = 0;
+                //do whatever you want when a particle dies -
+                //UbhScore++
+            }
+   
         }
         //this is where you set the particles back into the system
         psys.SetParticles(m_Particles, particleCount);
