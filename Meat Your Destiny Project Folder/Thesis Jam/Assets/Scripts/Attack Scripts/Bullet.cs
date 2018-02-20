@@ -26,6 +26,8 @@ public class Bullet : MonoBehaviour {
 	RigidbodyConstraints freezeVal;
 	RigidbodyConstraints normalBehavior;
 
+	public EZObjectPools.EZObjectPool objectPool;
+
 	public Material playerOneBullet;
 	public Material playerTwoBullet;
 	public Material normBullet;
@@ -52,7 +54,11 @@ public class Bullet : MonoBehaviour {
 
 	}
 	void Start () {
-		
+		if (ownerNumber==0) {
+			objectPool = GameObject.Find ("Impact pool p1").GetComponent<EZObjectPools.EZObjectPool>();
+		} else {
+			objectPool = GameObject.Find ("Impact pool p2").GetComponent<EZObjectPools.EZObjectPool>();
+		}
         transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         bulletHeight = transform.position.y;
         
@@ -154,7 +160,7 @@ public class Bullet : MonoBehaviour {
     //}
     private void OnDestroy()
     {
-        Instantiate(impactPrefab, transform.position, Quaternion.identity);
+		objectPool.TryGetNextObject(transform.position, Quaternion.identity);
 
     }
 

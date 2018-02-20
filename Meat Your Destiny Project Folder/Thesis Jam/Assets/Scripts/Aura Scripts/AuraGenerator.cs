@@ -39,9 +39,6 @@ public class AuraGenerator : MonoBehaviour {
 		}
 
 
-//		GameObject temp = new GameObject ("temp");
-//		temp.transform.position = point;
-//		temp.transform.LookAt (transform, transform.up);
 		for (int i = 0; i <totalPoints; i++) {
 			float l;
 			if (col.GetComponent<SphereCollider>()){
@@ -52,20 +49,26 @@ public class AuraGenerator : MonoBehaviour {
 				
 			Vector3 newPoint = point + Quaternion.AngleAxis (360 / totalPoints * i, (transform.position - point) / Vector3.Distance (transform.position, point)) * (Vector3.right * l);
 			points.Add (newPoint);
-		}
-		for (int i = 0; i < points.Count; i++) {
-			RaycastHit hit;
-			if (Physics.Raycast (points [i], (transform.position - col.transform.position) / Vector3.Distance (transform.position, col.transform.position), out hit,
-				Vector3.Distance (transform.position, col.transform.position), ~LayerMask.NameToLayer("Aura"), QueryTriggerInteraction.Collide)) {
-				hits.Add (hit.point);
+			if (i <= points.Count) {
+				RaycastHit hit;
+				if (Physics.Raycast (points [i], (transform.position - col.transform.position) / Vector3.Distance (transform.position, col.transform.position), out hit,
+					Vector3.Distance (transform.position, col.transform.position), ~LayerMask.NameToLayer("Aura"), QueryTriggerInteraction.Collide)) {
+					hits.Add (hit.point);
+				}
 			}
-		}
-		for (int i = 0; i < hits.Count; i++) {
+			if (i < hits.Count) {
 
-			GetComponent<MeshDeformer> ().AddDeformingForce (hits[i],
-				
-				Mathf.Clamp(col.GetComponent<Rigidbody>().velocity.magnitude *  Vector3.Distance (hits[i], col.ClosestPoint(hits[i])) * deformingForceModifier, 0, deformingLimit ));
+				GetComponent<MeshDeformer> ().AddDeformingForce (hits [i],
+
+					Mathf.Clamp (col.GetComponent<Rigidbody> ().velocity.magnitude * Vector3.Distance (hits [i], col.ClosestPoint (hits [i])) * deformingForceModifier, 0, deformingLimit));
+			}			
+
 		}
+//		for (int i = 0; i < points.Count; i++) {
+//		}
+//		for (int i = 0; i < hits.Count; i++) {
+//
+//		}
 	}
 	// Update is called once per frame
 	void Update () {
@@ -96,7 +99,7 @@ public class AuraGenerator : MonoBehaviour {
 
 	void OnTriggerEnter(Collider col){
 		if (GetComponent<MeshDeformer> () && col.GetComponent<Rigidbody>()) {
-			Deform (col, 6, .5f);
+			//Deform (col, 6, .5f);
 		}
 
 		//		MakeParticles (col, true);
@@ -104,7 +107,7 @@ public class AuraGenerator : MonoBehaviour {
 	void OnTriggerExit(Collider col){
 //		MakeParticles (col, false);
 		if (GetComponent<MeshDeformer> () && col.GetComponent<Rigidbody>()) {
-			Deform (col, 6, .5f);
+			//Deform (col, 6, .5f);
 		}
 	
 	}
