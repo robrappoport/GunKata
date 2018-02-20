@@ -125,7 +125,7 @@ public class TwoDGameManager : MonoBehaviour {
                 //player1Scale = player1.transform.localScale;
                 StartCoroutine(DelayedSpawnPlayer1());
                 addedScore2 = true;
-                player2ScoreNum += 10f;
+                //player2ScoreNum += 10f;
                 return;
             }
             if (playerHealth2.CurrentHealth <= 0 && addedScore1 == false)
@@ -133,7 +133,7 @@ public class TwoDGameManager : MonoBehaviour {
                 //player2Scale = player2.transform.localScale;
                 StartCoroutine(DelayedSpawnPlayer2());
                 addedScore1 = true;
-                player1ScoreNum += 10f;
+                //player1ScoreNum += 10f;
                 return;
             }
 

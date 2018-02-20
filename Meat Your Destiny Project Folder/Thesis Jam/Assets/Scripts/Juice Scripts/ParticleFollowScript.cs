@@ -10,24 +10,37 @@ public class ParticleFollowScript : MonoBehaviour {
     public float turn = 20f;
     public Transform target;
     public int owner;
-
+    private bool respawning;
     ParticleSystem.MainModule particleSystemMainModule;
 	// Use this for initialization
 	void Start () {
-        if (owner == 0)
-        {
-            target = GameObject.Find("Player1(Clone)").transform;
-        }
-        else
-        {
-            target = GameObject.Find("Player2(Clone)").transform;
-            psys = GetComponent<ParticleSystem>();
-            particleSystemMainModule = psys.main;
-        }
+        respawning = false;
+        //if (owner == 0)
+        //{
+        //    target = GameObject.Find("Player1(Clone)").transform;
+        //}
+        //else if (owner == 1)
+        //{
+        //    target = GameObject.Find("Player2(Clone)").transform;
+           
+        //}
+
+        psys = GetComponent<ParticleSystem>();
+        particleSystemMainModule = psys.main;
 	}
 	
 	// Update is called once per frame
 	void LateUpdate () {
+
+        if (target == null)
+        {
+            if (respawning == false){
+                respawning = true;
+                StartCoroutine(PlayerIsDead());
+
+            }
+            return;
+        }
         int maxParticles = particleSystemMainModule.maxParticles;
 
         if (m_Particles == null || m_Particles.Length < maxParticles)
@@ -81,13 +94,33 @@ public class ParticleFollowScript : MonoBehaviour {
             m_Particles[i].velocity = Vector3.ClampMagnitude(m_Particles[i].velocity, 150f);
             if (dist<15f) { //player absorbed particle
                 m_Particles[i].remainingLifetime = 0;
-                //do whatever you want when a particle dies -
-                //UbhScore++
+                if (owner == 0)
+                {
+                    TwoDGameManager.player1ScoreNum += .15f;
+                }
+                else if (owner == 1)
+                {
+                    TwoDGameManager.player2ScoreNum += .15f;
+                }
             }
    
         }
         //this is where you set the particles back into the system
         psys.SetParticles(m_Particles, particleCount);
+    }
+
+    IEnumerator PlayerIsDead ()
+    {
+        yield return new WaitForSeconds(2f);
+            if (owner == 0)
+        {
+            target = GameObject.Find("Player1(Clone)").transform;
+        }
+        else if (owner == 1)
+        {
+            target = GameObject.Find("Player2(Clone)").transform;
+        }
+        respawning = false;
     }
 }
 
