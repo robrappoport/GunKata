@@ -486,14 +486,5 @@ public class auraGunBehavior : MonoBehaviour
         }
 
     }
-
-    public void turretOwnerCheck ()
-    {
-        //check how many turrets the player owns//
-
-        //if player owns 1 turret
-        //else if player owns 2
-        //else if player owns 3
-    }
    
 }

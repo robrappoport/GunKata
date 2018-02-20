@@ -18,6 +18,7 @@ public class auraPlayerHealth : MonoBehaviour {
 	public Material normalColor;
     //public ParticleSystem standardHalo, DamagedHalo;
     public GameObject explosionPrefab;
+    public GameObject followParticles;
 
 	public int flashNum;
     public AudioClip damageSnd;
@@ -50,6 +51,17 @@ public class auraPlayerHealth : MonoBehaviour {
             TextManager text = ((GameObject)Instantiate(textPrefab, transform.position, Quaternion.identity)).GetComponent<TextManager>();
             text.color = enemyPlayerColor;
             text.pointString = "100";
+            ParticleFollowScript followParts = ((GameObject)Instantiate
+                                                (followParticles, transform.position, 
+                                                 Quaternion.identity)).GetComponent<ParticleFollowScript>();
+            if (gameObject.GetComponent<auraGunBehavior>().playerNum == 0)
+            {
+                followParts.owner = 1;
+            }
+            else
+            {
+                followParts.owner = 0;
+            }
             //Debug.Log("dying");
             gameObject.SetActive(false);
         }
