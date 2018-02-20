@@ -12,6 +12,8 @@ public class ParticleFollowScript : MonoBehaviour {
     public int owner;
     private bool respawning;
     ParticleSystem.MainModule particleSystemMainModule;
+    private float [] particleRandCount;
+    private float randTimer;
 	// Use this for initialization
 	void Start () {
         respawning = false;
@@ -27,20 +29,22 @@ public class ParticleFollowScript : MonoBehaviour {
 
         psys = GetComponent<ParticleSystem>();
         particleSystemMainModule = psys.main;
-	}
-	
-	// Update is called once per frame
-	void LateUpdate () {
+
+
+    }
+
+    // Update is called once per frame
+    void LateUpdate () {
 
         if (target == null)
         {
             if (respawning == false){
                 respawning = true;
                 StartCoroutine(PlayerSeek());
-
             }
             return;
         }
+
         int maxParticles = particleSystemMainModule.maxParticles;
 
         if (m_Particles == null || m_Particles.Length < maxParticles)
@@ -81,8 +85,13 @@ public class ParticleFollowScript : MonoBehaviour {
 
         int particleCount = psys.particleCount;
 
+        randTimer += Time.deltaTime;
         for (int i = 0; i < particleCount; i++)
         {
+            if (particleRandCount[i] > randTimer)
+            {
+                continue;
+            }
             Vector3 directionToTarget = Vector3.Normalize(targetTransformedPosition - m_Particles[i].position);
             Vector3 seekForce = directionToTarget;
             float dist = Vector3.Distance(targetTransformedPosition, m_Particles[i].position);
@@ -90,8 +99,8 @@ public class ParticleFollowScript : MonoBehaviour {
 
             //this is where you add the forces
             //m_Particles[i].rotation = targetRot;
-            m_Particles[i].velocity += seekForce * 30f;
-            m_Particles[i].velocity = Vector3.ClampMagnitude(m_Particles[i].velocity, 150f);
+            m_Particles[i].velocity += seekForce * 40f;
+            m_Particles[i].velocity = Vector3.ClampMagnitude(m_Particles[i].velocity, 500f);
             if (dist<15f) { //player absorbed particle
                 m_Particles[i].remainingLifetime = 0;
                 if (owner == 0)
@@ -115,7 +124,7 @@ public class ParticleFollowScript : MonoBehaviour {
 
     IEnumerator PlayerSeek ()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds (1.5f);
             if (owner == 0)
         {
             target = GameObject.Find("Player1(Clone)").transform;
@@ -125,6 +134,14 @@ public class ParticleFollowScript : MonoBehaviour {
             target = GameObject.Find("Player2(Clone)").transform;
         }
         respawning = false;
+        particleRandCount = new float[psys.particleCount];
+
+        for (int i = 0; i < particleRandCount.Length; i++)
+        {
+            particleRandCount[i] = Random.Range(.1f, 2);
+        }
+        randTimer = 0f;
+
     }
 }
 
