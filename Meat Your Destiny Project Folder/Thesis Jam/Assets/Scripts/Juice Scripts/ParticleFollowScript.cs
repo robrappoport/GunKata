@@ -6,9 +6,12 @@ public class ParticleFollowScript : MonoBehaviour {
     public ParticleSystem psys;
     ParticleSystem.Particle[] m_Particles;
     //public float m_drift = 0.0001f;
-    public float force = 50;
+    public float force = 50f;
+    public float turn = 20f;
     public Transform target;
     public int owner;
+
+    ParticleSystem.MainModule particleSystemMainModule;
 	// Use this for initialization
 	void Start () {
         if (owner == 0)
@@ -18,39 +21,66 @@ public class ParticleFollowScript : MonoBehaviour {
         else
         {
             target = GameObject.Find("Player2(Clone)").transform;
+            psys = GetComponent<ParticleSystem>();
+            particleSystemMainModule = psys.main;
         }
 	}
 	
 	// Update is called once per frame
 	void LateUpdate () {
-        m_Particles = new ParticleSystem.Particle[psys.particleCount];
-        psys.GetParticles(m_Particles);
-        for (int i = 0; i < m_Particles.Length; i++)
+        int maxParticles = particleSystemMainModule.maxParticles;
+
+        if (m_Particles == null || m_Particles.Length < maxParticles)
         {
-            ParticleSystem.Particle p = m_Particles[i];
-            Vector3 particleWorldPosition;
-            if (psys.main.simulationSpace == ParticleSystemSimulationSpace.Local)
-            {
-                particleWorldPosition = transform.TransformPoint(p.position);
-            }
-            else if (psys.main.simulationSpace == ParticleSystemSimulationSpace.Custom)
-            {
-                particleWorldPosition = psys.main.customSimulationSpace.TransformPoint(p.position);
-            }
-            else
-            {
-                particleWorldPosition = p.position;
-            }
-            Vector3 dir2Target = (target.position - m_Particles[i].position).normalized;
-            Debug.Log(dir2Target + "direction");
-            Vector3 seekForce = (dir2Target * force) * Time.deltaTime;
-
-            p.velocity = seekForce;
-
-            m_Particles[i] = p;
-            //Debug.Log(m_Particles[i].velocity + "velocity of particles");
+            m_Particles = new ParticleSystem.Particle[maxParticles];
         }
-        psys.SetParticles(m_Particles, m_Particles.Length);
-	}
 
+        psys.GetParticles(m_Particles);
+        float forceDeltaTime = force * Time.deltaTime;
+
+        Vector3 targetTransformedPosition;
+        //this is to make sure it works regardless of what sim space the particles use
+        switch (particleSystemMainModule.simulationSpace)
+        {
+            case ParticleSystemSimulationSpace.Local:
+                {
+                    targetTransformedPosition = transform.InverseTransformPoint(target.position);
+                    break;
+                }
+            case ParticleSystemSimulationSpace.Custom:
+                {
+                    targetTransformedPosition = particleSystemMainModule.customSimulationSpace.InverseTransformPoint(target.position);
+                    break;
+                }
+            case ParticleSystemSimulationSpace.World:
+                {
+                    targetTransformedPosition = target.position;
+                    break;
+                }
+            default:
+                {
+                    throw new System.NotSupportedException(
+
+                        string.Format("Unsupported simulation space '{0}'.",
+                        System.Enum.GetName(typeof(ParticleSystemSimulationSpace), particleSystemMainModule.simulationSpace)));
+                }
+        }
+
+        int particleCount = psys.particleCount;
+
+        for (int i = 0; i < particleCount; i++)
+        {
+            Vector3 directionToTarget = Vector3.Normalize(targetTransformedPosition - m_Particles[i].position);
+            Vector3 seekForce = directionToTarget;
+            float dist = Vector3.Distance(targetTransformedPosition, m_Particles[i].position);
+            //var targetRot = Quaternion.LookRotation(target.position - m_Particles[i].position);
+
+            //this is where you add the forces
+            //m_Particles[i].rotation = targetRot;
+            m_Particles[i].velocity += Vector3.ClampMagnitude(seekForce * dist, 1f);
+        }
+        //this is where you set the particles back into the system
+        psys.SetParticles(m_Particles, particleCount);
+    }
 }
+
