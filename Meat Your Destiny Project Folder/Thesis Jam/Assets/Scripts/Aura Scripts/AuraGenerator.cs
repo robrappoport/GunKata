@@ -99,7 +99,7 @@ public class AuraGenerator : MonoBehaviour {
 
 	void OnTriggerEnter(Collider col){
 		if (GetComponent<MeshDeformer> () && col.GetComponent<Rigidbody>()) {
-			//Deform (col, 6, .5f);
+			Deform (col, 6, .5f);
 		}
 
 		//		MakeParticles (col, true);
@@ -107,7 +107,7 @@ public class AuraGenerator : MonoBehaviour {
 	void OnTriggerExit(Collider col){
 //		MakeParticles (col, false);
 		if (GetComponent<MeshDeformer> () && col.GetComponent<Rigidbody>()) {
-			//Deform (col, 6, .5f);
+			Deform (col, 6, .5f);
 		}
 	
 	}
