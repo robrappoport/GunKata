@@ -22,7 +22,16 @@ public class Cannonball : MonoBehaviour {
 	Rigidbody r;
 	Renderer render;
 
+	public EZObjectPools.EZObjectPool objectPool;
+
+
 	void Start(){
+		if (ownerNum ==0) {
+			objectPool = GameObject.Find ("Impact pool p1").GetComponent<EZObjectPools.EZObjectPool>();
+		} else{
+		objectPool = GameObject.Find ("Impact pool p2").GetComponent<EZObjectPools.EZObjectPool>();
+		}
+
 		age += Time.deltaTime;
 //		myTurret = GetComponentInParent<Turret> ();
 //		ownerNum = myTurret.ownerNum;
@@ -115,7 +124,7 @@ public class Cannonball : MonoBehaviour {
 	public void SelfDestruct(){
 		age = 0;
 
-        Instantiate(impactPrefab, transform.position, Quaternion.identity);
+		objectPool.TryGetNextObject( transform.position, Quaternion.identity);
 		gameObject.SetActive (false);
 	}
 
