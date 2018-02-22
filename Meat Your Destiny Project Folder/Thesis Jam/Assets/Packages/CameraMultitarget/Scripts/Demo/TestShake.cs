@@ -6,10 +6,23 @@ public class TestShake : MonoBehaviour {
 
 	public float amount;
 	public float time;
+    public CameraMultitarget cam;
 
-	[ContextMenu("Test Shake")]
+    private void Start()
+    {
+        cam = GetComponent<CameraMultitarget>();   
+    }
+
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            TestCameraShake();
+        }
+    }
 	public void TestCameraShake()
 	{
-		Camera.main.GetComponent<CameraMultitarget>().Shake(amount, time);
+        cam.Shake(amount, time);
 	}
 }
