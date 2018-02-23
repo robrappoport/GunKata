@@ -12,7 +12,6 @@ public class Turret : MonoBehaviour
     public float startTime, repeatTime, immuneTime, uncontestableTime, spinSpeed;
     public bool amountOwnedIncrease;
     public bool scoreIncrease;
-    public GameObject textPrefab;
 	public List<Renderer> SegmentsList;
 	public EZObjectPools.EZObjectPool objectPool;
 	public float charge, chargeSpeed = 1;
@@ -107,9 +106,6 @@ public class Turret : MonoBehaviour
 					//increase the score
 			
 					TwoDGameManager.player1ScoreNum++;
-					TextManager txt = ((GameObject)Instantiate (textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager> ();
-					txt.color = playerColors [ownerNum];
-					txt.pointString = "50";
 					scoreIncrease = true;
 					print("player1 score increase");
 				}
@@ -118,9 +114,6 @@ public class Turret : MonoBehaviour
 					ownerNum = 1;
 					neutralColor = p2Color;
 
-					TextManager txt = ((GameObject)Instantiate (textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager> ();
-					txt.color = playerColors [ownerNum];
-					txt.pointString = "50";
 					TwoDGameManager.player2ScoreNum++;
 					scoreIncrease = true;
 					print ("player2 score increase");
@@ -132,7 +125,7 @@ public class Turret : MonoBehaviour
 		}
 
 
-		CleanCannonballList ();
+	//	CleanCannonballList ();
 			
     }
 
@@ -334,9 +327,6 @@ public class Turret : MonoBehaviour
 					cannonBall.layer = LayerMask.NameToLayer ("Player1OwnsTurret");
 					if (!scoreIncrease) {
 						TwoDGameManager.player1ScoreNum += 2;
-						TextManager txt = ((GameObject)Instantiate (textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager> ();
-						txt.color = playerColors [ownerNum];
-						txt.pointString = "50";
 						scoreIncrease = true;
 					}
 
@@ -347,9 +337,6 @@ public class Turret : MonoBehaviour
 					Physics.IgnoreCollision (gm.player2.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
 					cannonBall.layer = LayerMask.NameToLayer ("Player2OwnsTurret");
 					if (!scoreIncrease) {
-						TextManager txt = ((GameObject)Instantiate (textPrefab, transform.position + (Vector3.up * 2f), Quaternion.identity)).GetComponent<TextManager> ();
-						txt.color = playerColors [ownerNum];
-						txt.pointString = "50";
 						TwoDGameManager.player2ScoreNum += 2;
 						scoreIncrease = true;
 					}

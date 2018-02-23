@@ -11,17 +11,18 @@ public class Cannonball : MonoBehaviour {
     public Turret myTurret;
     private float bulletHeight;
     private float initDistance;
-	public bool player1AuraTriggered;
-	public bool player2AuraTriggered;
-	public bool prevPlayer1Triggered;
-	public bool prevPlayer2Triggered;
+//	public bool player1AuraTriggered;
+//	public bool player2AuraTriggered;
+//	public bool prevPlayer1Triggered;
+//	public bool prevPlayer2Triggered;
+	public bool auraEntered = false;
 	private float timeInAura;
 	public float auraSpeedIncrease, slowSpeed, startSpeed, stopSpeed, projectionSpeed, deformingForceModifier;
     public GameObject impactPrefab;
     public float forceMultiplier;
 	Rigidbody r;
 	Renderer render;
-
+	public Collider currentCollider;
 	public EZObjectPools.EZObjectPool objectPool;
 
 
@@ -73,23 +74,23 @@ public class Cannonball : MonoBehaviour {
 	}
 
 	void FixedUpdate(){
-        if ((transform.position.y) > (bulletHeight))
-        {
-            transform.position = new Vector3 (transform.position.x, bulletHeight, transform.position.z);
-        }
-
-		if (player1AuraTriggered && player2AuraTriggered) 
-		{
-			//			this.gameObject.GetComponent<Collider> ().material.bounciness = 0f;
-			auraStop ();
-			player1AuraTriggered = false;
-			player2AuraTriggered = false;
-			return;
-		}
-		prevPlayer1Triggered = player1AuraTriggered;
-		prevPlayer2Triggered = player2AuraTriggered;
-		player1AuraTriggered = false;
-		player2AuraTriggered = false;
+		AuraCheck ();
+//        if ((transform.position.y) > (bulletHeight))
+//        {
+//            transform.position = new Vector3 (transform.position.x, bulletHeight, transform.position.z);
+////        }
+//
+//		if (player1AuraTriggered && player2AuraTriggered) 
+//		{
+//			//			this.gameObject.GetComponent<Collider> ().material.bounciness = 0f;
+//			//auraStop ();
+//			player1AuraTriggered = false;
+//			player2AuraTriggered = false;
+//		}
+//		prevPlayer1Triggered = player1AuraTriggered;
+//		prevPlayer2Triggered = player2AuraTriggered;
+//		player1AuraTriggered = false;
+//		player2AuraTriggered = false;
 
 	}
 	void OnTriggerEnter(Collider col){
@@ -104,6 +105,11 @@ public class Cannonball : MonoBehaviour {
             {
                 SelfDestruct();
             }
+
+		}
+		if (col.gameObject.tag == "PlayerAura") {
+			currentCollider = col;
+			auraEntered = true;
 		}
 
 
@@ -129,56 +135,67 @@ public class Cannonball : MonoBehaviour {
 	}
 
 
-	void OnTriggerStay (Collider other)
-	{
-		//		this.gameObject.GetComponent<Collider> ().material.bounciness = 0f;
-		timeInAura += Time.deltaTime;
-		//		Debug.Log ("enter time" + timeInAura);
-		//		Debug.Log("enter bullet speed" + bulletSpeed);
+//	void OnTriggerStay (Collider other)
+//	{
+//		//		this.gameObject.GetComponent<Collider> ().material.bounciness = 0f;
+//		//		Debug.Log ("enter time" + timeInAura);
+//		//		Debug.Log("enter bullet speed" + bulletSpeed);
+//
+//        if (other.gameObject.tag == "PlayerAura")
+//        {
+//
+//            //player1AuraTriggered = true;
+//
+//        }
+//
+//	}
 
-        if (other.gameObject.tag == "PlayerAura")
-        {
+//	void OnTriggerExit (Collider other)
+//	{	
+//		
+//		//print ("exiting aura");
+//			//		this.gameObject.GetComponent<Collider> ().material.bounciness = 1f;
+////			if (prevPlayer1Triggered) {
+////				player1AuraTriggered = false;
+////				prevPlayer1Triggered = false;
+////			}
+////			if (prevPlayer2Triggered) {
+////				player2AuraTriggered = false;
+////				prevPlayer2Triggered = false;
+////			}
+//			//tr.time += (time + timeInAura + auraSpeedIncrease);
+//			//		Debug.Log (tr.time);
+//			//		Debug.Log ("exit time" + timeInAura);
+//
+//
+//	}
 
-            //player1AuraTriggered = true;
+	void AuraCheck(){
+		if (currentCollider) {
+			if (currentCollider.bounds.Contains (transform.position)) {
+				timeInAura += Time.deltaTime;
 
-            switch (other.gameObject.GetComponent<AuraGenerator>().auraType)
-            {
-                case AuraGenerator.AuraType.projection:
-                    AuraProject(other.transform);
-                    break;
-                case AuraGenerator.AuraType.slowdown:
-                    auraSlow();
-                    break;
-            }
-        }
+				switch (currentCollider.gameObject.GetComponent<AuraGenerator> ().auraType) {
+				case AuraGenerator.AuraType.projection:
+					AuraProject (currentCollider.transform);
+					break;
+				case AuraGenerator.AuraType.slowdown:
+					auraSlow ();
+					break;
+				}
+			} 
+
+		} else {
+			if (auraEntered) {
+				print ("exiting aura");
+				auraEntered = false;
+				currentCollider = null;
+				speed = startSpeed * (timeInAura + auraSpeedIncrease);
+				r.velocity = r.velocity.normalized * speed;
+			}
+		}
 
 	}
-
-	void OnTriggerExit (Collider other)
-	{	
-		
-		print ("exiting aura");
-			//		this.gameObject.GetComponent<Collider> ().material.bounciness = 1f;
-			if (prevPlayer1Triggered) {
-				player1AuraTriggered = false;
-				prevPlayer1Triggered = false;
-			}
-			if (prevPlayer2Triggered) {
-				player2AuraTriggered = false;
-				prevPlayer2Triggered = false;
-			}
-			//tr.time += (time + timeInAura + auraSpeedIncrease);
-			//		Debug.Log (tr.time);
-			//		Debug.Log ("exit time" + timeInAura);
-			speed = startSpeed * (timeInAura + auraSpeedIncrease);
-			//		Debug.Log ("exit bullet speed" + bulletSpeed);
-			//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-			r.velocity = r.velocity.normalized * speed;
-
-
-	}
-
-
 
     void auraSlow ()
 	{
