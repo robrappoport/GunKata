@@ -221,6 +221,7 @@ public class auraGunBehavior : MonoBehaviour
 				chargeTime = 0;
 			} else {
 				if (chargeTime >= 1) {
+                    Sound.me.Play(playerSounds[2], .8f, true);
 					laserIsFiring = true;
 					chargeTime = 0f;
 
