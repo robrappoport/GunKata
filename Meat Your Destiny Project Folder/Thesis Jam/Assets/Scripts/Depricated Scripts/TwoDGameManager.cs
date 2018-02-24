@@ -183,11 +183,7 @@ public class TwoDGameManager : MonoBehaviour {
 
     public void OnBallDestroyed(int playerNum){
         foreach(Turret t in keyTurrets){
-            t.litSegments = 0;
-            t.ownerNum = 2;
-            t.CancelInvoke();
-
-            t.contestable = true;
+            t.Reset();
         }
         //
     }

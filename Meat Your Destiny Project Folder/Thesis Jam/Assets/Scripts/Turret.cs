@@ -6,7 +6,7 @@ public class Turret : MonoBehaviour
 {
 
     public Renderer topRenderer, middleRenderer, bottomRenderer;
-    public Color p1Color, p2Color, neutralColor, currentColor, uncontestableColor;
+    public Color p1Color, p2Color, neutralColor, currentColor, uncontestableColor, unownedColor;
     public GameObject CannonballPrefab;
 	public int litSegments = 0, ownerNum = 2, timesOwned = 0, maxTimesCanBeOwned, chargeIncrementSign = 1;
     public float startTime, repeatTime, immuneTime, uncontestableTime, spinSpeed;
@@ -34,7 +34,6 @@ public class Turret : MonoBehaviour
     //I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
     void Awake(){	
 
-
 		//set emitters
 		Emitter[0] = GameObject.Find(name + "/N_Emitter");
 		Emitter[1] = GameObject.Find(name + "/E_Emitter"); 
@@ -55,12 +54,17 @@ public class Turret : MonoBehaviour
         p1Color = TwoDGameManager.thisInstance.playerHealth1.normalColor.color;
         p2Color = TwoDGameManager.thisInstance.playerHealth2.normalColor.color;
         currentColor = neutralColor;
+        unownedColor = neutralColor;
         //InvokeRepeating("Fire", startTime, repeatTime);
         //amountOwnedIncrease = false;
     }
 
 	void Start(){
-		objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
+        
+        if(key){
+        TwoDGameManager.thisInstance.keyTurrets.Add(this);
+        }
+        objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
 	}
 
     // Update is called once per frame
@@ -117,7 +121,12 @@ public class Turret : MonoBehaviour
 					neutralColor = p2Color;
 
 				}
-			}
+            }
+            else
+            {
+                Debug.Log("color changing");
+                neutralColor = unownedColor;
+            }
 			litSegments = 0;
 			charge = 0;
 
@@ -147,7 +156,7 @@ public class Turret : MonoBehaviour
                 {
                     owner = Owner.Player1;
                 }
-                else
+                else 
                 {
                     owner = Owner.Player2;
                 }
@@ -178,9 +187,10 @@ public class Turret : MonoBehaviour
 		}
 	}
 	void OnTriggerExit(Collider col){
-
+        print("exiting");
 		if (col.gameObject.GetComponent<AuraGenerator> ()) {
 			charging = false;
+
 			contestable = true;
 		}
 	}
@@ -345,10 +355,12 @@ public class Turret : MonoBehaviour
 
     }
 
-    void Reset()
+    public void Reset()
     {
 
         ownerNum = 2;
+        owner = Owner.NONE;
+        neutralColor = unownedColor;
         litSegments = 0;
         completelyOwned = false;
 		AdjustOwnership(owner);
@@ -357,6 +369,7 @@ public class Turret : MonoBehaviour
         middleRenderer.material.color = uncontestableColor;
         bottomRenderer.material.color = uncontestableColor;
         CancelInvoke();
+        contestable = false;
         Invoke("Neutralize", uncontestableTime);
 
     }
@@ -364,8 +377,6 @@ public class Turret : MonoBehaviour
     void Neutralize()
     {
         contestable = true;
-        AdjustCannonColor();
-        InvokeRepeating("Fire", startTime, repeatTime);
 
     }
 
