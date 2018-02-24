@@ -51,6 +51,9 @@ public class auraGunBehavior : MonoBehaviour
     private float tempAuraScaleCurrent;
     public float tempAuraGrowthRate;
 
+    [Header("Super Vars")]
+    public bool superReady;
+
     [Header("Charge Shot Vars")]
     public float buttonDownTime;
 	public float chargeTime; 

@@ -36,6 +36,9 @@ public class Bullet : MonoBehaviour {
 	public float time = 1.0f;
 	private TrailRenderer tr;
 
+    Collider currentCollider;
+    private bool auraEntered = false;
+
 
 
 	public bool player1AuraTriggered;
@@ -127,7 +130,44 @@ public class Bullet : MonoBehaviour {
 		player1AuraTriggered = false;
 		player2AuraTriggered = false;
 
+        AuraCheck();
+
 	}
+
+    void AuraCheck()
+    {
+        if (currentCollider)
+        {
+            if (currentCollider.bounds.Contains(transform.position))
+            {
+                timeInAura += Time.deltaTime;
+
+                switch (currentCollider.gameObject.GetComponent<AuraGenerator>().auraType)
+                {
+                    case AuraGenerator.AuraType.projection:
+                        AuraProject(currentCollider.transform);
+                        break;
+                    case AuraGenerator.AuraType.slowdown:
+                        auraSlow();
+                        break;
+                }
+            }
+
+        }
+        else
+        {
+            if (auraEntered)
+            {
+                tr.time += (time + timeInAura + auraBulletSpeedIncrease);
+
+                bulletSpeed = bulletStartSpeed * (timeInAura + auraBulletSpeedIncrease);
+
+                r.velocity = r.velocity.normalized * bulletSpeed;
+
+            }
+        }
+
+    }
 
     //	public void SetFreeze(bool b){
     //		isFrozen = b;
@@ -195,6 +235,9 @@ public class Bullet : MonoBehaviour {
 
         if (other.gameObject.tag == "PlayerAura")
         {
+            currentCollider = other;
+            auraEntered = true;
+
             initDistance = Vector3.Distance(transform.position, other.gameObject.transform.position);
         }
     }
@@ -236,22 +279,10 @@ public class Bullet : MonoBehaviour {
 
 	void OnTriggerExit (Collider other)
 	{
-//		this.gameObject.GetComponent<Collider> ().material.bounciness = 1f;
-		if (prevPlayer1Triggered) {
-			player1AuraTriggered = false;
-			prevPlayer1Triggered = false;
-		}
-		if (prevPlayer2Triggered) {
-			player2AuraTriggered = false;
-			prevPlayer2Triggered = false;
-		}
-        tr.time += (time + timeInAura + auraBulletSpeedIncrease);
 //		Debug.Log (tr.time);
 //		Debug.Log ("exit time" + timeInAura);
-		bulletSpeed = bulletStartSpeed * (timeInAura + auraBulletSpeedIncrease);
 //		Debug.Log ("exit bullet speed" + bulletSpeed);
 			//float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-		r.velocity = r.velocity.normalized * bulletSpeed;
 
 
 	}

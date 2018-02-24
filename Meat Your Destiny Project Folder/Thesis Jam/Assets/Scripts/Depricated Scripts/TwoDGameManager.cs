@@ -49,10 +49,16 @@ public class TwoDGameManager : MonoBehaviour {
     public GameObject player1Canvas, player2Canvas;
 
     public GameObject textPrefab;
+    public CameraMultitarget cam;
 
 	public int iFrameNumber = 10;
 	public float iFrameFlashDuration = .1f;
 
+    public float shakeTime = 2f, shakeWeight = .5f;
+
+    [Header("Turret Vars")]
+    public List<Turret> keyTurrets;
+    bool readyToMakeNewOrb;
 //	GameObject audioManagerClone;
 //	public GameObject audioManagerPrefab;
 
@@ -62,6 +68,7 @@ public class TwoDGameManager : MonoBehaviour {
     }
 	void Awake ()
 	{
+        cam = Camera.main.GetComponent<CameraMultitarget>();
         StartCoroutine(TimerCo());
         if (thisInstance == null)
         {
@@ -93,33 +100,14 @@ public class TwoDGameManager : MonoBehaviour {
     }
 
 
-    void Update ()
-	{
+    void Update()
+    {
         player1Start.position = player1Spawns[index1];
         player2Start.position = player2Spawns[index2];
         playerScoreUpdate();
-		if (playerHealth1.CurrentHealth <= 0 || playerHealth2.CurrentHealth <= 0) {
-//            if (playerHealth1.CurrentHealth > 0 && addedScore == false) {
-//				//player 1 wins
-//                addedScore = true;
-//                //player2Canvas.SetActive(false);
-//                player1ScoreNum += 2f;
-//                Debug.Log("Adding to player1 score");
-////                playerWinner.text = "green wins";
-//                //StartCoroutine(gameRestart());
-//                return;
-//            } 
-//            if (playerHealth2.CurrentHealth > 0 && addedScore == false){
-//				//player 2 wins
-//                addedScore = true;
-//                //player1Canvas.SetActive(false);
-//                player2ScoreNum += 2f;
-//                Debug.Log("Adding to player2 score");
-
-////				playerWinner.text = "red wins";
-   //            //StartCoroutine(gameRestart());
-   //             return;
-			//}
+        if (playerHealth1.CurrentHealth <= 0 || playerHealth2.CurrentHealth <= 0)
+        {
+            cam.Shake(shakeWeight, shakeTime);
             if (playerHealth1.CurrentHealth <= 0 && addedScore2 == false)
             {
                 //player1Scale = player1.transform.localScale;
@@ -137,14 +125,24 @@ public class TwoDGameManager : MonoBehaviour {
                 return;
             }
 
-		}
+        }
         playerWin();
+        for (int i = 0; i < keyTurrets.Count; i++)
+        {
+            if(!keyTurrets[i].completelyOwned){
+                readyToMakeNewOrb = false;
+                break;
+            }else{
+                readyToMakeNewOrb = true;
+            }
+        }
 
-
-
-	}
-
-	public IEnumerator gameRestart ()
+        if(readyToMakeNewOrb){
+            FindObjectOfType<TheBallScript>().gameObject.SetActive(true);
+            readyToMakeNewOrb = false;
+        }
+    }
+        public IEnumerator gameRestart ()
 	{
 		yield return new WaitForSeconds (restartTime);
         resetScore();
@@ -152,7 +150,37 @@ public class TwoDGameManager : MonoBehaviour {
         addedScore1 = false;
         addedScore2 = false;
 	}
+    public GameObject GetPlayer(int playerNum){
+        
+        if(playerNum == 0){
+            if (player1)
+            {
+                return player1;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        else if(playerNum == 1){
+            if (player2)
+            {
+                return player2;
+            }
+            else
+            {
+                return null;
+            }
+        }else{
+            return null;
+            
+        }
+    }
 
+    public void OnBallDestroyed(int playerNum){
+        print("the ball has been destroyed by player1 " + (playerNum + 1));
+        //
+    }
     public void playerScoreUpdate ()
     {
         //Debug.Log("player 1 score: " + player1ScoreNum + " player2 score: " + player2ScoreNum);

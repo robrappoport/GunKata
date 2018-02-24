@@ -17,16 +17,6 @@ public class ParticleFollowScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         respawning = false;
-        //if (owner == 0)
-        //{
-        //    target = GameObject.Find("Player1(Clone)").transform;
-        //}
-        //else if (owner == 1)
-        //{
-        //    target = GameObject.Find("Player2(Clone)").transform;
-           
-        //}
-
         psys = GetComponent<ParticleSystem>();
         particleSystemMainModule = psys.main;
 
@@ -99,7 +89,7 @@ public class ParticleFollowScript : MonoBehaviour {
 
             //this is where you add the forces
             //m_Particles[i].rotation = targetRot;
-            m_Particles[i].velocity += seekForce * 40f;
+            m_Particles[i].velocity += seekForce * 600f;
             m_Particles[i].velocity = Vector3.ClampMagnitude(m_Particles[i].velocity, 500f);
             if (dist<15f) { //player absorbed particle
                 m_Particles[i].remainingLifetime = 0;

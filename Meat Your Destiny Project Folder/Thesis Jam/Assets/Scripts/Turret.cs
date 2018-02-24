@@ -10,16 +10,11 @@ public class Turret : MonoBehaviour
     public GameObject CannonballPrefab;
 	public int litSegments = 0, ownerNum = 2, timesOwned = 0, maxTimesCanBeOwned, chargeIncrementSign = 1;
     public float startTime, repeatTime, immuneTime, uncontestableTime, spinSpeed;
-    public bool amountOwnedIncrease;
-    public bool scoreIncrease;
 	public List<Renderer> SegmentsList;
 	public EZObjectPools.EZObjectPool objectPool;
 	public float charge, chargeSpeed = 1;
-	public bool charging = false, withinTimerLimits = true;
+    public bool charging = false, withinTimerLimits = true, isSpinning, key;
 
-    //public List<Cannonball> cannonBallList = new List<Cannonball>();
-	//UbhShotCtrl myShooter;
-    TwoDGameManager gm;
     public enum Owner { Player1, Player2, NONE };
     public Owner owner = Owner.NONE;
 
@@ -40,11 +35,8 @@ public class Turret : MonoBehaviour
 
 
 		//set emitters
-		Emitter[0] = GameObject.Find(name + "/N_Emitter");
-		Emitter[1] = GameObject.Find(name + "/E_Emitter"); 
 		charge = 0;
 		ownerNum = 2;
-        gm = FindObjectOfType<TwoDGameManager>();
 		//myShooter = GetComponentInChildren<UbhShotCtrl> ();
 		//set up segments here
 		topRenderer = transform.Find("Turret Top").GetComponent<Renderer>();
@@ -56,14 +48,17 @@ public class Turret : MonoBehaviour
 		//
 		Cannon = topRenderer.gameObject;
 
-        p1Color = gm.playerHealth1.normalColor.color;
-        p2Color = gm.playerHealth2.normalColor.color;
+        p1Color = TwoDGameManager.thisInstance.playerHealth1.normalColor.color;
+        p2Color = TwoDGameManager.thisInstance.playerHealth2.normalColor.color;
         currentColor = neutralColor;
         //InvokeRepeating("Fire", startTime, repeatTime);
         //amountOwnedIncrease = false;
     }
 
 	void Start(){
+        if(key){
+            TwoDGameManager.thisInstance.keyTurrets.Add(this);
+        }
 		objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
 	}
 
@@ -73,8 +68,12 @@ public class Turret : MonoBehaviour
 		if (charging && contestable) {
 			charge = Mathf.Clamp (charge + chargeIncrementSign * Time.deltaTime * chargeSpeed, 0, 3);
 		}
-//        Vector3 curRotation = transform.localRotation.eulerAngles;
-//        transform.localRotation = Quaternion.Euler(curRotation.x, curRotation.y + spinSpeed, curRotation.z);
+        if (isSpinning)
+        {
+            Vector3 curRotation = transform.localRotation.eulerAngles;
+            transform.localRotation = Quaternion.Euler(curRotation.x, curRotation.y + spinSpeed, curRotation.z);
+        }
+       
 //        if (completelyOwned)
 //        {
 //            Debug.Log("checking");
@@ -105,18 +104,12 @@ public class Turret : MonoBehaviour
 
 					//increase the score
 			
-					TwoDGameManager.player1ScoreNum++;
-					scoreIncrease = true;
-					print("player1 score increase");
 				}
 			} else if (owner == Owner.Player2) {
 				if (ownerNum != 1) {
 					ownerNum = 1;
 					neutralColor = p2Color;
 
-					TwoDGameManager.player2ScoreNum++;
-					scoreIncrease = true;
-					print ("player2 score increase");
 				}
 			}
 			litSegments = 0;
@@ -295,7 +288,7 @@ public class Turret : MonoBehaviour
     void Fire()
 	{	 
 		print ("firing");
-		CleanCannonballList ();
+		//CleanCannonballList ();
 			
         foreach (GameObject Em in Emitter)
         {
@@ -306,7 +299,6 @@ public class Turret : MonoBehaviour
 				cannonBallList.Add (cannonBall.GetComponent<Cannonball> ());
 				cannonBall.GetComponent<Cannonball> ().myTurret = this;
 				Cannonball newBall = cannonBall.GetComponent<Cannonball> ();
-				print (impactPrefabs.Length);
 				newBall.impactPrefab = impactPrefabs [ownerNum];
 
 				if (completelyOwned) {
@@ -316,30 +308,23 @@ public class Turret : MonoBehaviour
 				} else {
 					newBall.ownerNum = 2;
 				}
-				Cannonball cball = cannonBall.GetComponent<Cannonball> ();
+			//	Cannonball cball = cannonBall.GetComponent<Cannonball> ();
 				//cannonBallList.Add(cball);
 //            if (completelyOwned)
 //            {
 
-				if (ownerNum == 0) {
+				if (ownerNum ==0) {
 					cannonBall.GetComponent<Renderer> ().material = cannonBall.GetComponent<Cannonball> ().player1BulletMaterial;
-					Physics.IgnoreCollision (gm.player1.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
+                    Physics.IgnoreCollision (TwoDGameManager.thisInstance.player1.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
 					cannonBall.layer = LayerMask.NameToLayer ("Player1OwnsTurret");
-					if (!scoreIncrease) {
-						TwoDGameManager.player1ScoreNum += 2;
-						scoreIncrease = true;
-					}
 
                    
 
 				} else if (ownerNum == 1) {
 					cannonBall.GetComponent<Renderer> ().material = cannonBall.GetComponent<Cannonball> ().player2BulletMaterial;
-					Physics.IgnoreCollision (gm.player2.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
+                    Physics.IgnoreCollision (TwoDGameManager.thisInstance.player2.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
 					cannonBall.layer = LayerMask.NameToLayer ("Player2OwnsTurret");
-					if (!scoreIncrease) {
-						TwoDGameManager.player2ScoreNum += 2;
-						scoreIncrease = true;
-					}
+					
 				} else {
 					cannonBall.GetComponent<Renderer> ().material.color = neutralColor;
 
@@ -362,8 +347,7 @@ public class Turret : MonoBehaviour
         bottomRenderer.material.color = uncontestableColor;
         CancelInvoke();
         Invoke("Neutralize", uncontestableTime);
-        amountOwnedIncrease = false;
-        scoreIncrease = false;
+
     }
 
     void Neutralize()
@@ -374,7 +358,7 @@ public class Turret : MonoBehaviour
 
     }
 
-   public void init (int ownerNum_, int timesOwned_, int litSegments_)
+   public void Init (int ownerNum_, int timesOwned_, int litSegments_)
     {
         Debug.Log(timesOwned_);
         litSegments = litSegments_;
