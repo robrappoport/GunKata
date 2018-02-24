@@ -4,128 +4,145 @@ using UnityEngine;
 using InControl;
 using UnityEngine.SceneManagement;
 
-public class AuraCharacterController : PlayControl {
-	public static PlayControl instance;
-	public InputDevice myController;
+public class AuraCharacterController : PlayControl
+{
+    public static PlayControl instance;
+    public InputDevice myController;
 
-//	LockOnScript lockedOn;
-	//public InputDevice myController { get; set; }
-	//    public Vector3 moveDirection;
-	public Vector3 moveDirForward;
-	public Vector3 moveDirSides;
+    //	LockOnScript lockedOn;
+    //public InputDevice myController { get; set; }
+    //    public Vector3 moveDirection;
+    public Vector3 moveDirForward;
+    public Vector3 moveDirSides;
     public float heightValue;
-	//	private Vector3 storeDir;
-	private Vector3 directionPos;
-	//	public Transform cameraTrans;
-	public int playerNum;
-	public float turnSpeed = 4f;
-	//	public float walkSpeed = 2;
-	public float maxDashTime = 1.0f;
-	public float dashSpeed = 4.0f;
-	public float dashStopSpeed = 0.1f;
+    //	private Vector3 storeDir;
+    private Vector3 directionPos;
+    //	public Transform cameraTrans;
+    public int playerNum;
+    public float turnSpeed = 4f;
+    //	public float walkSpeed = 2;
+    public float maxDashTime = 1.0f;
+    public float dashSpeed = 4.0f;
+    public float dashStopSpeed = 0.1f;
     private float initDistance;
-	public float currentDashTime;
-	//	private float currentSpeed = 0;
-	public bool isDashing;
-	private Quaternion previousRot;
-	private Rigidbody characterCtr;
-	public float curForce;
-	public float moveForce;
-	public float dashForce;
-	public float slowForce;
+    public float currentDashTime;
+    //	private float currentSpeed = 0;
+    public bool isDashing;
+    private Quaternion previousRot;
+    private Rigidbody characterCtr;
+    private Animator anim;
+    public float curForce;
+    public float moveForce;
+    public float dashForce;
+    public float slowForce;
     public float shootForce;
     public float prevMoveForce;
-	float stuckTimer;
-	public float stuckTime = .1f;
-	public enum ControlType {Keyboard, Controller, NONE};/// <summary>
+    float stuckTimer;
+    public float stuckTime = .1f;
+    public enum ControlType { Keyboard, Controller, NONE };/// <summary>
     public float forceMultiplier;
-	/// Keyboard controls are as follows: WASD to move, YGHJ to rotate, V to shoot, left shift to project aura.
-	/// </summary>
-	public ControlType controlType;
+    /// Keyboard controls are as follows: WASD to move, YGHJ to rotate, V to shoot, left shift to project aura.
+    /// </summary>
+    public ControlType controlType;
 
-	private auraGunBehavior gunBehave;
+    private auraGunBehavior gunBehave;
     public float hitStunnedTimer;
-	//	public float dragForce;
-	//	public float dashDrag;
-	//	public float stopForce;
-	//	public GameObject ringAttack;
-	//	public GameObject bounceAttack;
-	//	public GameObject StraightAttack;
+    //	public float dragForce;
+    //	public float dashDrag;
+    //	public float stopForce;
+    //	public GameObject ringAttack;
+    //	public GameObject bounceAttack;
+    //	public GameObject StraightAttack;
 
-	//ANIMATORS
-	//	public Animator XAttackAnim;
-	//	public Animator YAttackAnim;
-	//	public Animator BAttackAnim;
-	// Use this for initialization
+    //ANIMATORS
+    //	public Animator XAttackAnim;
+    //	public Animator YAttackAnim;
+    //	public Animator BAttackAnim;
+    // Use this for initialization
 
 
-	void Awake (){
+    void Awake()
+    {
 
-		instance = this;
-	}
-	void Start () {
+        instance = this;
+    }
+    void Start()
+    {
+        anim = GetComponent<Animator>();
         //prevMoveForce = moveForce;
         transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         //heightValue = transform.position.y;
-		gunBehave = GetComponent<auraGunBehavior> ();
-//		lockedOn = GetComponent<LockOnScript> ();
-		characterCtr = this.GetComponent<Rigidbody>();
-		if (InputManager.Devices.Count == 2 || (InputManager.Devices.Count == 1 && playerNum == 0)) { //two controllers or player 1 with one controller
-			controlType = ControlType.Controller;
-			myController = InputManager.Devices [playerNum];
+        gunBehave = GetComponent<auraGunBehavior>();
+        //		lockedOn = GetComponent<LockOnScript> ();
+        characterCtr = this.GetComponent<Rigidbody>();
+        if (InputManager.Devices.Count == 2 || (InputManager.Devices.Count == 1 && playerNum == 0))
+        { //two controllers or player 1 with one controller
+            controlType = ControlType.Controller;
+            myController = InputManager.Devices[playerNum];
 
-		} else {
-			controlType = ControlType.Keyboard;
-		}
-		previousRot = transform.rotation;
-		currentDashTime = maxDashTime;
-		isDashing = false;
+        }
+        else
+        {
+            controlType = ControlType.Keyboard;
+        }
+        previousRot = transform.rotation;
+        currentDashTime = maxDashTime;
+        isDashing = false;
 
-		//ANIMATORS
-		//		XAttackAnim = GetComponent<Animator>();
-		//		YAttackAnim = GetComponent<Animator>();
-		//		BAttackAnim = GetComponent<Animator>();
+        //ANIMATORS
+        //		XAttackAnim = GetComponent<Animator>();
+        //		YAttackAnim = GetComponent<Animator>();
+        //		BAttackAnim = GetComponent<Animator>();
 
-	}
+    }
 
-	public void shootSlowDown(){
+    public void shootSlowDown()
+    {
         //prevMoveForce = moveForce;
         moveForce = shootForce;
-	}
-    public void NotShot(){
+    }
+    public void NotShot()
+    {
         moveForce = prevMoveForce;
     }
 
-	// Update is called once per frame
-	void FixedUpdate () {
-  //      if (transform.position.y >= heightValue) {
-  //          transform.position = new Vector3 (transform.position.x, heightValue, transform.position.z);
-		//}
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        //      if (transform.position.y >= heightValue) {
+        //          transform.position = new Vector3 (transform.position.x, heightValue, transform.position.z);
+        //}
         //		moveDirection.y = 0;
         //myController = InputManager.Devices[playerNum];
         //if (stuckTimer <= 0) {
         if (hitStunnedTimer <= 0)
         {
             MoveCharacter();
-        } else {
+        }
+        else
+        {
             hitStunnedTimer -= Time.deltaTime;
         }
-		//} else {
-		//	characterCtr.velocity = Vector3.zero;
-		//}
-		//		storeDir = cameraTrans.right;
-		//		MyCharacterActions ();
-		//stuckTimer -= Time.deltaTime;
-		if (startButton())
+        //} else {
+        //	characterCtr.velocity = Vector3.zero;
+        //}
+        //		storeDir = cameraTrans.right;
+        //		MyCharacterActions ();
+        //stuckTimer -= Time.deltaTime;
+        if (startButton())
         {
             TwoDGameManager.player1ScoreNum = 0;
             TwoDGameManager.player2ScoreNum = 0;
             SceneManager.LoadScene("LevelSelectScreen");
-		}
-	}
+        }
+    }
+    private void Update()
+    {
+        anim.SetFloat("Velocity X", myController.LeftStick.X);
+        anim.SetFloat("Velocity Z", myController.LeftStick.Y);
+    }
 
-
-	private Vector3 OnMove() {
+    private Vector3 OnMove() {
 		if (controlType == ControlType.Controller) {
 			return new Vector3 (myController.LeftStickX, 0, myController.LeftStickY);
 		} else {

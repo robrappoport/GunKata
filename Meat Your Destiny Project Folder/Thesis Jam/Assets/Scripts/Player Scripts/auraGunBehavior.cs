@@ -221,6 +221,7 @@ public class auraGunBehavior : MonoBehaviour
 				chargeTime = 0;
 			} else {
 				if (chargeTime >= 1) {
+                    StartCoroutine(LaserShotSound());
 					laserIsFiring = true;
 					chargeTime = 0f;
 
@@ -474,6 +475,12 @@ public class auraGunBehavior : MonoBehaviour
             yield return new WaitForSeconds(myAudio.clip.length);
             myAudio.Stop();
         }*/
+    }
+
+    IEnumerator LaserShotSound()
+    {
+        Sound.me.Play(playerSounds[2], .8f, true);
+        yield return null;
     }
 
     public void SetStamina()
