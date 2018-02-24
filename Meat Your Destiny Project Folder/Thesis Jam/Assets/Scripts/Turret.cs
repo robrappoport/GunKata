@@ -9,7 +9,7 @@ public class Turret : MonoBehaviour
     public Color p1Color, p2Color, neutralColor, currentColor, uncontestableColor, unownedColor;
     public GameObject CannonballPrefab;
 	public int litSegments = 0, ownerNum = 2, timesOwned = 0, maxTimesCanBeOwned, chargeIncrementSign = 1;
-    public float startTime, repeatTime, immuneTime, uncontestableTime, spinSpeed;
+    public float startTime, repeatTime, immuneTime, uncontestableTime, keyUncontestableTime, spinSpeed;
 	public List<Renderer> SegmentsList;
 	public EZObjectPools.EZObjectPool objectPool;
 	public float charge, chargeSpeed = 1;
@@ -62,7 +62,8 @@ public class Turret : MonoBehaviour
 	void Start(){
         
         if(key){
-        TwoDGameManager.thisInstance.keyTurrets.Add(this);
+            TwoDGameManager.thisInstance.keyTurrets.Add(this);
+            uncontestableTime = keyUncontestableTime;
         }
         objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
 	}
@@ -370,6 +371,7 @@ public class Turret : MonoBehaviour
         bottomRenderer.material.color = uncontestableColor;
         CancelInvoke();
         contestable = false;
+
         Invoke("Neutralize", uncontestableTime);
 
     }
