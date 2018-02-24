@@ -59,6 +59,7 @@ public class TwoDGameManager : MonoBehaviour {
     [Header("Turret Vars")]
     public List<Turret> keyTurrets;
     bool readyToMakeNewOrb;
+    GameObject ball;
 //	GameObject audioManagerClone;
 //	public GameObject audioManagerPrefab;
 
@@ -89,6 +90,8 @@ public class TwoDGameManager : MonoBehaviour {
 
         /////////GAME INSTANTIATION OCCURS HERE/////////
         setLevel();
+        ball = FindObjectOfType<TheBallScript>().gameObject;
+        ball.SetActive(false);
 
 
 	}
@@ -138,8 +141,9 @@ public class TwoDGameManager : MonoBehaviour {
         }
 
         if(readyToMakeNewOrb){
-            FindObjectOfType<TheBallScript>().gameObject.SetActive(true);
+            ball.SetActive(true);
             readyToMakeNewOrb = false;
+
         }
     }
         public IEnumerator gameRestart ()
@@ -178,7 +182,13 @@ public class TwoDGameManager : MonoBehaviour {
     }
 
     public void OnBallDestroyed(int playerNum){
-        print("the ball has been destroyed by player1 " + (playerNum + 1));
+        foreach(Turret t in keyTurrets){
+            t.litSegments = 0;
+            t.ownerNum = 2;
+            t.CancelInvoke();
+
+            t.contestable = true;
+        }
         //
     }
     public void playerScoreUpdate ()
@@ -215,6 +225,7 @@ public class TwoDGameManager : MonoBehaviour {
     }
     void setLevel ()
     {
+        Debug.Log("What's up?");
 		SpawnPlayer1 ();
 		SpawnPlayer2 ();
     }

@@ -187,7 +187,6 @@ public class Cannonball : MonoBehaviour {
 
 		} else {
 			if (auraEntered) {
-				print ("exiting aura");
 				auraEntered = false;
 				currentCollider = null;
 				speed = startSpeed * (timeInAura + auraSpeedIncrease);

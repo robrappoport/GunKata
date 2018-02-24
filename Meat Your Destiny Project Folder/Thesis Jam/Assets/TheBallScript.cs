@@ -47,6 +47,7 @@ public class TheBallScript : MonoBehaviour {
             killingPlayer.superReady = true;
         }
         health = maxHealth;
+        TwoDGameManager.thisInstance.OnBallDestroyed(playerNum);
         gameObject.SetActive(false);
     }
 }

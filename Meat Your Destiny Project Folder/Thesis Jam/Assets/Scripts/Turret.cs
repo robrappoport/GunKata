@@ -15,6 +15,7 @@ public class Turret : MonoBehaviour
 	public float charge, chargeSpeed = 1;
     public bool charging = false, withinTimerLimits = true, isSpinning, key;
 
+    TwoDGameManager gm;
     public enum Owner { Player1, Player2, NONE };
     public Owner owner = Owner.NONE;
 
@@ -35,8 +36,11 @@ public class Turret : MonoBehaviour
 
 
 		//set emitters
+		Emitter[0] = GameObject.Find(name + "/N_Emitter");
+		Emitter[1] = GameObject.Find(name + "/E_Emitter"); 
 		charge = 0;
 		ownerNum = 2;
+        gm = FindObjectOfType<TwoDGameManager>();
 		//myShooter = GetComponentInChildren<UbhShotCtrl> ();
 		//set up segments here
 		topRenderer = transform.Find("Turret Top").GetComponent<Renderer>();
@@ -56,9 +60,6 @@ public class Turret : MonoBehaviour
     }
 
 	void Start(){
-        if(key){
-            TwoDGameManager.thisInstance.keyTurrets.Add(this);
-        }
 		objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
 	}
 
@@ -73,6 +74,11 @@ public class Turret : MonoBehaviour
             Vector3 curRotation = transform.localRotation.eulerAngles;
             transform.localRotation = Quaternion.Euler(curRotation.x, curRotation.y + spinSpeed, curRotation.z);
         }
+        if(!withinTimerLimits)
+        {
+            contestable = false;
+        }
+
        
 //        if (completelyOwned)
 //        {
@@ -95,7 +101,7 @@ public class Turret : MonoBehaviour
 		if (completelyOwned) {
 			CancelInvoke ();
 			InvokeRepeating ("Fire", repeatTime - (Time.timeSinceLevelLoad % repeatTime), repeatTime);
-			contestable = false;
+			//contestable = false;
 			//myShooter.StartShotRoutine ();
 			if (owner == Owner.Player1) {
 				if (ownerNum != 0) {
@@ -124,36 +130,41 @@ public class Turret : MonoBehaviour
 
 
 	void OnTriggerStay(Collider col){
-		if (withinTimerLimits) {
-			if (contestable) {
-				if (completelyOwned) {
-					contestable = false;
-				}
+        if (contestable) {
 
-				if (col.gameObject.GetComponent<AuraGenerator> ()) {
-					//ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
-					if (litSegments < 3) {
-						charging = true;
 
-					}
+            if (col.gameObject.GetComponent<AuraGenerator>())
+            {
+                //ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
+                if (litSegments < 3)
+                {
+                    charging = true;
 
+                }
+
+
+                if (col.gameObject.GetComponent<AuraGenerator>().auraPlayerNum == 0)
+                {
+                    owner = Owner.Player1;
+                }
+                else
+                {
+                    owner = Owner.Player2;
+                }
+                litSegments = (int)charge;
+
+                //if the intruding player is hitting the turret , increment the number of lit segments up to a max of 3
+                if (ownerNum != col.gameObject.GetComponent<AuraGenerator>().auraPlayerNum)
+                {
+
+                    chargeIncrementSign = 1;
+                }
+                else
+                {
+                    chargeIncrementSign = -1;
+                }
+            }
 			
-					if (col.gameObject.GetComponent<AuraGenerator> ().auraPlayerNum == 0) {
-						owner = Owner.Player1;
-					} else {
-						owner = Owner.Player2;
-					}
-					litSegments = (int)charge;
-
-					//if the intruding player is hitting the turret , increment the number of lit segments up to a max of 3
-					if (ownerNum != col.gameObject.GetComponent<AuraGenerator> ().auraPlayerNum) {
-
-						chargeIncrementSign = 1;
-					} else {
-						chargeIncrementSign = -1;
-					}
-				}
-			}
 		}
 	}
 
