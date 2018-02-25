@@ -19,6 +19,7 @@ public class Bullet : MonoBehaviour {
 	public float rayDist;
     private float bulletHeight;
     private float initDistance;
+    private float tempOwnerNum;
 	Rigidbody r;
 	Renderer render;
 	Vector3 velocity;
@@ -36,8 +37,8 @@ public class Bullet : MonoBehaviour {
 	public float time = 1.0f;
 	private TrailRenderer tr;
 
-    Collider currentCollider;
-    private bool auraEntered = false;
+    public Collider currentCollider;
+    public bool auraEntered = false;
 
 
 
@@ -109,26 +110,26 @@ public class Bullet : MonoBehaviour {
 		}
 	}
 	void FixedUpdate(){
-		if ((!player1AuraTriggered && prevPlayer1Triggered) || (!player2AuraTriggered && prevPlayer2Triggered)) {
-			//if (!(BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 0 && prevPlayer1Triggered) && !(BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 1 && prevPlayer2Triggered)) {
-			//	r.velocity *= -1f;
-			//}
-			r.velocity = r.velocity.normalized * fastBulletSpeed;
-		}
+		//if ((!player1AuraTriggered && prevPlayer1Triggered) || (!player2AuraTriggered && prevPlayer2Triggered)) {
+		//	//if (!(BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 0 && prevPlayer1Triggered) && !(BMan.gameObject.GetComponent<auraGunBehavior> ().playerNum == 1 && prevPlayer2Triggered)) {
+		//	//	r.velocity *= -1f;
+		//	//}
+		//	r.velocity = r.velocity.normalized * fastBulletSpeed;
+		//}
 	
 
-		if (player1AuraTriggered && player2AuraTriggered) 
-		{
-			//			this.gameObject.GetComponent<Collider> ().material.bounciness = 0f;
-			auraStop ();
-			player1AuraTriggered = false;
-			player2AuraTriggered = false;
-			return;
-		}
-		prevPlayer1Triggered = player1AuraTriggered;
-		prevPlayer2Triggered = player2AuraTriggered;
-		player1AuraTriggered = false;
-		player2AuraTriggered = false;
+		//if (player1AuraTriggered && player2AuraTriggered) 
+		//{
+		//	//			this.gameObject.GetComponent<Collider> ().material.bounciness = 0f;
+		//	auraStop ();
+		//	player1AuraTriggered = false;
+		//	player2AuraTriggered = false;
+		//	return;
+		//}
+		//prevPlayer1Triggered = player1AuraTriggered;
+		//prevPlayer2Triggered = player2AuraTriggered;
+		//player1AuraTriggered = false;
+		//player2AuraTriggered = false;
 
         AuraCheck();
 
@@ -138,34 +139,117 @@ public class Bullet : MonoBehaviour {
     {
         if (currentCollider)
         {
-            if (currentCollider.bounds.Contains(transform.position))
+           
+            Debug.Log(currentCollider.GetComponent<AuraGenerator>().isSuper + "supercheck");
+            if (!currentCollider.GetComponent<AuraGenerator>().isSuper)
             {
-                timeInAura += Time.deltaTime;
-
-                switch (currentCollider.gameObject.GetComponent<AuraGenerator>().auraType)
+                if (currentCollider.bounds.Contains(transform.position))
                 {
-                    case AuraGenerator.AuraType.projection:
-                        AuraProject(currentCollider.transform);
-                        break;
-                    case AuraGenerator.AuraType.slowdown:
-                        auraSlow();
-                        break;
+                    timeInAura += Time.deltaTime;
+
+                    switch (currentCollider.gameObject.GetComponent<AuraGenerator>().auraType)
+                    {
+                        case AuraGenerator.AuraType.projection:
+                            AuraProject(currentCollider.transform);
+                            break;
+                        case AuraGenerator.AuraType.slowdown:
+                            auraSlow();
+                            break;
+                    }
                 }
+                else
+                {
+                    currentCollider = null;
+                }
+
+
+
+            }
+            else
+            {
+               
+                if (currentCollider.GetComponent<AuraGenerator>().auraPlayerNum != ownerNumber)
+                {
+                    Debug.Log(currentCollider.GetComponent<AuraGenerator>().auraPlayerNum + "owner of aura    " + ownerNumber + "owner of bullet");
+                    if (currentCollider.bounds.Contains(transform.position))
+                    {
+                        timeInAura += Time.deltaTime;
+
+                        switch (currentCollider.gameObject.GetComponent<AuraGenerator>().auraType)
+                        {
+                            case AuraGenerator.AuraType.projection:
+                                AuraProject(currentCollider.transform);
+                                break;
+                            case AuraGenerator.AuraType.slowdown:
+                                auraSlow();
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        currentCollider = null;
+                    }
+
+
+                }
+                else
+                {
+                    currentCollider = null;
+                }
+
             }
 
         }
         else
         {
+           
             if (auraEntered)
             {
-                tr.time += (time + timeInAura + auraBulletSpeedIncrease);
+                    tr.time += (time + timeInAura + auraBulletSpeedIncrease);
 
-                bulletSpeed = bulletStartSpeed * (timeInAura + auraBulletSpeedIncrease);
+                    bulletSpeed = bulletStartSpeed * (timeInAura + auraBulletSpeedIncrease);
 
-                r.velocity = r.velocity.normalized * bulletSpeed;
+                    r.velocity = r.velocity.normalized * bulletSpeed;
 
             }
         }
+            
+
+        //if (currentCollider)
+        //{
+        //    if (currentCollider.bounds.Contains(transform.position))
+        //    {
+        //        timeInAura += Time.deltaTime;
+
+        //        switch (currentCollider.gameObject.GetComponent<AuraGenerator>().auraType)
+        //        {
+        //            case AuraGenerator.AuraType.projection:
+        //                AuraProject(currentCollider.transform);
+        //                break;
+        //            case AuraGenerator.AuraType.slowdown:
+        //                auraSlow();
+        //                break;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        currentCollider = null;
+        //    }
+
+        //}
+        //else
+        //{
+        //    if (auraEntered)
+        //    {
+                
+                //tr.time += (time + timeInAura + auraBulletSpeedIncrease);
+
+                //bulletSpeed = bulletStartSpeed * (timeInAura + auraBulletSpeedIncrease);
+
+                //r.velocity = r.velocity.normalized * bulletSpeed;
+
+        //    }
+        //}
 
     }
 

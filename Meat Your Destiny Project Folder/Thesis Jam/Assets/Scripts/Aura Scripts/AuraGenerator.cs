@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AuraGenerator : MonoBehaviour {
+public class 
+AuraGenerator : MonoBehaviour {
     public float auraScaleMin;
     private float auraScaleCurrent;
     public float auraGrowthRate;
@@ -12,6 +13,7 @@ public class AuraGenerator : MonoBehaviour {
     public float auraCurLife;
     public AuraType auraType;
 	public GameObject ps;
+    public bool isSuper;
 
 	// Use this for initialization
 	void Start () {
@@ -89,28 +91,41 @@ public class AuraGenerator : MonoBehaviour {
             auraCurLife = auraLifeTime;
             Destroy(gameObject);
         }
-        if (auraCurLife > (.98f * auraLifeTime))
-        {
+        if (!isSuper){
+            if (auraCurLife > (.98f * auraLifeTime))
+            {
 
-            gameObject.transform.localScale = Vector3.Lerp(gameObject.transform.localScale, new Vector3 (gameObject.transform.localScale.x+1, gameObject.transform.localScale.y+1, gameObject.transform.localScale.z+1), auraCurLife/auraLifeTime);
+                gameObject.transform.localScale = Vector3.Lerp(gameObject.transform.localScale, new Vector3(gameObject.transform.localScale.x + 1, gameObject.transform.localScale.y + 1, gameObject.transform.localScale.z + 1), auraCurLife / auraLifeTime);
 
+            }
         }
+        else
+        {
+            if (auraCurLife > (.10f * auraLifeTime))
+            {
+
+                gameObject.transform.localScale = Vector3.Lerp(gameObject.transform.localScale, new Vector3(0,0,0), auraCurLife / auraLifeTime);
+
+            } 
+        }
+
+
 	}
 
-	void OnTriggerEnter(Collider col){
-		if (GetComponent<MeshDeformer> () && col.GetComponent<Rigidbody>()) {
-		//	Deform (col, 6, .5f);
-		}
+//	void OnTriggerEnter(Collider col){
+//		if (GetComponent<MeshDeformer> () && col.GetComponent<Rigidbody>()) {
+//		//	Deform (col, 6, .5f);
+//		}
 
-		//		MakeParticles (col, true);
-	}
-	void OnTriggerExit(Collider col){
-//		MakeParticles (col, false);
-		if (GetComponent<MeshDeformer> () && col.GetComponent<Rigidbody>()) {
-		//	Deform (col, 6, .5f);
-		}
+//		//		MakeParticles (col, true);
+//	}
+//	void OnTriggerExit(Collider col){
+////		MakeParticles (col, false);
+	//	if (GetComponent<MeshDeformer> () && col.GetComponent<Rigidbody>()) {
+	//	//	Deform (col, 6, .5f);
+	//	}
 	
-	}
+	//}
 
 //	void Deform(Collider col){
 //		if (GetComponent<MeshDeformer> ()) {
@@ -157,9 +172,9 @@ public class AuraGenerator : MonoBehaviour {
         slowdown, projection
     }
 
-    public void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log("we done had a collision");
-    }
+    //public void OnCollisionEnter(Collision collision)
+    //{
+    //    Debug.Log("we done had a collision");
+    //}
 }
 

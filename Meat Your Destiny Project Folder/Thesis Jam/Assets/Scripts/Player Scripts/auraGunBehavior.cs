@@ -53,6 +53,7 @@ public class auraGunBehavior : MonoBehaviour
 
     [Header("Super Vars")]
     public bool superReady;
+    public float tempSuperAuraGrowthRate;
 
     [Header("Charge Shot Vars")]
     public float buttonDownTime;
@@ -316,91 +317,109 @@ public class auraGunBehavior : MonoBehaviour
         }
 
         if (myCont.secondaryFireUp())
-		{print ("projecting aura");
+           {
             if (isProjecting)
             {
-                sprAura.SetActive(false);
-                isProjecting = false;
-                AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position,
-                            Quaternion.Euler(0, 0, 0))
-                    .GetComponent<AuraGenerator>();
-                aura.Init(playerNum, tempAuraScaleCurrent);
-                tempAuraScaleCurrent = tempAuraScaleMin;
-                sprAura.transform.localScale = new Vector3(1, 1, 1);
-                sprAura.transform.localScale *= tempAuraScaleCurrent;
+               
+
+                    sprAura.SetActive(false);
+                    isProjecting = false;
+                    AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position,
+                                Quaternion.Euler(0, 0, 0))
+                        .GetComponent<AuraGenerator>();
+                    aura.Init(playerNum, tempAuraScaleCurrent);
+                if (superReady)
+                {
+                    aura.isSuper = true;
+                    superReady = false;
+                }
+                    tempAuraScaleCurrent = tempAuraScaleMin;
+                    sprAura.transform.localScale = new Vector3(1, 1, 1);
+                    sprAura.transform.localScale *= tempAuraScaleCurrent;
+
+              
+
             }
         }
 
         if (curStamina > 0)
         {
             
+            if (!superReady){
+                if (myCont.secondaryFire() && isProjecting)
+                {
+                    curStamina -= staminaRate;
+                    timeElapsed += Time.deltaTime * tempAuraGrowthRate;
+                    SetStamina();
+                    if (curStamina <= 0)
+                    {
+                        curStamina = 0;
+                        isExhausted = true;
+                        isProjecting = false;
+                        pressedWhileExhausted = true;
+                        isContracting = true;
+                        sprAura.SetActive(false);
+                    }
+                    tempAuraScaleCurrent += tempAuraGrowthRate * Time.deltaTime;
+                    if (tempAuraScaleCurrent >= 1f)
+                    {
+                        tempAuraScaleCurrent = 1f;
+                    }
+                    sprAura.transform.localScale = new Vector3(1, 1, 1);
+                    sprAura.transform.localScale *= tempAuraScaleCurrent;
 
-            if (myCont.secondaryFire() && isProjecting/* && !isExhausted && !isContracting*/)
-            {
-                curStamina -= staminaRate;
-                timeElapsed += Time.deltaTime * tempAuraGrowthRate;
-                SetStamina();
-                if (curStamina <= 0)
-                {
-                    curStamina = 0;
-                    isExhausted = true;
-                    isProjecting = false;
-                    pressedWhileExhausted = true;
-                    isContracting = true;
-                    sprAura.SetActive(false);
+                    //AuraObj.transform.localScale = Vector3.Lerp(auraInitScale,
+                    //auraBaseScale * auraMultiplier, timeElapsed / duration);
                 }
-                tempAuraScaleCurrent += tempAuraGrowthRate * Time.deltaTime;
-                if (tempAuraScaleCurrent >= 1f)
-                {
-                    tempAuraScaleCurrent = 1f;
-                }
-                sprAura.transform.localScale = new Vector3(1, 1, 1);
-                sprAura.transform.localScale *= tempAuraScaleCurrent;
-               
-                //AuraObj.transform.localScale = Vector3.Lerp(auraInitScale,
-                //auraBaseScale * auraMultiplier, timeElapsed / duration);
+
+                /*if (isExhausted){
+                    //recharge
+                    curStamina += staminaRate;
+                    SetStamina();
+                    if (curStamina >= staminaTotal / 2f){
+                        isExhausted = false;
+                    }
+                }*/
+
+                //auraInitScale = AuraObj.transform.localScale;
             }
+            else
+            {
+                if (myCont.secondaryFire() && isProjecting)
+                {
+                    curStamina = staminaTotal;
+                    timeElapsed += Time.deltaTime * tempSuperAuraGrowthRate;
+                    SetStamina();
 
-            /*if (isExhausted){
+                    tempAuraScaleCurrent += tempSuperAuraGrowthRate * Time.deltaTime;
+                    if (tempAuraScaleCurrent >= 1000f)
+                    {
+                        tempAuraScaleCurrent = 1000f;
+                    }
+                    sprAura.transform.localScale = new Vector3(1, 1, 1);
+                    sprAura.transform.localScale *= tempAuraScaleCurrent;
+
+                    //AuraObj.transform.localScale = Vector3.Lerp(auraInitScale,
+                    //auraBaseScale * auraMultiplier, timeElapsed / duration);
+                }
+            }
+            if (curStamina < staminaTotal && !isProjecting)
+            {
                 //recharge
-                curStamina += staminaRate;
+                //Gabe changed this
+                curStamina += staminaRate * .5f;
                 SetStamina();
-                if (curStamina >= staminaTotal / 2f){
+                //this is amount needed to be able to Aura again
+                if (curStamina >= staminaTotal)
+                {
+                    standardHalo.Play();
                     isExhausted = false;
                 }
-            }*/
+                //Contraction happens here
 
-            //auraInitScale = AuraObj.transform.localScale;
-        }
-        if (curStamina < staminaTotal && !isProjecting)
-        {
-            //recharge
-            //Gabe changed this
-            curStamina += staminaRate * .5f;
-            SetStamina();
-            //this is amount needed to be able to Aura again
-            if (curStamina >= staminaTotal)
-            {
-                standardHalo.Play();
-                isExhausted = false;
             }
-            //Contraction happens here
+            }
            
-        }
-
-        if (isContracting)
-        {
-            //auraContract();
-        }
-
-
-        //while (curStamina <= 0f || isExhausted)
-        //{
-        //    //isRecharging = true;
-        //    StartCoroutine(auraRecharge());
-        //    AuraObj.SetActive(false);
-        //    return;
-        //}
     }
 
     void auraContract()

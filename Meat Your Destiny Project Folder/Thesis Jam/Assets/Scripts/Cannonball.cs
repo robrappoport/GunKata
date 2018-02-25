@@ -171,29 +171,81 @@ public class Cannonball : MonoBehaviour {
 //	}
 
 	void AuraCheck(){
-		if (currentCollider) {
-			if (currentCollider.bounds.Contains (transform.position)) {
-				timeInAura += Time.deltaTime;
+        if (currentCollider)
+        {
 
-				switch (currentCollider.gameObject.GetComponent<AuraGenerator> ().auraType) {
-				case AuraGenerator.AuraType.projection:
-					AuraProject (currentCollider.transform);
-					break;
-				case AuraGenerator.AuraType.slowdown:
-					auraSlow ();
-					break;
-				}
-			} 
+            Debug.Log(currentCollider.GetComponent<AuraGenerator>().isSuper + "supercheck");
+            if (!currentCollider.GetComponent<AuraGenerator>().isSuper)
+            {
+                if (currentCollider.bounds.Contains(transform.position))
+                {
+                    timeInAura += Time.deltaTime;
 
-		} else {
-			if (auraEntered) {
-				auraEntered = false;
-				currentCollider = null;
-				speed = startSpeed * (timeInAura + auraSpeedIncrease);
-				r.velocity = r.velocity.normalized * speed;
-			}
-		}
+                    switch (currentCollider.gameObject.GetComponent<AuraGenerator>().auraType)
+                    {
+                        case AuraGenerator.AuraType.projection:
+                            AuraProject(currentCollider.transform);
+                            break;
+                        case AuraGenerator.AuraType.slowdown:
+                            auraSlow();
+                            break;
+                    }
+                }
+                else
+                {
+                    currentCollider = null;
+                }
 
+
+
+            }
+            else
+            {
+
+                if (currentCollider.GetComponent<AuraGenerator>().auraPlayerNum != ownerNum)
+                {
+                    Debug.Log(currentCollider.GetComponent<AuraGenerator>().auraPlayerNum + "owner of aura    " + ownerNum + "owner of bullet");
+                    if (currentCollider.bounds.Contains(transform.position))
+                    {
+                        timeInAura += Time.deltaTime;
+
+                        switch (currentCollider.gameObject.GetComponent<AuraGenerator>().auraType)
+                        {
+                            case AuraGenerator.AuraType.projection:
+                                AuraProject(currentCollider.transform);
+                                break;
+                            case AuraGenerator.AuraType.slowdown:
+                                auraSlow();
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        currentCollider = null;
+                    }
+
+
+                }
+                else
+                {
+                    currentCollider = null;
+                }
+
+            }
+
+        }
+        else
+        {
+
+            if (auraEntered)
+            {
+                auraEntered = false;
+                currentCollider = null;
+                speed = startSpeed * (timeInAura + auraSpeedIncrease);
+                r.velocity = r.velocity.normalized * speed;
+
+            }
+        }
 	}
 
     void auraSlow ()

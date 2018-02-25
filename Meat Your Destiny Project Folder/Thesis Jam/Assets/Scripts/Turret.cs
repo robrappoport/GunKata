@@ -143,35 +143,38 @@ public class Turret : MonoBehaviour
         if (contestable) {
 
 
-            if (col.gameObject.GetComponent<AuraGenerator>())
-            {
-                //ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
-                if (litSegments < 3)
+                if (col.gameObject.GetComponent<AuraGenerator>())
                 {
-                    charging = true;
-
-                }
-
-
-                if (col.gameObject.GetComponent<AuraGenerator>().auraPlayerNum == 0)
+                if (!col.gameObject.GetComponent<AuraGenerator>().isSuper)
                 {
-                    owner = Owner.Player1;
-                }
-                else 
-                {
-                    owner = Owner.Player2;
-                }
-                litSegments = (int)charge;
+                    //ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
+                    if (litSegments < 3)
+                    {
+                        charging = true;
 
-                //if the intruding player is hitting the turret , increment the number of lit segments up to a max of 3
-                if (ownerNum != col.gameObject.GetComponent<AuraGenerator>().auraPlayerNum)
-                {
+                    }
 
-                    chargeIncrementSign = 1;
-                }
-                else
-                {
-                    chargeIncrementSign = -1;
+
+                    if (col.gameObject.GetComponent<AuraGenerator>().auraPlayerNum == 0)
+                    {
+                        owner = Owner.Player1;
+                    }
+                    else
+                    {
+                        owner = Owner.Player2;
+                    }
+                    litSegments = (int)charge;
+
+                    //if the intruding player is hitting the turret , increment the number of lit segments up to a max of 3
+                    if (ownerNum != col.gameObject.GetComponent<AuraGenerator>().auraPlayerNum)
+                    {
+
+                        chargeIncrementSign = 1;
+                    }
+                    else
+                    {
+                        chargeIncrementSign = -1;
+                    }
                 }
             }
 			
@@ -358,7 +361,8 @@ public class Turret : MonoBehaviour
 
     public void Reset()
     {
-
+        Debug.Log("RESET");
+        CancelInvoke();
         ownerNum = 2;
         owner = Owner.NONE;
         neutralColor = unownedColor;
@@ -369,7 +373,6 @@ public class Turret : MonoBehaviour
         topRenderer.material.color = uncontestableColor;
         middleRenderer.material.color = uncontestableColor;
         bottomRenderer.material.color = uncontestableColor;
-        CancelInvoke();
         contestable = false;
 
         Invoke("Neutralize", uncontestableTime);
