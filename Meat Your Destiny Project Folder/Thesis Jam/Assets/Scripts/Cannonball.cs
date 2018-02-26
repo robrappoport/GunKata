@@ -204,7 +204,7 @@ public class Cannonball : MonoBehaviour {
 
                 if (currentCollider.GetComponent<AuraGenerator>().auraPlayerNum != ownerNum)
                 {
-                    Debug.Log(currentCollider.GetComponent<AuraGenerator>().auraPlayerNum + "owner of aura    " + ownerNum + "owner of bullet");
+                    //Debug.Log(currentCollider.GetComponent<AuraGenerator>().auraPlayerNum + "owner of aura    " + ownerNum + "owner of bullet");
                     if (currentCollider.bounds.Contains(transform.position))
                     {
                         timeInAura += Time.deltaTime;

@@ -35,8 +35,8 @@ public class Turret : MonoBehaviour
     void Awake(){	
 
 		//set emitters
-		Emitter[0] = GameObject.Find(name + "/N_Emitter");
-		Emitter[1] = GameObject.Find(name + "/E_Emitter"); 
+		//Emitter[0] = GameObject.Find(name + "/N_Emitter");
+		//Emitter[1] = GameObject.Find(name + "/E_Emitter"); 
 		charge = 0;
 		ownerNum = 2;
         gm = FindObjectOfType<TwoDGameManager>();
@@ -326,10 +326,12 @@ public class Turret : MonoBehaviour
 				Cannonball newBall = cannonBall.GetComponent<Cannonball> ();
 				newBall.impactPrefab = impactPrefabs [ownerNum];
 
-				if (completelyOwned) {
+				if (owner == Owner.Player1) {
                 
-					newBall.ownerNum = ownerNum;
+					newBall.ownerNum = 0;
 
+				} else if (owner == Owner.Player2) {
+					newBall.ownerNum = 1;
 				} else {
 					newBall.ownerNum = 2;
 				}

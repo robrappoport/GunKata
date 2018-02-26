@@ -170,7 +170,7 @@ public class Bullet : MonoBehaviour {
                
                 if (currentCollider.GetComponent<AuraGenerator>().auraPlayerNum != ownerNumber)
                 {
-                    Debug.Log(currentCollider.GetComponent<AuraGenerator>().auraPlayerNum + "owner of aura    " + ownerNumber + "owner of bullet");
+					//Debug.Log(currentCollider.GetComponent<AuraGenerator>().auraPlayerNum + "owner of aura    " + ownerNumber + "owner of bullet");
                     if (currentCollider.bounds.Contains(transform.position))
                     {
                         timeInAura += Time.deltaTime;
