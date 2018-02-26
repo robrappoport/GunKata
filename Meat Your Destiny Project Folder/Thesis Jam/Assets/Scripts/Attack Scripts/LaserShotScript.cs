@@ -77,11 +77,15 @@ public class LaserShotScript : MonoBehaviour {
            
         }
         //retract the line
-        //else
-        //{
-        //    endPos.localPosition = Vector3.Lerp(endPos.localPosition, startPos.localPosition, Time.deltaTime * extendDuration);
-        //    //Destroy(this.gameObject);
-        //}
+        else
+        {
+            timeOn = 0f;
+            //endPos.localPosition = Vector3.Lerp(endPos.localPosition, startPos.localPosition, Time.deltaTime * extendDuration);
+            //if (endPos.localPosition == startPos.localPosition)
+            //{
+            //    Destroy(gameObject);
+            //}
+        }
         lineRend.SetPosition(0, startPos.position);
         lineRend.SetPosition(1, endPos.position);
         //pan the texture for cool effect//

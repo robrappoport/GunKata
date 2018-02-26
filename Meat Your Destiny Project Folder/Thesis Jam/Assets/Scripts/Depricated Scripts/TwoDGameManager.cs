@@ -60,6 +60,7 @@ public class TwoDGameManager : MonoBehaviour {
     public List<Turret> keyTurrets;
     bool readyToMakeNewOrb;
     GameObject ball;
+    public Vector3 ballLoc;
 //	GameObject audioManagerClone;
 //	public GameObject audioManagerPrefab;
 
@@ -91,6 +92,10 @@ public class TwoDGameManager : MonoBehaviour {
         /////////GAME INSTANTIATION OCCURS HERE/////////
         setLevel();
         ball = FindObjectOfType<TheBallScript>().gameObject;
+
+        ballLoc = ball.transform.position;
+
+
         ball.SetActive(false);
 
 
@@ -132,7 +137,7 @@ public class TwoDGameManager : MonoBehaviour {
         playerWin();
         for (int i = 0; i < keyTurrets.Count; i++)
         {
-            if(!keyTurrets[i].completelyOwned){
+            if(keyTurrets[i].ownerNum == 2){
                 readyToMakeNewOrb = false;
                 break;
             }else{

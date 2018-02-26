@@ -15,7 +15,6 @@ public class Turret : MonoBehaviour
 	public float charge, chargeSpeed = 1;
     public bool charging = false, withinTimerLimits = true, isSpinning, key;
 
-    TwoDGameManager gm;
     public enum Owner { Player1, Player2, NONE };
     public Owner owner = Owner.NONE;
 
@@ -39,7 +38,6 @@ public class Turret : MonoBehaviour
 		//Emitter[1] = GameObject.Find(name + "/E_Emitter"); 
 		charge = 0;
 		ownerNum = 2;
-        gm = FindObjectOfType<TwoDGameManager>();
 		//myShooter = GetComponentInChildren<UbhShotCtrl> ();
 		//set up segments here
 		topRenderer = transform.Find("Turret Top").GetComponent<Renderer>();
@@ -57,6 +55,7 @@ public class Turret : MonoBehaviour
         unownedColor = neutralColor;
         //InvokeRepeating("Fire", startTime, repeatTime);
         //amountOwnedIncrease = false;
+
     }
 
 	void Start(){
@@ -64,6 +63,7 @@ public class Turret : MonoBehaviour
         if(key){
             TwoDGameManager.thisInstance.keyTurrets.Add(this);
             uncontestableTime = keyUncontestableTime;
+           
         }
         objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
 	}
@@ -376,7 +376,7 @@ public class Turret : MonoBehaviour
         middleRenderer.material.color = uncontestableColor;
         bottomRenderer.material.color = uncontestableColor;
         contestable = false;
-
+        bool turnOff = GetComponent<BallArrayScript>().on = false;
         Invoke("Neutralize", uncontestableTime);
 
     }
@@ -419,25 +419,14 @@ public class Turret : MonoBehaviour
     {
         if (litSegments > 2)
         {
+            
+            if (key)
+            {
+                bool turnOn = GetComponent<BallArrayScript>().on = true;
+            }
             if (!completelyOwned)
             {
-
-
-//                //destroy all unowned cannonballs
-//                foreach (Cannonball c in cannonBallList)
-//                {
-//                    if (c)
-//                    {
-//                        if (c.ownerNum != ownerNum)
-//                        {
-//
-//                            Destroy(c.gameObject);
-//                        }
-//                    }
-//                    else
-//                    {
-//                    }
-//                }
+              
                 completelyOwned = true;
                 //contestable = false;
                 //Invoke("Reset", immuneTime);
