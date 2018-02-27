@@ -426,7 +426,7 @@ public class Turret : MonoBehaviour
                 bool turnOn = GetComponent<BallArrayScript>().on = true;
                 if (hasAddedToBall == false)
                 {
-                    TwoDGameManager.thisInstance.ballTime += 10f;
+                    TwoDGameManager.thisInstance.ballTime += 2f;
                     hasAddedToBall = true;
                 }
                
