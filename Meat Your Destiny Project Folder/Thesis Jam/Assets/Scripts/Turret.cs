@@ -13,7 +13,7 @@ public class Turret : MonoBehaviour
 	public List<Renderer> SegmentsList;
 	public EZObjectPools.EZObjectPool objectPool;
 	public float charge, chargeSpeed = 1;
-    public bool charging = false, withinTimerLimits = true, isSpinning, key;
+    public bool charging = false, withinTimerLimits = true, isSpinning, key, hasAddedToBall = false;
 
     public enum Owner { Player1, Player2, NONE };
     public Owner owner = Owner.NONE;
@@ -377,6 +377,7 @@ public class Turret : MonoBehaviour
         bottomRenderer.material.color = uncontestableColor;
         contestable = false;
         bool turnOff = GetComponent<BallArrayScript>().on = false;
+        hasAddedToBall = false;
         Invoke("Neutralize", uncontestableTime);
 
     }
@@ -423,6 +424,12 @@ public class Turret : MonoBehaviour
             if (key)
             {
                 bool turnOn = GetComponent<BallArrayScript>().on = true;
+                if (hasAddedToBall == false)
+                {
+                    TwoDGameManager.thisInstance.ballTime += 10f;
+                    hasAddedToBall = true;
+                }
+               
             }
             if (!completelyOwned)
             {

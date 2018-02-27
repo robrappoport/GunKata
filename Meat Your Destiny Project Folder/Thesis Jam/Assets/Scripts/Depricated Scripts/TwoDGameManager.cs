@@ -56,11 +56,16 @@ public class TwoDGameManager : MonoBehaviour {
 
     public float shakeTime = 2f, shakeWeight = .5f;
 
-    [Header("Turret Vars")]
+    [Header("SuperBall Vars")]
     public List<Turret> keyTurrets;
     bool readyToMakeNewOrb;
     GameObject ball;
     public Vector3 ballLoc;
+    public float ballTime;
+    public float ballTimeTotal;
+    public bool ballDestroyed = false;
+    public int zoneIndex;
+    public float zoneTimeElapsed;
 //	GameObject audioManagerClone;
 //	public GameObject audioManagerPrefab;
 
@@ -110,6 +115,7 @@ public class TwoDGameManager : MonoBehaviour {
 
     void Update()
     {
+        StartCoroutine(BallTimer());
         player1Start.position = player1Spawns[index1];
         player2Start.position = player2Spawns[index2];
         playerScoreUpdate();
@@ -135,19 +141,19 @@ public class TwoDGameManager : MonoBehaviour {
 
         }
         playerWin();
-        for (int i = 0; i < keyTurrets.Count; i++)
-        {
-            if(keyTurrets[i].ownerNum == 2){
-                readyToMakeNewOrb = false;
-                break;
-            }else{
-                readyToMakeNewOrb = true;
-            }
-        }
+        //for (int i = 0; i < keyTurrets.Count; i++)
+        //{
+        //    if(keyTurrets[i].ownerNum == 2){
+        //        readyToMakeNewOrb = false;
+        //        break;
+        //    }else{
+        //        //readyToMakeNewOrb = true;
+        //    }
+        //}
 
         if(readyToMakeNewOrb){
             ball.SetActive(true);
-            readyToMakeNewOrb = false;
+            //readyToMakeNewOrb = false;
 
         }
     }
@@ -155,7 +161,7 @@ public class TwoDGameManager : MonoBehaviour {
 	{
 		yield return new WaitForSeconds (restartTime);
         resetScore();
-		SceneManager.LoadScene("AuraVersion");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         addedScore1 = false;
         addedScore2 = false;
 	}
@@ -187,6 +193,15 @@ public class TwoDGameManager : MonoBehaviour {
     }
 
     public void OnBallDestroyed(int playerNum){
+        readyToMakeNewOrb = false;
+        if (zoneTimeElapsed > 1f)
+        {
+            zoneTimeElapsed = 1f;  
+        }
+        foreach (Turret t in zones[zoneIndex].GetComponentInChildren<SectionScript>().sectionTurret)
+        {
+            keyTurrets.Remove(t);
+        }
         foreach(Turret t in keyTurrets){
             t.Reset();
         }
@@ -199,16 +214,16 @@ public class TwoDGameManager : MonoBehaviour {
 
         player1ScoreNum = Mathf.Clamp(player1ScoreNum, 0, maxScore);
         player2ScoreNum = Mathf.Clamp(player2ScoreNum, 0, maxScore);
-        float scale1 = remapRange(player1ScoreNum, 0, maxScore, 1, maxScale);
-        float scale2 = remapRange(player2ScoreNum, 0, maxScore, 1, maxScale);
+        //float scale1 = remapRange(player1ScoreNum, 0, maxScore, 1, maxScale);
+        //float scale2 = remapRange(player2ScoreNum, 0, maxScore, 1, maxScale);
         displayedPlayer1Score = Mathf.Lerp(displayedPlayer1Score, player1ScoreNum / maxScore, Time.deltaTime * lerpTime);
         displayedPlayer2Score = Mathf.Lerp(displayedPlayer2Score, player2ScoreNum / maxScore, Time.deltaTime * lerpTime);
-        scale1 = Mathf.Clamp(scale1, 1, maxScale);
-        scale2 = Mathf.Clamp(scale2, 1, maxScale);
+        //scale1 = Mathf.Clamp(scale1, 1, maxScale);
+        //scale2 = Mathf.Clamp(scale2, 1, maxScale);
         player1Score.fillAmount = (displayedPlayer1Score);
         player2Score.fillAmount = (displayedPlayer2Score);
-        Vector3 newScale1 = new Vector3(scale1, scale1, scale1);
-        Vector3 newScale2 = new Vector3(scale2, scale2, scale2);
+        //Vector3 newScale1 = new Vector3(scale1, scale1, scale1);
+        //Vector3 newScale2 = new Vector3(scale2, scale2, scale2);
         //player1.transform.localScale = Vector3.Lerp((player1.transform.localScale), (newScale1), Time.deltaTime * lerpTime);
         //player2.transform.localScale = Vector3.Lerp((player2.transform.localScale), (newScale2), Time.deltaTime * lerpTime);
 
@@ -226,7 +241,7 @@ public class TwoDGameManager : MonoBehaviour {
     }
     void setLevel ()
     {
-        Debug.Log("What's up?");
+        //Debug.Log("What's up?");
 		SpawnPlayer1 ();
 		SpawnPlayer2 ();
     }
@@ -321,11 +336,31 @@ public class TwoDGameManager : MonoBehaviour {
         player2ScoreNum = 0f;
     }
 
+    public IEnumerator BallTimer ()
+    {
+        if (!readyToMakeNewOrb)
+        {
+            ballTime += Time.deltaTime;
+        }
+       
+        if (ballTime >= ballTimeTotal)
+        {
+            ballTime = 0f;
+            readyToMakeNewOrb = true;
+        }
+        yield return null;
+    }
     public IEnumerator TimerCo ()
     {
         for (int i = 0; i < zones.Length; i++)
         {
-            yield return new WaitForSeconds(zones[i].zoneTime);
+           zoneTimeElapsed = zones[i].zoneTime;
+            zoneIndex = i;
+            while (zoneTimeElapsed > 0)
+            {
+                zoneTimeElapsed -= Time.deltaTime;
+                yield return null;
+            }
             if (index1 < player1Spawns.Length-1)
             {
                 index1++;
@@ -343,12 +378,12 @@ public class TwoDGameManager : MonoBehaviour {
         }
     }
 
-    public static float remapRange(float oldValue, float oldMin, float oldMax, float newMin, float newMax)
-    {
-        float newValue = 0;
-        float oldRange = (oldMax - oldMin);
-        float newRange = (newMax - newMin);
-        newValue = (((oldValue - oldMin) * newRange) / oldRange) + newMin;
-        return newValue;
-    }
+    //public static float remapRange(float oldValue, float oldMin, float oldMax, float newMin, float newMax)
+    //{
+    //    float newValue = 0;
+    //    float oldRange = (oldMax - oldMin);
+    //    float newRange = (newMax - newMin);
+    //    newValue = (((oldValue - oldMin) * newRange) / oldRange) + newMin;
+    //    return newValue;
+    //}
 }

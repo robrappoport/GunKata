@@ -62,6 +62,7 @@ public class SectionScript : MonoBehaviour {
         for (int i = 0; i < sectionTurret.Length; i++)
         {
             sectionTurret[i].withinTimerLimits = false;
+            sectionTurret[i].key = false;
         }
         while (floor.transform.position.y > dropTotal)
         {

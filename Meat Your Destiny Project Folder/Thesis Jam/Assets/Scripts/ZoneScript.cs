@@ -6,4 +6,7 @@ public class ZoneScript : MonoBehaviour {
 
     public SectionScript[] sections;
     public float zoneTime;
+
 }
+
+
