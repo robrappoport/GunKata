@@ -138,8 +138,9 @@ public class AuraCharacterController : PlayControl
     }
     private void Update()
     {
-        anim.SetFloat("Velocity X", myController.LeftStick.X);
-        anim.SetFloat("Velocity Z", myController.LeftStick.Y);
+		
+		anim.SetFloat("Velocity X", transform.InverseTransformDirection(OnMove()).x);
+		anim.SetFloat("Velocity Z", transform.InverseTransformDirection(OnMove()).z);
     }
 
     private Vector3 OnMove() {
