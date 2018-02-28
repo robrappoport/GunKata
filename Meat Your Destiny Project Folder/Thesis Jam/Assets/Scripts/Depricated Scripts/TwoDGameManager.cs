@@ -372,6 +372,11 @@ public class TwoDGameManager : MonoBehaviour {
 
             for (int j = 0; j < zones[i].sections.Length; j++)
             {
+				foreach (Turret t in zones[zoneIndex].GetComponentInChildren<SectionScript>().sectionTurret)
+				{
+					keyTurrets.Remove(t);
+				}
+
                 zones[i].sections[j].Drop();
 
             }
