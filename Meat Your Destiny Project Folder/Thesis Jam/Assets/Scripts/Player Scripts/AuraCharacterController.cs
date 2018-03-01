@@ -268,7 +268,7 @@ public class AuraCharacterController : PlayControl
 		if (controlType == ControlType.Controller) {
 			return (myController.LeftTrigger.WasPressed);
 		} else {
-			print ("spawning aura");
+			//print ("spawning aura");
 			return (Input.GetKeyDown (KeyCode.X));
 
 		}	

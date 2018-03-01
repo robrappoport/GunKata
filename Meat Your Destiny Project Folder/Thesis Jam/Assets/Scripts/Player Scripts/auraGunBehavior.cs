@@ -10,7 +10,7 @@ public class auraGunBehavior : MonoBehaviour
     //Drag in the Bullet Prefab from the Component Inspector.
     public GameObject RyuBullet;
     public GameObject LaserBullet;
-    public GameObject AuraObj;
+    //public GameObject AuraObj;
     public GameObject ProjectAuraObj;
     public GameObject SlowAuraobj;
 
@@ -45,11 +45,27 @@ public class auraGunBehavior : MonoBehaviour
     public bool pressedWhileExhausted;
     public ParticleSystem standardHalo, DamagedHalo;
 
-    [Header ("SPRITE AURA VARS")]
+    [Header("NEW AURA VERSION VARS")]
+    public float[] auraLevelCharge;
+    public float auraLevelChargeMax;
+    int heldCharges;
+    public Image[] auraStamImgArray;
+    bool currentlyLerpingAuraSize = false;
+    public float lerpDur;
+    float currentLerpTimeElapsed;
     public GameObject sprAura;
+    public GameObject AuraObj;
     public float tempAuraScaleMin;
     private float tempAuraScaleCurrent;
     public float tempAuraGrowthRate;
+    public float refractoryPeriod;
+    public int auraIndex;
+
+    //[Header ("SPRITE AURA VARS")]
+    //public GameObject sprAura;
+    //public float tempAuraScaleMin;
+    //private float tempAuraScaleCurrent;
+    //public float tempAuraGrowthRate;
 
     [Header("Super Vars")]
     public bool superReady;
@@ -109,12 +125,15 @@ public class auraGunBehavior : MonoBehaviour
         shootTime = 0;
         //      Debug.Log ("Player Number"+playerNum);
         CurrentBullets = MaxBullets;
-
+        refractoryPeriod = 0f;
 
     }
+
     // Update is called once per frame
     void Update()
     {
+        AuraSys();
+        SetStamina(); 
 
         //AURA CHANGER
         if (myCont.yButton())
@@ -154,8 +173,7 @@ public class auraGunBehavior : MonoBehaviour
         {
             return;
         }
-
-        auraProject();
+        //auraProject();
 
 
         //if (myCont.secondaryFire () && !isExhausted) {
@@ -293,177 +311,293 @@ public class auraGunBehavior : MonoBehaviour
       
     }
 
-    void auraProject()
+    int activeAura()
     {
-       
 
-        if (myCont.secondaryFireDown() && 100 - curStamina < .00000001/*&& !isExhausted && !isProjecting && !isContracting*/)
+        for (int i = 0; i < auraLevelCharge.Length; i++)
         {
+            if (auraLevelCharge[i] >= 100f)
+            {
+                return i;
+            }
+           
+        }
+        return -1;
+    }
 
-			
-            standardHalo.Clear();
-            standardHalo.Pause();
-            DamagedHalo.Play();
-            StartCoroutine(AuraSound());
-            //AuraObj.transform.position = transform.position;
-            isProjecting = true;
-            //AuraObj.SetActive(true);
-            timeElapsed = 0f;
-            //auraInitScale = AuraObj.transform.localScale;
-            pressedWhileExhausted = false;
+    void AuraSys()
+    {
+        Debug.Log(heldCharges);
+        //Debug.Log(activeAura() + "active aura");
+        //if (!myCont.secondaryFire())
+        //{
+        //    refractoryPeriod -= Time.deltaTime;
+        //    if (refractoryPeriod <= 0f)
+        //    {
+        //        refractoryPeriod = 0f;
+        //    }
+        //}
+      
+        // when we press the left trigger and you have at least 1 energy bar
+        if (myCont.secondaryFireDown() && auraIndex > -1)
+        {
+            auraIndex = activeAura();
+            Debug.Log(auraIndex + "aura index" + Time.time + "at time");
+            //turn on the aura outline and set its scale to minimum
             tempAuraScaleCurrent = tempAuraScaleMin;
             sprAura.SetActive(true);
-
         }
 
-        if (myCont.secondaryFireUp())
-           {
-            if (isProjecting)
+        //while we hold down the left trigger and we still have at least 1 energy bar 
+        if (myCont.secondaryFire() && auraIndex > -1 && auraIndex < auraLevelCharge.Length)
+        {
+            // if you have just pressed the button i.e. have no current aura charges, then quickly reduce the value of the current float to 0
+            if (heldCharges == 0)
             {
+                auraLevelCharge[auraIndex] -= Time.deltaTime * 50f;
+            }
+            //otherwise, reduce the value by this set slower amount
+            else
+            {
+                auraLevelCharge[auraIndex] -= Time.deltaTime * 20f;
+            }
+            //if the current float we are on becomes less than or equal to zero, 
+            if (auraLevelCharge[auraIndex] <= 0)
+            {
+                auraLevelCharge[auraIndex] = 0;  //set it to zero for sanity
+                heldCharges++;
+                if (auraIndex < auraLevelCharge.Length-1)
+                {
+                    auraIndex++; 
+                }
+               
+               
+                //start lerping the aura outline
+                currentlyLerpingAuraSize = true;
+                currentLerpTimeElapsed = 0f;
+            }
+
+            //lerp the aura outline over a period of time by the number of held charges
+            if (currentlyLerpingAuraSize)
+            {
+                currentLerpTimeElapsed += Time.deltaTime;
+                sprAura.transform.localScale = Vector3.Lerp(Mathf.Pow(1.1f, heldCharges)
+                                                    * Vector3.one, Mathf.Pow(1.1f, heldCharges + 1)
+                                                    * Vector3.one, currentLerpTimeElapsed / lerpDur);
+                if (currentLerpTimeElapsed >= lerpDur)
+                {
+                    currentlyLerpingAuraSize = false;
+                }
+            }
+
+        }
+        // when you release the button, if the current aura charge is less than 100 but not zero, lerp it back to 100 very quickly
+        if (myCont.secondaryFireUp())
+        {
+            //refractoryPeriod = 5f;
+            heldCharges = 0;
+            sprAura.SetActive(false);
+            AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position,
+                                  Quaternion.Euler(0, 0, 0))
+                          .GetComponent<AuraGenerator>();
+            aura.Init(playerNum, tempAuraScaleCurrent);
+            tempAuraScaleCurrent = tempAuraScaleMin;
+            sprAura.transform.localScale = new Vector3(1, 1, 1);
+            if (auraLevelCharge[auraIndex] > 0f && auraLevelCharge[auraIndex] < 100f)
+            {
+                auraLevelCharge[auraIndex] = Mathf.Lerp(auraLevelCharge[auraIndex], 100f, (2 / 1));
+            }
+        }
+    }
+    public void SetStamina()
+    {
+        for (int i = 0; i < auraStamImgArray.Length; i++)
+        {
+            if (i < activeAura())
+            {
+                auraStamImgArray[i].fillAmount = 0f;
+            }
+            else
+                auraStamImgArray[i].fillAmount = 1f;
+            if (i == activeAura() - 1)
+            {
+                auraStamImgArray[i].fillAmount = auraLevelCharge[auraIndex] / auraLevelChargeMax;
+            }
+        }
+    }
+
+
+    //void auraProject()
+    //{
+       
+
+    //    if (myCont.secondaryFireDown() && 100 - curStamina < .00000001/*&& !isExhausted && !isProjecting && !isContracting*/)
+    //    {
+
+			
+    //        standardHalo.Clear();
+    //        standardHalo.Pause();
+    //        DamagedHalo.Play();
+    //        StartCoroutine(AuraSound());
+    //        //AuraObj.transform.position = transform.position;
+    //        isProjecting = true;
+    //        //AuraObj.SetActive(true);
+    //        timeElapsed = 0f;
+    //        //auraInitScale = AuraObj.transform.localScale;
+    //        pressedWhileExhausted = false;
+    //        tempAuraScaleCurrent = tempAuraScaleMin;
+    //        sprAura.SetActive(true);
+
+    //    }
+
+    //    if (myCont.secondaryFireUp())
+    //       {
+    //        if (isProjecting)
+    //        {
                
 
-                    sprAura.SetActive(false);
-                    isProjecting = false;
-                    AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position,
-                                Quaternion.Euler(0, 0, 0))
-                        .GetComponent<AuraGenerator>();
-                    aura.Init(playerNum, tempAuraScaleCurrent);
-                if (superReady)
-                {
-                    aura.isSuper = true;
-                    superReady = false;
-                }
-                    tempAuraScaleCurrent = tempAuraScaleMin;
-                    sprAura.transform.localScale = new Vector3(1, 1, 1);
-                    sprAura.transform.localScale *= tempAuraScaleCurrent;
+    //                sprAura.SetActive(false);
+    //                isProjecting = false;
+    //                AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position,
+    //                            Quaternion.Euler(0, 0, 0))
+    //                    .GetComponent<AuraGenerator>();
+    //                aura.Init(playerNum, tempAuraScaleCurrent);
+    //            if (superReady)
+    //            {
+    //                aura.isSuper = true;
+    //                superReady = false;
+    //            }
+    //                tempAuraScaleCurrent = tempAuraScaleMin;
+    //                sprAura.transform.localScale = new Vector3(1, 1, 1);
+    //                sprAura.transform.localScale *= tempAuraScaleCurrent;
 
               
 
-            }
-        }
-
-        if (curStamina > 0)
-        {
+    //        }
+    //    }
+    
+    //    if (curStamina > 0)
+    //    {
             
-            if (!superReady){
-                if (myCont.secondaryFire() && isProjecting)
-                {
-                    curStamina -= staminaRate;
-                    timeElapsed += Time.deltaTime * tempAuraGrowthRate;
-                    SetStamina();
-                    if (curStamina <= 0)
-                    {
-                        curStamina = 0;
-                        isExhausted = true;
-                        isProjecting = false;
-                        pressedWhileExhausted = true;
-                        isContracting = true;
-                        sprAura.SetActive(false);
-                    }
-                    tempAuraScaleCurrent += tempAuraGrowthRate * Time.deltaTime;
-                    if (tempAuraScaleCurrent >= 1f)
-                    {
-                        tempAuraScaleCurrent = 1f;
-                    }
-                    sprAura.transform.localScale = new Vector3(1, 1, 1);
-                    sprAura.transform.localScale *= tempAuraScaleCurrent;
+    //        if (!superReady){
+    //            if (myCont.secondaryFire() && isProjecting)
+    //            {
+    //                curStamina -= staminaRate;
+    //                timeElapsed += Time.deltaTime * tempAuraGrowthRate;
+    //                SetStamina();
+    //                if (curStamina <= 0)
+    //                {
+    //                    curStamina = 0;
+    //                    isExhausted = true;
+    //                    isProjecting = false;
+    //                    pressedWhileExhausted = true;
+    //                    isContracting = true;
+    //                    sprAura.SetActive(false);
+    //                }
+    //                tempAuraScaleCurrent += tempAuraGrowthRate * Time.deltaTime;
+    //                if (tempAuraScaleCurrent >= 1f)
+    //                {
+    //                    tempAuraScaleCurrent = 1f;
+    //                }
+    //                sprAura.transform.localScale = new Vector3(1, 1, 1);
+    //                sprAura.transform.localScale *= tempAuraScaleCurrent;
 
-                    //AuraObj.transform.localScale = Vector3.Lerp(auraInitScale,
-                    //auraBaseScale * auraMultiplier, timeElapsed / duration);
-                }
+    //                //AuraObj.transform.localScale = Vector3.Lerp(auraInitScale,
+    //                //auraBaseScale * auraMultiplier, timeElapsed / duration);
+    //            }
 
-                /*if (isExhausted){
-                    //recharge
-                    curStamina += staminaRate;
-                    SetStamina();
-                    if (curStamina >= staminaTotal / 2f){
-                        isExhausted = false;
-                    }
-                }*/
+    //            /*if (isExhausted){
+    //                //recharge
+    //                curStamina += staminaRate;
+    //                SetStamina();
+    //                if (curStamina >= staminaTotal / 2f){
+    //                    isExhausted = false;
+    //                }
+    //            }*/
 
-                //auraInitScale = AuraObj.transform.localScale;
-            }
-            else
-            {
-                if (myCont.secondaryFire() && isProjecting)
-                {
-                    curStamina = staminaTotal;
-                    timeElapsed += Time.deltaTime * tempSuperAuraGrowthRate;
-                    SetStamina();
+    //            //auraInitScale = AuraObj.transform.localScale;
+    //        }
+    //        else
+    //        {
+    //            if (myCont.secondaryFire() && isProjecting)
+    //            {
+    //                curStamina = staminaTotal;
+    //                timeElapsed += Time.deltaTime * tempSuperAuraGrowthRate;
+    //                SetStamina();
 
-                    tempAuraScaleCurrent += tempSuperAuraGrowthRate * Time.deltaTime;
-                    if (tempAuraScaleCurrent >= 1000f)
-                    {
-                        tempAuraScaleCurrent = 1000f;
-                    }
-                    sprAura.transform.localScale = new Vector3(1, 1, 1);
-                    sprAura.transform.localScale *= tempAuraScaleCurrent;
+    //                tempAuraScaleCurrent += tempSuperAuraGrowthRate * Time.deltaTime;
+    //                if (tempAuraScaleCurrent >= 1000f)
+    //                {
+    //                    tempAuraScaleCurrent = 1000f;
+    //                }
+    //                sprAura.transform.localScale = new Vector3(1, 1, 1);
+    //                sprAura.transform.localScale *= tempAuraScaleCurrent;
 
-                    //AuraObj.transform.localScale = Vector3.Lerp(auraInitScale,
-                    //auraBaseScale * auraMultiplier, timeElapsed / duration);
-                }
-            }
-            if (curStamina < staminaTotal && !isProjecting)
-            {
-                //recharge
-                //Gabe changed this
-                curStamina += staminaRate * .5f;
-                SetStamina();
-                //this is amount needed to be able to Aura again
-                if (curStamina >= staminaTotal)
-                {
-                    standardHalo.Play();
-                    isExhausted = false;
-                }
-                //Contraction happens here
+    //                //AuraObj.transform.localScale = Vector3.Lerp(auraInitScale,
+    //                //auraBaseScale * auraMultiplier, timeElapsed / duration);
+    //            }
+    //        }
+    //        if (curStamina < staminaTotal && !isProjecting)
+    //        {
+    //            //recharge
+    //            //Gabe changed this
+    //            curStamina += staminaRate * .5f;
+    //            SetStamina();
+    //            //this is amount needed to be able to Aura again
+    //            if (curStamina >= staminaTotal)
+    //            {
+    //                standardHalo.Play();
+    //                isExhausted = false;
+    //            }
+    //            //Contraction happens here
 
-            }
-            }
+    //        }
+    //        }
            
-    }
+    //}
 
-    void auraContract()
-    {
-        if (curStamina <= 0f)
-        {
-            isProjecting = false;
-            timeElapsed = 0f;
-            //auraInitScale = AuraObj.transform.localScale;
-        }
-        else
-        {
-            curStamina += staminaRate * .2f;
-            SetStamina();
-            timeElapsed += Time.deltaTime;
+    //void auraContract()
+    //{
+    //    if (curStamina <= 0f)
+    //    {
+    //        isProjecting = false;
+    //        timeElapsed = 0f;
+    //        //auraInitScale = AuraObj.transform.localScale;
+    //    }
+    //    else
+    //    {
+    //        curStamina += staminaRate * .2f;
+    //        SetStamina();
+    //        timeElapsed += Time.deltaTime;
 
-            //AuraObj.transform.localScale = Vector3.Lerp(auraInitScale, auraBaseScale, timeElapsed / duration);
-            if (timeElapsed >= duration)
-            {
-                Debug.Log("Is");
-                isContracting = false;
-                //AuraObj.SetActive(false);
-            }
-        }
-    }
+    //        //AuraObj.transform.localScale = Vector3.Lerp(auraInitScale, auraBaseScale, timeElapsed / duration);
+    //        if (timeElapsed >= duration)
+    //        {
+    //            Debug.Log("Is");
+    //            isContracting = false;
+    //            //AuraObj.SetActive(false);
+    //        }
+    //    }
+    //}
 
-    IEnumerator auraRecharge()
-    {
-        //      Debug.Log ("test");
-        while (curStamina < (staminaTotal))
-        {
-            yield return new WaitForSeconds(1f);
-            Debug.Log("In while");
-            curStamina += staminaRate;
-            SetStamina();
-            if (curStamina >= (staminaTotal))
-            {
-                Debug.Log("while is done");
-                isExhausted = false;
-                break;
-            }
-        }
+    //IEnumerator auraRecharge()
+    //{
+    //    //      Debug.Log ("test");
+    //    while (curStamina < (staminaTotal))
+    //    {
+    //        yield return new WaitForSeconds(1f);
+    //        Debug.Log("In while");
+    //        curStamina += staminaRate;
+    //        SetStamina();
+    //        if (curStamina >= (staminaTotal))
+    //        {
+    //            Debug.Log("while is done");
+    //            isExhausted = false;
+    //            break;
+    //        }
+    //    }
 
-    }
+    //}
 
     IEnumerator NormalReload()
     {
@@ -505,15 +639,29 @@ public class auraGunBehavior : MonoBehaviour
         yield return null;
     }
 
-    public void SetStamina()
-    {
-        staminaBar.fillAmount = curStamina * .01f;
+    //public void SetStamina()
+    //{
+    //    for (int i = 0; i < auraStamArray.Length; i++)
+    //    {
+    //        if (i < currentAuraCharge)
+    //        {
+    //            auraStamArray[i].fillAmount = 1f;
+    //        }
+    //        else
+    //            auraStamArray[i].fillAmount = 0f;
+    //        if (i == currentAuraCharge -1)
+    //        {
+    //            //auraStamArray[i].fillAmount = some float / how long it takes to completely charge 1 aura charge
+    //        }
+    //    }
 
-        if (curStamina > staminaTotal)
-        {
-            curStamina = staminaTotal;
-        }
+    //    staminaBar.fillAmount = curStamina * .01f;
 
-    }
+    //    if (curStamina > staminaTotal)
+    //    {
+    //        curStamina = staminaTotal;
+    //    }
+
+    //}
    
 }
