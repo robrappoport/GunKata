@@ -62,7 +62,12 @@ public class auraGunBehavior : MonoBehaviour
     public float coolDownTotal;
     public bool coolDownTime = false;
     public int auraIndex;
-    private float[] auraScales = new float[5] {1f,1.2f,1.4f,1.6f,1.8f };
+    private float[] auraScales = new float[5] {1f,1.2f,1.4f,1.6f,1.8f};
+    public float auraRechargeRate;
+    public float auraDrainRate;
+    private float displayDrainRate = 100f;
+    private float staminaToDisplay;
+    private int startingAuraIndex;
     //[Header ("SPRITE AURA VARS")]
     //public GameObject sprAura;
     //public float tempAuraScaleMin;
@@ -330,19 +335,11 @@ public class auraGunBehavior : MonoBehaviour
 
     void AuraSys()
     {
+        
         if (coolDownTime)
         {
             curCoolDownAmt -= Time.deltaTime;
         }
-        //Debug.Log(activeAura() + "active aura");
-        //if (!myCont.secondaryFire())
-        //{
-        //    refractoryPeriod -= Time.deltaTime;
-        //    if (refractoryPeriod <= 0f)
-        //    {
-        //        refractoryPeriod = 0f;
-        //    }
-        //}
       
         // when we press the left trigger and you have at least 1 energy bar
         if (myCont.secondaryFireDown() && activeAura() > -1)
@@ -350,6 +347,7 @@ public class auraGunBehavior : MonoBehaviour
             coolDownTime = false;
             curCoolDownAmt = 0f;
             auraIndex = activeAura();
+            startingAuraIndex = activeAura();
             //Debug.Log(auraIndex + "aura index" + Time.time + "at time");
             //turn on the aura outline and set its scale to minimum
             tempAuraScaleCurrent = tempAuraScaleMin;
@@ -362,7 +360,7 @@ public class auraGunBehavior : MonoBehaviour
             for (int i = auraLevelCharge.Length-1; i >=0; i--){
                 //iterate over auras until we find one that isn't fully charged, then charge it a bit
                 if (auraLevelCharge[i] < auraLevelChargeMax){
-                    auraLevelCharge[i] += Time.deltaTime * 20f;
+                    auraLevelCharge[i] += Time.deltaTime * auraRechargeRate;
                     auraLevelCharge[i] = Mathf.Clamp(auraLevelCharge[i], 0, auraLevelChargeMax);
                     break;
                 }
@@ -376,12 +374,12 @@ public class auraGunBehavior : MonoBehaviour
             // if you have just pressed the button i.e. have no current aura charges, then quickly reduce the value of the current float to 0
             if (heldCharges == 0)
             {
-                auraLevelCharge[auraIndex] -= Time.deltaTime * 80f;
+                auraLevelCharge[auraIndex] -= Time.deltaTime * auraDrainRate;
             }
             //otherwise, reduce the value by this set slower amount
             else
             {
-                auraLevelCharge[auraIndex] -= Time.deltaTime * 70f;
+                auraLevelCharge[auraIndex] -= Time.deltaTime * auraDrainRate;
             }
             //if the current float we are on becomes less than or equal to zero, 
             if (auraLevelCharge[auraIndex] <= 0)
@@ -390,7 +388,11 @@ public class auraGunBehavior : MonoBehaviour
                
                 //if it's not the last bar 
                 if (auraIndex < auraLevelCharge.Length){
-                    heldCharges++;
+                    if (auraIndex != startingAuraIndex)
+                    {
+                        heldCharges++;
+                    }
+                   
                     if (auraIndex < auraLevelCharge.Length)
                     {
                         auraIndex++; 
@@ -433,7 +435,12 @@ public class auraGunBehavior : MonoBehaviour
 
 
             //currentLerpTimeElapsed = 0f;
-            auraLevelCharge[auraIndex] = 0f; //immediately drain
+            //auraLevelCharge[auraIndex] = 0f;
+            if (heldCharges == 0)
+            { 
+                StartCoroutine(drainToZero(auraIndex));
+            }
+           //immediately drain
             sprAura.SetActive(false);
             AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position,
                                   Quaternion.Euler(0, 0, 0))
@@ -457,15 +464,23 @@ public class auraGunBehavior : MonoBehaviour
     {
         for (int i = 0; i < auraStamImgArray.Length; i++)
         {
-            //if (i < activeAura())
-            //{
-            //    auraStamImgArray[i].fillAmount = 0f;
-            //}
-            //else
-                //auraStamImgArray[i].fillAmount = 1f;
-          auraStamImgArray[i].fillAmount = auraLevelCharge[i] / auraLevelChargeMax;
+            //float targetStamina = 
+            //staminaToDisplay = Mathf.MoveTowards(staminaToDisplay, targetStamina, displayChangeSpeed * Time.deltaTime);
+            auraStamImgArray[i].fillAmount = auraLevelCharge[i] / auraLevelChargeMax;
 
         }
+    }
+    IEnumerator drainToZero (int auraIndexToDrain)
+
+    {
+        float currentLevel = auraLevelCharge[auraIndexToDrain];
+        while (currentLevel > 0f)
+        {
+            currentLevel = Mathf.MoveTowards(currentLevel, 0f, displayDrainRate * Time.deltaTime);
+            auraLevelCharge[auraIndexToDrain] = currentLevel;
+            yield return 0f;
+        }
+
     }
 
 
