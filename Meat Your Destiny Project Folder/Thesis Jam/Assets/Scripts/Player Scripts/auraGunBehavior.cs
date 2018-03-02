@@ -58,9 +58,11 @@ public class auraGunBehavior : MonoBehaviour
     public float tempAuraScaleMin;
     private float tempAuraScaleCurrent;
     public float tempAuraGrowthRate;
-    public float refractoryPeriod;
+    public float curCoolDownAmt;
+    public float coolDownTotal;
+    public bool coolDownTime = false;
     public int auraIndex;
-
+    private float[] auraScales = new float[5] {1f,1.2f,1.4f,1.6f,1.8f };
     //[Header ("SPRITE AURA VARS")]
     //public GameObject sprAura;
     //public float tempAuraScaleMin;
@@ -100,8 +102,6 @@ public class auraGunBehavior : MonoBehaviour
 
     void Start()
     {
-
-	
         foreach (GameObject g in wings)
         {
             Renderer [] wingArray = g.GetComponentsInChildren<Renderer>();
@@ -125,15 +125,18 @@ public class auraGunBehavior : MonoBehaviour
         shootTime = 0;
         //      Debug.Log ("Player Number"+playerNum);
         CurrentBullets = MaxBullets;
-        refractoryPeriod = 0f;
-
+        for (int i = 0; i < auraLevelCharge.Length; i++)
+        {
+            auraLevelCharge[i] = auraLevelChargeMax;
+        }
+         
     }
 
     // Update is called once per frame
     void Update()
     {
         AuraSys();
-        SetStamina(); 
+        drawStamina(); 
 
         //AURA CHANGER
         if (myCont.yButton())
@@ -316,7 +319,7 @@ public class auraGunBehavior : MonoBehaviour
 
         for (int i = 0; i < auraLevelCharge.Length; i++)
         {
-            if (auraLevelCharge[i] >= 100f)
+            if (auraLevelCharge[i] > 0)
             {
                 return i;
             }
@@ -327,7 +330,10 @@ public class auraGunBehavior : MonoBehaviour
 
     void AuraSys()
     {
-        Debug.Log(heldCharges);
+        if (coolDownTime)
+        {
+            curCoolDownAmt -= Time.deltaTime;
+        }
         //Debug.Log(activeAura() + "active aura");
         //if (!myCont.secondaryFire())
         //{
@@ -339,13 +345,29 @@ public class auraGunBehavior : MonoBehaviour
         //}
       
         // when we press the left trigger and you have at least 1 energy bar
-        if (myCont.secondaryFireDown() && auraIndex > -1)
+        if (myCont.secondaryFireDown() && activeAura() > -1)
         {
+            coolDownTime = false;
+            curCoolDownAmt = 0f;
             auraIndex = activeAura();
-            Debug.Log(auraIndex + "aura index" + Time.time + "at time");
+            //Debug.Log(auraIndex + "aura index" + Time.time + "at time");
             //turn on the aura outline and set its scale to minimum
             tempAuraScaleCurrent = tempAuraScaleMin;
             sprAura.SetActive(true);
+        }
+
+        //not holding button
+        if (!myCont.secondaryFire() && curCoolDownAmt <= 0f){
+            //recharge anything that's not full
+            for (int i = auraLevelCharge.Length-1; i >=0; i--){
+                //iterate over auras until we find one that isn't fully charged, then charge it a bit
+                if (auraLevelCharge[i] < auraLevelChargeMax){
+                    auraLevelCharge[i] += Time.deltaTime * 20f;
+                    auraLevelCharge[i] = Mathf.Clamp(auraLevelCharge[i], 0, auraLevelChargeMax);
+                    break;
+                }
+            }
+
         }
 
         //while we hold down the left trigger and we still have at least 1 energy bar 
@@ -354,75 +376,96 @@ public class auraGunBehavior : MonoBehaviour
             // if you have just pressed the button i.e. have no current aura charges, then quickly reduce the value of the current float to 0
             if (heldCharges == 0)
             {
-                auraLevelCharge[auraIndex] -= Time.deltaTime * 50f;
+                auraLevelCharge[auraIndex] -= Time.deltaTime * 80f;
             }
             //otherwise, reduce the value by this set slower amount
             else
             {
-                auraLevelCharge[auraIndex] -= Time.deltaTime * 20f;
+                auraLevelCharge[auraIndex] -= Time.deltaTime * 70f;
             }
             //if the current float we are on becomes less than or equal to zero, 
             if (auraLevelCharge[auraIndex] <= 0)
             {
-                auraLevelCharge[auraIndex] = 0;  //set it to zero for sanity
-                heldCharges++;
-                if (auraIndex < auraLevelCharge.Length-1)
-                {
-                    auraIndex++; 
+               // auraLevelCharge[auraIndex] = 0;  //set it to zero for sanity
+               
+                //if it's not the last bar 
+                if (auraIndex < auraLevelCharge.Length){
+                    heldCharges++;
+                    if (auraIndex < auraLevelCharge.Length)
+                    {
+                        auraIndex++; 
+                    }
                 }
                
                
                 //start lerping the aura outline
-                currentlyLerpingAuraSize = true;
-                currentLerpTimeElapsed = 0f;
+    
             }
 
             //lerp the aura outline over a period of time by the number of held charges
-            if (currentlyLerpingAuraSize)
-            {
-                currentLerpTimeElapsed += Time.deltaTime;
-                sprAura.transform.localScale = Vector3.Lerp(Mathf.Pow(1.1f, heldCharges)
-                                                    * Vector3.one, Mathf.Pow(1.1f, heldCharges + 1)
-                                                    * Vector3.one, currentLerpTimeElapsed / lerpDur);
-                if (currentLerpTimeElapsed >= lerpDur)
-                {
-                    currentlyLerpingAuraSize = false;
-                }
-            }
+            //if (currentlyLerpingAuraSize)
+            //{
+            //    currentLerpTimeElapsed += Time.deltaTime;
+            //    sprAura.transform.localScale = Vector3.Lerp(Mathf.Pow(1.1f, heldCharges-1)
+            //                                        * Vector3.one, Mathf.Pow(1.1f, heldCharges)
+            //                                        * Vector3.one, currentLerpTimeElapsed / lerpDur);
+            //    if (currentLerpTimeElapsed >= lerpDur)
+            //    {
+            //        currentlyLerpingAuraSize = false;
+            //    }
+            //}
+            Vector3 targetScale = auraScales[Mathf.Min(heldCharges,auraLevelCharge.Length-1)] * Vector3.one;
+            sprAura.transform.localScale = Vector3.Lerp(sprAura.transform.localScale, targetScale,0.7f);
 
         }
         // when you release the button, if the current aura charge is less than 100 but not zero, lerp it back to 100 very quickly
         if (myCont.secondaryFireUp())
         {
-            //refractoryPeriod = 5f;
-            heldCharges = 0;
+           curCoolDownAmt = coolDownTotal;
+            coolDownTime = true;
+
+            if (auraIndex == auraLevelCharge.Length) {
+                auraIndex--;
+            }
+
+            //only make an aura if we made at least one charge
+
+
+
+            //currentLerpTimeElapsed = 0f;
+            auraLevelCharge[auraIndex] = 0f; //immediately drain
             sprAura.SetActive(false);
             AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position,
                                   Quaternion.Euler(0, 0, 0))
                           .GetComponent<AuraGenerator>();
-            aura.Init(playerNum, tempAuraScaleCurrent);
+            aura.Init(playerNum, auraScales[Mathf.Min(heldCharges, auraLevelCharge.Length - 1)]);
             tempAuraScaleCurrent = tempAuraScaleMin;
             sprAura.transform.localScale = new Vector3(1, 1, 1);
-            if (auraLevelCharge[auraIndex] > 0f && auraLevelCharge[auraIndex] < 100f)
-            {
-                auraLevelCharge[auraIndex] = Mathf.Lerp(auraLevelCharge[auraIndex], 100f, (2 / 1));
-            }
+            //if (auraLevelCharge[auraIndex] > 0f && auraLevelCharge[auraIndex] < 100f)
+            //{
+            //    auraLevelCharge[auraIndex] = Mathf.Lerp(auraLevelCharge[auraIndex], 100f, (2 / 1));
+            //}
+
+
+           
+            heldCharges = 0;
+
         }
+        Debug.Log(auraIndex+ " aura index");
+        Debug.Log(activeAura() + " active aura int");
     }
-    public void SetStamina()
+    public void drawStamina()
     {
         for (int i = 0; i < auraStamImgArray.Length; i++)
         {
-            if (i < activeAura())
-            {
-                auraStamImgArray[i].fillAmount = 0f;
-            }
-            else
-                auraStamImgArray[i].fillAmount = 1f;
-            if (i == activeAura() - 1)
-            {
-                auraStamImgArray[i].fillAmount = auraLevelCharge[auraIndex] / auraLevelChargeMax;
-            }
+            //if (i < activeAura())
+            //{
+            //    auraStamImgArray[i].fillAmount = 0f;
+            //}
+            //else
+                //auraStamImgArray[i].fillAmount = 1f;
+          auraStamImgArray[i].fillAmount = auraLevelCharge[i] / auraLevelChargeMax;
+
         }
     }
 

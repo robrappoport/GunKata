@@ -256,7 +256,6 @@ public class TwoDGameManager : MonoBehaviour {
 		playerHealth1 = player1.GetComponent<auraPlayerHealth>();
 		players[0] = player1.GetComponent<auraGunBehavior>();
 		GetComponent<bulletManagerManager>().bMan1 = player1.GetComponent<BulletManager>();
-        player1.GetComponent<auraGunBehavior>().curStamina = player1.GetComponent<auraGunBehavior>().staminaTotal;
         //Debug.Log("player 1's stamina is" + player1.GetComponent<auraGunBehavior>().curStamina);
         player1.GetComponent<auraGunBehavior>().auraStamImgArray[0] = player1Canvas.transform.Find("AuraLvl1/AuraBar1").GetComponent<Image>();
         player1.GetComponent<auraGunBehavior>().auraStamImgArray[0].fillAmount = 1;
@@ -287,7 +286,6 @@ public class TwoDGameManager : MonoBehaviour {
 		playerHealth2 = player2.GetComponent<auraPlayerHealth>();
 		players[1] = player2.GetComponent<auraGunBehavior>();
 		GetComponent<bulletManagerManager>().bMan2 = player2.GetComponent<BulletManager>();
-        player2.GetComponent<auraGunBehavior>().curStamina = player2.GetComponent<auraGunBehavior>().staminaTotal;
         //Debug.Log("player 2's stamina is"+ player2.GetComponent<auraGunBehavior>().curStamina);
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[0] = player2Canvas.transform.Find("AuraLvl1/AuraBar1").GetComponent<Image>();
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[0].fillAmount = 1;
