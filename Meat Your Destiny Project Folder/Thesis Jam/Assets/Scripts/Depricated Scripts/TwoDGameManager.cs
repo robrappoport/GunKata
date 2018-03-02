@@ -258,15 +258,15 @@ public class TwoDGameManager : MonoBehaviour {
 		GetComponent<bulletManagerManager>().bMan1 = player1.GetComponent<BulletManager>();
         player1.GetComponent<auraGunBehavior>().curStamina = player1.GetComponent<auraGunBehavior>().staminaTotal;
         //Debug.Log("player 1's stamina is" + player1.GetComponent<auraGunBehavior>().curStamina);
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[0] = player1Canvas.transform.Find("Player1AuraCanvas/AuraLvl1/AuraBar1").GetComponent<Image>();
+        player1.GetComponent<auraGunBehavior>().auraStamImgArray[0] = player1Canvas.transform.Find("AuraLvl1/AuraBar1").GetComponent<Image>();
         player1.GetComponent<auraGunBehavior>().auraStamImgArray[0].fillAmount = 1;
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[1] = player1Canvas.transform.Find("Player1AuraCanvas/AuraLvl2/AuraBar2").GetComponent<Image>();
+        player1.GetComponent<auraGunBehavior>().auraStamImgArray[1] = player1Canvas.transform.Find("AuraLvl2/AuraBar2").GetComponent<Image>();
         player1.GetComponent<auraGunBehavior>().auraStamImgArray[1].fillAmount = 1;
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[2] = player1Canvas.transform.Find("Player1AuraCanvas/AuraLvl3/AuraBar3").GetComponent<Image>();
+        player1.GetComponent<auraGunBehavior>().auraStamImgArray[2] = player1Canvas.transform.Find("AuraLvl3/AuraBar3").GetComponent<Image>();
         player1.GetComponent<auraGunBehavior>().auraStamImgArray[2].fillAmount = 1;
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[3] = player1Canvas.transform.Find("Player1AuraCanvas/AuraLvl4/AuraBar4").GetComponent<Image>();
+        player1.GetComponent<auraGunBehavior>().auraStamImgArray[3] = player1Canvas.transform.Find("AuraLvl4/AuraBar4").GetComponent<Image>();
         player1.GetComponent<auraGunBehavior>().auraStamImgArray[3].fillAmount = 1;
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[4] = player1Canvas.transform.Find("Player1AuraCanvas/AuraLvl5/AuraBar5").GetComponent<Image>();
+        player1.GetComponent<auraGunBehavior>().auraStamImgArray[4] = player1Canvas.transform.Find("AuraLvl5/AuraBar5").GetComponent<Image>();
         player1.GetComponent<auraGunBehavior>().auraStamImgArray[4].fillAmount = 1;
 		//player1Tracker.Player = player1.transform;
 
@@ -289,15 +289,15 @@ public class TwoDGameManager : MonoBehaviour {
 		GetComponent<bulletManagerManager>().bMan2 = player2.GetComponent<BulletManager>();
         player2.GetComponent<auraGunBehavior>().curStamina = player2.GetComponent<auraGunBehavior>().staminaTotal;
         //Debug.Log("player 2's stamina is"+ player2.GetComponent<auraGunBehavior>().curStamina);
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[0] = player2Canvas.transform.Find("Player2AuraCanvas/AuraLvl1/AuraBar1").GetComponent<Image>();
+        player2.GetComponent<auraGunBehavior>().auraStamImgArray[0] = player2Canvas.transform.Find("AuraLvl1/AuraBar1").GetComponent<Image>();
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[0].fillAmount = 1;
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[1] = player2Canvas.transform.Find("Player2AuraCanvas/AuraLvl2/AuraBar2").GetComponent<Image>();
+        player2.GetComponent<auraGunBehavior>().auraStamImgArray[1] = player2Canvas.transform.Find("AuraLvl2/AuraBar2").GetComponent<Image>();
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[1].fillAmount = 1;
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[2] = player2Canvas.transform.Find("Player2AuraCanvas/AuraLvl3/AuraBar3").GetComponent<Image>();
+        player2.GetComponent<auraGunBehavior>().auraStamImgArray[2] = player2Canvas.transform.Find("AuraLvl3/AuraBar3").GetComponent<Image>();
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[2].fillAmount = 1;
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[3] = player2Canvas.transform.Find("Player2AuraCanvas/AuraLvl4/AuraBar4").GetComponent<Image>();
+        player2.GetComponent<auraGunBehavior>().auraStamImgArray[3] = player2Canvas.transform.Find("AuraLvl4/AuraBar4").GetComponent<Image>();
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[3].fillAmount = 1;
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[4] = player2Canvas.transform.Find("Player2AuraCanvas/AuraLvl5/AuraBar5").GetComponent<Image>();
+        player2.GetComponent<auraGunBehavior>().auraStamImgArray[4] = player2Canvas.transform.Find("AuraLvl5/AuraBar5").GetComponent<Image>();
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[4].fillAmount = 1;
 		//player2Tracker.Player = player2.transform;
 
