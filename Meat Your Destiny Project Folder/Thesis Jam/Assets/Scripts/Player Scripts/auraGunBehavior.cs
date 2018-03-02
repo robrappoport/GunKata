@@ -156,7 +156,7 @@ public class auraGunBehavior : MonoBehaviour
             isFiring = false;
         }
 
-        Debug.DrawRay(transform.position, transform.forward * 50, Color.red);
+        //Debug.DrawRay(transform.position, transform.forward * 50, Color.red);
         if (myCont.xButtonUp() && CurrentBullets < MaxBullets)
         {
             isReloading = true;
@@ -193,7 +193,7 @@ public class auraGunBehavior : MonoBehaviour
             if (chargeTime >= loadedChargeTime && !laserIsFiring)
             {
                 chargeTime = loadedChargeTime;
-                Debug.Log("laser fully charged");
+                //Debug.Log("laser fully charged");
                 //play charge sound
             }
             if (myCont.primaryFireDown() == true || myCont.primaryFire() == true)
@@ -419,7 +419,7 @@ public class auraGunBehavior : MonoBehaviour
 
         }
         // when you release the button, if the current aura charge is less than 100 but not zero, lerp it back to 100 very quickly
-        if (myCont.secondaryFireUp())
+        if (myCont.secondaryFireUp() && activeAura() > -1)
         {
            curCoolDownAmt = coolDownTotal;
             coolDownTime = true;
@@ -451,8 +451,7 @@ public class auraGunBehavior : MonoBehaviour
             heldCharges = 0;
 
         }
-        Debug.Log(auraIndex+ " aura index");
-        Debug.Log(activeAura() + " active aura int");
+    
     }
     public void drawStamina()
     {

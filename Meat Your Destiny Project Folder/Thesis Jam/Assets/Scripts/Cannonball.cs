@@ -174,7 +174,7 @@ public class Cannonball : MonoBehaviour {
         if (currentCollider)
         {
 
-            Debug.Log(currentCollider.GetComponent<AuraGenerator>().isSuper + "supercheck");
+            //Debug.Log(currentCollider.GetComponent<AuraGenerator>().isSuper + "supercheck");
             if (!currentCollider.GetComponent<AuraGenerator>().isSuper)
             {
                 if (currentCollider.bounds.Contains(transform.position))
