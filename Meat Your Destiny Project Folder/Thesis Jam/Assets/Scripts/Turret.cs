@@ -24,9 +24,14 @@ public class Turret : MonoBehaviour
     public List<Cannonball> cannonBallList = new List<Cannonball>();
 
     public GameObject[] Emitter;
+    public Transform EmitterRotators;
     public GameObject[] turretTypes;
     public GameObject[] impactPrefabs;
     public Color[] playerColors;
+    private Transform curTarget;
+    private Vector3 targetDir;
+    private Vector3 newDir;
+    private Transform target;
 
 
     //ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
@@ -71,7 +76,9 @@ public class Turret : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if (charging && contestable) {
+        AimingTurret();
+
+        if (charging && contestable) {
 			charge = Mathf.Clamp (charge + chargeIncrementSign * Time.deltaTime * chargeSpeed, 0, 3);
 		}
         if (isSpinning)
@@ -265,6 +272,38 @@ public class Turret : MonoBehaviour
         }
     }
 
+    void AimingTurret()
+    {
+        // if the turret has an owner
+        if (owner != Owner.NONE)
+        {
+            //check the owner number
+            if (owner == Owner.Player1)
+            {
+                //get the other player
+                curTarget = TwoDGameManager.thisInstance.players[1].transform;
+                Debug.Log(curTarget);
+            }
+
+            if (owner == Owner.Player2)
+            {
+                //get the other player
+                curTarget = TwoDGameManager.thisInstance.players[0].transform;
+                Debug.Log(curTarget);
+            }
+
+            //face that player over a period of time
+            target = curTarget;
+            float rotSpeed = 2f;
+            targetDir = target.position - EmitterRotators.transform.position;
+            float step = rotSpeed * Time.deltaTime;
+            newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0F);
+            Debug.DrawRay(transform.position, newDir, Color.red, 50f);
+            transform.rotation = Quaternion.LookRotation(newDir);
+        }
+       
+        
+    }
     void AdjustCannonColor()
     {//adjusts turret based on the number of lit segments;
         if (litSegments > 0)
