@@ -60,14 +60,18 @@ public class auraGunBehavior : MonoBehaviour
     public float tempAuraGrowthRate;
     public float curCoolDownAmt;
     public float coolDownTotal;
-    public bool coolDownTime = false;
+    public bool coolingDown = false;
     public int auraIndex;
     private float[] auraScales = new float[5] {1f,1.2f,1.4f,1.6f,1.8f};
-    public float auraRechargeRate;
     public float auraDrainRate;
     private float displayDrainRate = 100f;
     private float staminaToDisplay;
     private int startingAuraIndex;
+
+	public float auraChargeRate = 1f, auraRechargeRate = 1f, coolDownDuration;
+	float currentAuraCharge, remainingAuraCharge, currentAuraChargeLimit;
+
+
     //[Header ("SPRITE AURA VARS")]
     //public GameObject sprAura;
     //public float tempAuraScaleMin;
@@ -107,6 +111,8 @@ public class auraGunBehavior : MonoBehaviour
 
     void Start()
     {
+		currentAuraChargeLimit = auraStamImgArray.Length;
+		remainingAuraCharge = currentAuraChargeLimit;
         foreach (GameObject g in wings)
         {
             Renderer [] wingArray = g.GetComponentsInChildren<Renderer>();
@@ -140,8 +146,11 @@ public class auraGunBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        AuraSys();
-        drawStamina(); 
+		AuraCharge ();
+		drawStamina ();
+		print ("remaining aura: " + remainingAuraCharge + ", current aura charge: " + currentAuraCharge);
+        //AuraSys();
+       // drawStamina(); 
 
         //AURA CHANGER
         if (myCont.yButton())
@@ -333,10 +342,43 @@ public class auraGunBehavior : MonoBehaviour
         return -1;
     }
 
+	void AuraCharge(){
+		if (myCont.secondaryFireDown ()) {
+			currentAuraChargeLimit = remainingAuraCharge;
+
+		}
+		if (myCont.secondaryFire ()) {
+				//calculate how much charge remains and how much is to be used
+				sprAura.SetActive (true);
+			remainingAuraCharge = Mathf.Clamp (remainingAuraCharge - Time.deltaTime * auraChargeRate, 0, auraStamImgArray.Length);
+			currentAuraCharge = Mathf.Clamp (currentAuraCharge + Time.deltaTime * auraChargeRate, 0, currentAuraChargeLimit);
+	
+				//draw the stamina bars in accordance with the remaining charge
+				//lerp the outline to the target scale
+			Vector3 targetScale = auraScales [Mathf.Clamp((int)currentAuraCharge, 0, auraScales.Length - 1)] * Vector3.one;
+				sprAura.transform.localScale = Vector3.Lerp (sprAura.transform.localScale, targetScale, 0.7f);
+			} else {
+			remainingAuraCharge = Mathf.Clamp (remainingAuraCharge + Time.deltaTime * auraRechargeRate, 0, auraStamImgArray.Length);
+		}
+
+		if (myCont.secondaryFireUp ()) {
+			if((int) currentAuraCharge > 0){//only instantiate an aura if one "charge" has been used
+				AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position,
+					Quaternion.Euler(0, 0, 0))
+					.GetComponent<AuraGenerator>();
+				aura.Init(playerNum, auraScales[Mathf.Clamp((int)currentAuraCharge, 0, auraScales.Length - 1)]);
+
+			}
+			sprAura.transform.localScale = new Vector3(1, 1, 1);
+			sprAura.SetActive(false);
+			currentAuraCharge = 0f;
+		}
+	}
+
     void AuraSys()
     {
         
-        if (coolDownTime)
+        if (coolingDown)
         {
             curCoolDownAmt -= Time.deltaTime;
         }
@@ -344,7 +386,7 @@ public class auraGunBehavior : MonoBehaviour
         // when we press the left trigger and you have at least 1 energy bar
         if (myCont.secondaryFireDown() && activeAura() > -1)
         {
-            coolDownTime = false;
+            coolingDown = false;
             curCoolDownAmt = 0f;
             auraIndex = activeAura();
             startingAuraIndex = activeAura();
@@ -424,7 +466,7 @@ public class auraGunBehavior : MonoBehaviour
         if (myCont.secondaryFireUp() && activeAura() > -1)
         {
            curCoolDownAmt = coolDownTotal;
-            coolDownTime = true;
+            coolingDown = true;
 
             if (auraIndex == auraLevelCharge.Length) {
                 auraIndex--;
@@ -460,15 +502,27 @@ public class auraGunBehavior : MonoBehaviour
         }
     
     }
-    public void drawStamina()
-    {
-        for (int i = 0; i < auraStamImgArray.Length; i++)
-        {
-            //float targetStamina = 
-            //staminaToDisplay = Mathf.MoveTowards(staminaToDisplay, targetStamina, displayChangeSpeed * Time.deltaTime);
-            auraStamImgArray[i].fillAmount = auraLevelCharge[i] / auraLevelChargeMax;
-
-        }
+	public void drawStamina()
+	{
+		//draw all full bars
+		for (int i = 0; i < auraStamImgArray.Length; i++) {
+			if ((int)remainingAuraCharge > i ) {
+				auraStamImgArray [i].fillAmount = 1;
+			}
+		
+		}
+		//draw the remainder
+		if (remainingAuraCharge < auraStamImgArray.Length) {
+			auraStamImgArray [(int)remainingAuraCharge].fillAmount = remainingAuraCharge - (int)remainingAuraCharge;
+		}
+//        for (int i = 0; i < auraStamImgArray.Length; i++)
+//        {
+//            //float targetStamina = 
+//            //staminaToDisplay = Mathf.MoveTowards(staminaToDisplay, targetStamina, displayChangeSpeed * Time.deltaTime);
+//		
+//            auraStamImgArray[i].fillAmount = auraLevelCharge[i] / auraLevelChargeMax;
+//
+//        }
     }
     IEnumerator drainToZero (int auraIndexToDrain)
 

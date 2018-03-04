@@ -1,20 +1,77 @@
 fileFormatVersion: 2
-guid: 63a226029b7514c6c9cf363351fb4f7e
-timeCreated: 1519946124
+guid: 36eb9c206910f3e499d6f7b4866cf9fe
+timeCreated: 1520088416
 licenseType: Free
 ModelImporter:
   serializedVersion: 21
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Obelisk_Base_001
+    100004: Obelisk_Base_003
+    100006: Obelisk_Base_004
+    100008: Obelisk_Base_005
+    100010: Obelisk_Base_006
+    100012: Obelisk_Base_007
+    100014: Obelisk_Base_008
+    100016: Symbols_001
+    100018: Symbols_002
+    100020: Symbols_003
+    100022: Symbols_004
+    100024: Symbols_005
     400000: //RootNode
-    2100000: Obelisk Body Material
-    2100002: Obelisk Face Material
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: Cube
+    400002: Obelisk_Base_001
+    400004: Obelisk_Base_003
+    400006: Obelisk_Base_004
+    400008: Obelisk_Base_005
+    400010: Obelisk_Base_006
+    400012: Obelisk_Base_007
+    400014: Obelisk_Base_008
+    400016: Symbols_001
+    400018: Symbols_002
+    400020: Symbols_003
+    400022: Symbols_004
+    400024: Symbols_005
+    2300000: Obelisk_Base_001
+    2300002: Obelisk_Base_003
+    2300004: Obelisk_Base_004
+    2300006: Obelisk_Base_005
+    2300008: Obelisk_Base_006
+    2300010: Obelisk_Base_007
+    2300012: Obelisk_Base_008
+    2300014: Symbols_001
+    2300016: Symbols_002
+    2300018: Symbols_003
+    2300020: Symbols_004
+    2300022: Symbols_005
+    3300000: Obelisk_Base_001
+    3300002: Obelisk_Base_003
+    3300004: Obelisk_Base_004
+    3300006: Obelisk_Base_005
+    3300008: Obelisk_Base_006
+    3300010: Obelisk_Base_007
+    3300012: Obelisk_Base_008
+    3300014: Symbols_001
+    3300016: Symbols_002
+    3300018: Symbols_003
+    3300020: Symbols_004
+    3300022: Symbols_005
+    4300000: Symbols_004
+    4300002: Symbols_003
+    4300004: Symbols_002
+    4300006: Symbols_001
+    4300008: Obelisk_Base_007
+    4300010: Obelisk_Base_006
+    4300012: Obelisk_Base_005
+    4300014: Obelisk_Base_004
+    4300016: Obelisk_Base_003
+    4300018: Obelisk_Base_001
+    4300020: Obelisk_Base_008
+    4300022: Symbols_005
+    7400000: Default Take
+    9500000: //RootNode
   materials:
     importMaterials: 1
-    materialName: 1
+    materialName: 0
     materialSearch: 1
   animations:
     legacyGenerateAnimations: 4
@@ -81,7 +138,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
