@@ -148,7 +148,6 @@ public class auraGunBehavior : MonoBehaviour
     {
 		AuraCharge ();
 		drawStamina ();
-		print ("remaining aura: " + remainingAuraCharge + ", current aura charge: " + currentAuraCharge);
         //AuraSys();
        // drawStamina(); 
 
@@ -345,7 +344,7 @@ public class auraGunBehavior : MonoBehaviour
 	void AuraCharge(){
 		if (myCont.secondaryFireDown ()) {
 			currentAuraChargeLimit = remainingAuraCharge;
-
+			CancelInvoke ("ResetAuraCooldown");
 		}
 		if (myCont.secondaryFire ()) {
 				//calculate how much charge remains and how much is to be used
@@ -353,28 +352,59 @@ public class auraGunBehavior : MonoBehaviour
 			remainingAuraCharge = Mathf.Clamp (remainingAuraCharge - Time.deltaTime * auraChargeRate, 0, auraStamImgArray.Length);
 			currentAuraCharge = Mathf.Clamp (currentAuraCharge + Time.deltaTime * auraChargeRate, 0, currentAuraChargeLimit);
 	
-				//draw the stamina bars in accordance with the remaining charge
 				//lerp the outline to the target scale
-			Vector3 targetScale = auraScales [Mathf.Clamp((int)currentAuraCharge, 0, auraScales.Length - 1)] * Vector3.one;
+			Vector3 targetScale = auraScales [Mathf.Clamp((int)currentAuraCharge -1, 0, auraScales.Length - 1)] * Vector3.one;
 				sprAura.transform.localScale = Vector3.Lerp (sprAura.transform.localScale, targetScale, 0.7f);
 			} else {
-			remainingAuraCharge = Mathf.Clamp (remainingAuraCharge + Time.deltaTime * auraRechargeRate, 0, auraStamImgArray.Length);
+			if (!coolingDown) {
+				remainingAuraCharge = Mathf.Clamp (remainingAuraCharge + Time.deltaTime * auraRechargeRate, 0, auraStamImgArray.Length);
+			}
 		}
 
 		if (myCont.secondaryFireUp ()) {
-			if((int) currentAuraCharge > 0){//only instantiate an aura if one "charge" has been used
+			coolingDown = true;
+			if(currentAuraCharge > 0){//only instantiate an aura if one "charge" has been used
 				AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position,
 					Quaternion.Euler(0, 0, 0))
 					.GetComponent<AuraGenerator>();
-				aura.Init(playerNum, auraScales[Mathf.Clamp((int)currentAuraCharge, 0, auraScales.Length - 1)]);
-
+				aura.Init(playerNum, auraScales[Mathf.Clamp((int)currentAuraCharge - 1, 0, auraScales.Length - 1)]);
 			}
 			sprAura.transform.localScale = new Vector3(1, 1, 1);
 			sprAura.SetActive(false);
+			if (currentAuraCharge < 1) {
+				remainingAuraCharge = (int)remainingAuraCharge;
+			}
+
 			currentAuraCharge = 0f;
+			Invoke ("ResetAuraCooldown", coolDownDuration);
 		}
 	}
+	void ResetAuraCooldown(){
+		coolingDown = false;
+	}
 
+	public void drawStamina()
+	{
+		//draw all full bars
+		for (int i = 0; i < auraStamImgArray.Length; i++) {
+			if ((int)remainingAuraCharge > i ) {
+				auraStamImgArray [i].fillAmount = 1;
+			}
+
+		}
+		//draw the remainder
+		if (remainingAuraCharge < auraStamImgArray.Length) {
+			auraStamImgArray [(int)remainingAuraCharge].fillAmount = remainingAuraCharge - (int)remainingAuraCharge;
+		}
+		//        for (int i = 0; i < auraStamImgArray.Length; i++)
+		//        {
+		//            //float targetStamina = 
+		//            //staminaToDisplay = Mathf.MoveTowards(staminaToDisplay, targetStamina, displayChangeSpeed * Time.deltaTime);
+		//		
+		//            auraStamImgArray[i].fillAmount = auraLevelCharge[i] / auraLevelChargeMax;
+		//
+		//        }
+	}
     void AuraSys()
     {
         
@@ -502,28 +532,7 @@ public class auraGunBehavior : MonoBehaviour
         }
     
     }
-	public void drawStamina()
-	{
-		//draw all full bars
-		for (int i = 0; i < auraStamImgArray.Length; i++) {
-			if ((int)remainingAuraCharge > i ) {
-				auraStamImgArray [i].fillAmount = 1;
-			}
-		
-		}
-		//draw the remainder
-		if (remainingAuraCharge < auraStamImgArray.Length) {
-			auraStamImgArray [(int)remainingAuraCharge].fillAmount = remainingAuraCharge - (int)remainingAuraCharge;
-		}
-//        for (int i = 0; i < auraStamImgArray.Length; i++)
-//        {
-//            //float targetStamina = 
-//            //staminaToDisplay = Mathf.MoveTowards(staminaToDisplay, targetStamina, displayChangeSpeed * Time.deltaTime);
-//		
-//            auraStamImgArray[i].fillAmount = auraLevelCharge[i] / auraLevelChargeMax;
-//
-//        }
-    }
+
     IEnumerator drainToZero (int auraIndexToDrain)
 
     {
