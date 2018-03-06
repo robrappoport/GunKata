@@ -33,13 +33,14 @@ public class Turret : MonoBehaviour
 	private Vector3 newDir;
 	private Transform target;
 	[Header("PARTICLE SYSTEM VARS")]
-	private ParticleSystem p;
+	ParticleSystem p;
 	Collider auraCollider;
 
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
 	void Awake(){	
 		p = GetComponentInChildren<ParticleSystem>();
+		p.transform.localPosition = new Vector3 (0, 1.5f, 0);
 		p.gameObject.SetActive (false);
 		//set emitters
 		//Emitter[0] = GameObject.Find(name + "/N_Emitter");
@@ -144,7 +145,9 @@ public class Turret : MonoBehaviour
 
 
 		if (auraCollider && charging && MismatchedOwners()) {
+			print ("sparking");
 			var main = p.main;
+
 			p.gameObject.SetActive (true);
 			if (owner == Owner.Player1) {
 				main.startColor = playerColors [0];
