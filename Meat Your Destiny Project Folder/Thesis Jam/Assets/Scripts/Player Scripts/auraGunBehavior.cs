@@ -62,7 +62,7 @@ public class auraGunBehavior : MonoBehaviour
     public float coolDownTotal;
     public bool coolingDown = false;
     public int auraIndex;
-    private float[] auraScales = new float[5] {1f,1.2f,1.4f,1.6f,1.8f};
+    private float[] auraScales = new float[5] {.5f,.8f,1f,1.2f,1.8f};
     public float auraDrainRate;
     private float displayDrainRate = 100f;
     private float staminaToDisplay;

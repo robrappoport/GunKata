@@ -11,6 +11,8 @@ public class LivingParticleArrayController : MonoBehaviour {
 
 	void Start () {
         psr = GetComponent<ParticleSystemRenderer>();
+        affectors[0] = TwoDGameManager.thisInstance.player1.transform;
+        affectors[1] = TwoDGameManager.thisInstance.player2.transform;
 	}
 	
     // Sending an array of positions to particle shader

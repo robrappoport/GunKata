@@ -80,6 +80,7 @@ public class Turret : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+        AuraCheck();
 		AimingTurret();
 
 		if (charging && contestable) {
@@ -164,46 +165,58 @@ public class Turret : MonoBehaviour
 	}
 
 
-	void OnTriggerStay(Collider col){
+	void AuraCheck (){
 		if (contestable) {
 
+            if (auraCollider)
+            {
+                if (auraCollider.GetComponent<AuraGenerator>())
+                {
+                    if (!auraCollider.GetComponent<AuraGenerator>().isSuper)
+                    {
+                        //ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
+                        if (litSegments < 3)
+                        {
+                            charging = true;
 
-			if (col.gameObject.GetComponent<AuraGenerator>())
-			{
-				if (!col.gameObject.GetComponent<AuraGenerator>().isSuper)
-				{
-					//ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
-					if (litSegments < 3)
-					{
-						charging = true;
-
-					}
+                        }
 
 
-					if (col.gameObject.GetComponent<AuraGenerator>().auraPlayerNum == 0)
-					{
-						owner = Owner.Player1;
-					}
-					else
-					{
-						owner = Owner.Player2;
-					}
-					litSegments = (int)charge;
+                        if (auraCollider.GetComponent<AuraGenerator>().auraPlayerNum == 0)
+                        {
+                            owner = Owner.Player1;
+                        }
+                        else
+                        {
+                            owner = Owner.Player2;
+                        }
+                        litSegments = (int)charge;
 
-					//if the intruding player is hitting the turret , increment the number of lit segments up to a max of 3
-					if (ownerNum != col.gameObject.GetComponent<AuraGenerator>().auraPlayerNum)
-					{
+                        //if the intruding player is hitting the turret , increment the number of lit segments up to a max of 3
+                        if (ownerNum != auraCollider.GetComponent<AuraGenerator>().auraPlayerNum)
+                        {
 
-						chargeIncrementSign = 1;
-					}
-					else
-					{
-						chargeIncrementSign = -1;
-					}
-				}
-			}
+                            chargeIncrementSign = 1;
+                        }
+                        else
+                        {
+                            chargeIncrementSign = -1;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                auraCollider = null;
+                charging = false;
+            }
 
 		}
+        //if (col != col.gameObject.GetComponent<AuraGenerator>())
+        //{
+        //    charging = false;
+        //    col = null;
+        //}
 	}
 
 	bool MismatchedOwners(){
