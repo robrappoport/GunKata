@@ -40,9 +40,12 @@ public class Turret : MonoBehaviour
 	ParticleSystem p;
 	Collider auraCollider;
 
+	Animator anim;
+
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
-	void Awake(){	
+	void Awake(){
+		anim = GetComponent<Animator> ();
 		segmentNum = letterRenderers.Length;
 		p = GetComponentInChildren<ParticleSystem>();
 		p.transform.localPosition = new Vector3 (0, 6.5f, 0);
@@ -484,6 +487,7 @@ public class Turret : MonoBehaviour
 		contestable = false;
 		bool turnOff = GetComponent<BallArrayScript>().on = false;
 		hasAddedToBall = false;
+		anim.SetTrigger ("Close");
 		Invoke("Neutralize", uncontestableTime);
 
 	}
@@ -545,7 +549,7 @@ public class Turret : MonoBehaviour
 			}
 			if (!completelyOwned)
 			{
-
+				anim.SetTrigger ("Open");
 				completelyOwned = true;
 				//contestable = false;
 				//Invoke("Reset", immuneTime);
