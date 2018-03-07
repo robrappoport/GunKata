@@ -6,7 +6,9 @@ public class Turret : MonoBehaviour
 {
 
 //	public Renderer topRenderer, middleRenderer, bottomRenderer;
-	public Renderer[] segments = new Renderer[5];
+	public Renderer[] letterRenderers = new Renderer[5];
+	public Renderer[] piecesRenderers = new Renderer[6];
+
 	public Color p1Color, p2Color, neutralColor, currentColor, uncontestableColor, unownedColor;
 	public GameObject CannonballPrefab;
 	public int litSegments = 0, ownerNum = 2, timesOwned = 0, maxTimesCanBeOwned, chargeIncrementSign = 1;
@@ -41,7 +43,7 @@ public class Turret : MonoBehaviour
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
 	void Awake(){	
-		segmentNum = segments.Length;
+		segmentNum = letterRenderers.Length;
 		p = GetComponentInChildren<ParticleSystem>();
 		p.transform.localPosition = new Vector3 (0, 6.5f, 0);
 		p.gameObject.SetActive (false);
@@ -87,7 +89,7 @@ public class Turret : MonoBehaviour
 		AimingTurret();
 
 		if (charging && contestable) {
-			charge = Mathf.Clamp (charge + chargeIncrementSign * Time.deltaTime * chargeSpeed, 0, segments.Length);
+			charge = Mathf.Clamp (charge + chargeIncrementSign * Time.deltaTime * chargeSpeed, 0, letterRenderers.Length);
 		}
 		if (isSpinning)
 		{
@@ -177,7 +179,7 @@ public class Turret : MonoBehaviour
                     if (!auraCollider.GetComponent<AuraGenerator>().isSuper)
                     {
                         //ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
-						if (litSegments < segments.Length)
+						if (litSegments < letterRenderers.Length)
                         {
                             charging = true;
 
@@ -373,15 +375,33 @@ public class Turret : MonoBehaviour
 //	}
 
 	void AdjustCannonColor(){
+		for (int i = 0; i < litSegments; i++) {//adjust the lit letters
+			letterRenderers [i].material.color = currentColor;
+			letterRenderers [i].material.SetColor ("_EmissionColor", currentColor);
+
+		}
+		for (int i = litSegments; i < segmentNum; i++) {//adjust the unlit letters
+			letterRenderers[i].material.color = neutralColor;
+			letterRenderers [i].material.SetColor ("_EmissionColor", neutralColor);
+
+		}
+
 		for (int i = 0; i < litSegments; i++) {
-			segments [i].material.color = currentColor;
-			segments [i].material.SetColor ("_EmissionColor", currentColor);
+			piecesRenderers[i].materials[2].color = currentColor;
+			piecesRenderers[i].materials[2].SetColor ("_EmissionColor", currentColor);
 
 		}
 		for (int i = litSegments; i < segmentNum; i++) {
-			segments[i].material.color = neutralColor;
-			segments [i].material.SetColor ("_EmissionColor", currentColor);
+			piecesRenderers[i].materials[2].color = neutralColor;
+			piecesRenderers[i].materials[2].SetColor ("_EmissionColor", neutralColor);
 
+		}
+
+		if (litSegments >= segmentNum) {
+			piecesRenderers [piecesRenderers.Length - 1].materials [2].color = currentColor;
+		} else {
+			piecesRenderers [piecesRenderers.Length - 1].materials [2].color = neutralColor;
+		
 		}
 	}
 
@@ -469,8 +489,8 @@ public class Turret : MonoBehaviour
 	}
 
 	void ResetAllColors(){
-		for (int i = 0; i < segments.Length; i++) {
-			segments [i].material.color = uncontestableColor;
+		for (int i = 0; i < letterRenderers.Length; i++) {
+			letterRenderers [i].material.color = uncontestableColor;
 		}
 	}
 
