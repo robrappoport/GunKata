@@ -149,7 +149,6 @@ public class Turret : MonoBehaviour
 
 
 		if (auraCollider && charging && MismatchedOwners()) {
-			print ("sparking");
 			var main = p.main;
 
 			p.gameObject.SetActive (true);
@@ -321,14 +320,12 @@ public class Turret : MonoBehaviour
 			{
 				//get the other player
 				curTarget = TwoDGameManager.thisInstance.players[1].transform;
-				Debug.Log(curTarget);
 			}
 
 			if (ownerNum == 1)
 			{
 				//get the other player
 				curTarget = TwoDGameManager.thisInstance.players[0].transform;
-				Debug.Log(curTarget);
 			}
 
 			//face that player over a period of time
@@ -337,7 +334,7 @@ public class Turret : MonoBehaviour
 			targetDir = new Vector3(target.position.x, EmitterRotators.transform.position.y, target.position.z) - EmitterRotators.transform.position;
 			float step = rotSpeed * Time.deltaTime;
 			newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0F);
-			Debug.DrawRay(transform.position, newDir, Color.red, 50f);
+			//Debug.DrawRay(transform.position, newDir, Color.red, 50f);
 			transform.rotation = Quaternion.LookRotation(newDir);
 		}
 
@@ -485,7 +482,7 @@ public class Turret : MonoBehaviour
 
 	public void Init (int ownerNum_, int timesOwned_, int litSegments_)
 	{
-		Debug.Log(timesOwned_);
+		//Debug.Log(timesOwned_);
 		litSegments = litSegments_;
 		ownerNum = ownerNum_;
 		timesOwned = timesOwned_;
