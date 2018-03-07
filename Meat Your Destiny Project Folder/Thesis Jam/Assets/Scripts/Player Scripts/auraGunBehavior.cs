@@ -15,13 +15,16 @@ public class auraGunBehavior : MonoBehaviour
     public GameObject SlowAuraobj;
 
     public int playerNum;
+
     private float bulletOffsetNorm = 0f;
+	[Header("SHOOTING VARS")]
     public int MaxBullets;
     public int CurrentBullets;
     public float ReloadTime;
     public float initShootTime;
     public float shootTime;
     public float shootVol;
+	public float shootAnimationDelay;
     private bool isFiring;
     public bool autoReloadEnabled;
     private bool autoReload;
@@ -260,6 +263,7 @@ public class auraGunBehavior : MonoBehaviour
 			} else {
 				if (chargeTime >= 1) {
                     StartCoroutine(LaserShotSound());
+					myCont.GetComponent<Animator>().SetBool("Laser Firing", true);
 					laserIsFiring = true;
 					chargeTime = 0f;
 
@@ -281,6 +285,8 @@ public class auraGunBehavior : MonoBehaviour
 
                 if (laserFiring >= totalLaserShotTime)
                 {
+					myCont.GetComponent<Animator>().SetBool("Laser Firing", false);
+
                     gameObject.GetComponent<AuraCharacterController>().turnSpeed = 20f;
                     gameObject.GetComponent<AuraCharacterController>().prevMoveForce = 4f;
                     foreach (GameObject g in wings)
@@ -316,17 +322,22 @@ public class auraGunBehavior : MonoBehaviour
 
     void PrimaryFire()
     {
-       
-            CurrentBullets -= 1;
-            //myCont.OnShot();
-            bulletManager.CreateBullet(
-                RyuBullet,
-                Bullet_Emitter.transform.position,
-                Quaternion.Euler(new Vector3(0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
-        
+		CancelInvoke ("StopAttacking");
+		myCont.GetComponent<Animator> ().SetBool ("Attacking", true);
+		Invoke ("StopAttacking", shootAnimationDelay);
+        CurrentBullets -= 1;
+        //myCont.OnShot();
+        bulletManager.CreateBullet(
+            RyuBullet,
+            Bullet_Emitter.transform.position,
+            Quaternion.Euler(new Vector3(0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
+    
       
     }
 
+	public void StopAttacking(){
+		myCont.GetComponent<Animator> ().SetBool ("Attacking", false);
+	}
     int activeAura()
     {
 
