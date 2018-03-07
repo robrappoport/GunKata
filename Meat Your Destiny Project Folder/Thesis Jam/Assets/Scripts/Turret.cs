@@ -5,7 +5,8 @@ using UnityEngine;
 public class Turret : MonoBehaviour
 {
 
-	public Renderer topRenderer, middleRenderer, bottomRenderer;
+//	public Renderer topRenderer, middleRenderer, bottomRenderer;
+	public Renderer[] segments = new Renderer[5];
 	public Color p1Color, p2Color, neutralColor, currentColor, uncontestableColor, unownedColor;
 	public GameObject CannonballPrefab;
 	public int litSegments = 0, ownerNum = 2, timesOwned = 0, maxTimesCanBeOwned, chargeIncrementSign = 1;
@@ -18,7 +19,7 @@ public class Turret : MonoBehaviour
 	public enum Owner { Player1, Player2, NONE };
 	public Owner owner = Owner.NONE;
 
-	GameObject Cannon;
+	//GameObject Cannon;
 	public bool completelyOwned = false, contestable = true;
 
 	public List<Cannonball> cannonBallList = new List<Cannonball>();
@@ -32,6 +33,7 @@ public class Turret : MonoBehaviour
 	private Vector3 targetDir;
 	private Vector3 newDir;
 	private Transform target;
+	private int segmentNum;
 	[Header("PARTICLE SYSTEM VARS")]
 	ParticleSystem p;
 	Collider auraCollider;
@@ -39,8 +41,9 @@ public class Turret : MonoBehaviour
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
 	void Awake(){	
+		segmentNum = segments.Length;
 		p = GetComponentInChildren<ParticleSystem>();
-		p.transform.localPosition = new Vector3 (0, 1.5f, 0);
+		p.transform.localPosition = new Vector3 (0, 6.5f, 0);
 		p.gameObject.SetActive (false);
 		//set emitters
 		//Emitter[0] = GameObject.Find(name + "/N_Emitter");
@@ -49,14 +52,14 @@ public class Turret : MonoBehaviour
 		ownerNum = 2;
 		//myShooter = GetComponentInChildren<UbhShotCtrl> ();
 		//set up segments here
-		topRenderer = transform.Find("Turret Top").GetComponent<Renderer>();
-		middleRenderer = transform.Find("Turret Middle").GetComponent<Renderer>();
-		bottomRenderer = transform.Find("Turret Bottom").GetComponent<Renderer>();
-		SegmentsList.Add (bottomRenderer);
-		SegmentsList.Add (middleRenderer);
-		SegmentsList.Add (topRenderer);
+////		topRenderer = transform.Find("Turret Top").GetComponent<Renderer>();
+////		middleRenderer = transform.Find("Turret Middle").GetComponent<Renderer>();
+////		bottomRenderer = transform.Find("Turret Bottom").GetComponent<Renderer>();
+//		SegmentsList.Add (bottomRenderer);
+//		SegmentsList.Add (middleRenderer);
+//		SegmentsList.Add (topRenderer);
 		//
-		Cannon = topRenderer.gameObject;
+		//Cannon = topRenderer.gameObject;
 
 		p1Color = TwoDGameManager.thisInstance.playerHealth1.normalColor.color;
 		p2Color = TwoDGameManager.thisInstance.playerHealth2.normalColor.color;
@@ -84,7 +87,7 @@ public class Turret : MonoBehaviour
 		AimingTurret();
 
 		if (charging && contestable) {
-			charge = Mathf.Clamp (charge + chargeIncrementSign * Time.deltaTime * chargeSpeed, 0, 3);
+			charge = Mathf.Clamp (charge + chargeIncrementSign * Time.deltaTime * chargeSpeed, 0, segments.Length);
 		}
 		if (isSpinning)
 		{
@@ -175,7 +178,7 @@ public class Turret : MonoBehaviour
                     if (!auraCollider.GetComponent<AuraGenerator>().isSuper)
                     {
                         //ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
-                        if (litSegments < 3)
+						if (litSegments < segments.Length)
                         {
                             charging = true;
 
@@ -231,7 +234,6 @@ public class Turret : MonoBehaviour
 		}
 	}
 	void OnTriggerExit(Collider col){
-		print("exiting");
 		if (col.gameObject.GetComponent<AuraGenerator> ()) {
 			charging = false;
 
@@ -341,37 +343,50 @@ public class Turret : MonoBehaviour
 
 
 	}
-	void AdjustCannonColor()
-	{//adjusts turret based on the number of lit segments;
-		if (litSegments > 0)
-		{
-			bottomRenderer.material.color = currentColor;
-		}
-		else
-		{
-			bottomRenderer.material.color = neutralColor;
-		}
+//	void AdjustCannonColor()
+//	{//adjusts turret based on the number of lit segments;
+//		
+//		if (litSegments > 0)
+//		{
+//			bottomRenderer.material.color = currentColor;
+//		}
+//		else
+//		{
+//			bottomRenderer.material.color = neutralColor;
+//		}
+//
+//		if (litSegments > 1)
+//		{
+//			middleRenderer.material.color = currentColor;
+//		}
+//		else
+//		{
+//			middleRenderer.material.color = neutralColor;
+//		}
+//
+//		if (litSegments > 2)
+//		{
+//			topRenderer.material.color = currentColor;
+//		}
+//		else
+//		{
+//			topRenderer.material.color = neutralColor;
+//		}
+//
+//	}
 
-		if (litSegments > 1)
-		{
-			middleRenderer.material.color = currentColor;
-		}
-		else
-		{
-			middleRenderer.material.color = neutralColor;
-		}
+	void AdjustCannonColor(){
+		for (int i = 0; i < litSegments; i++) {
+			segments [i].material.color = currentColor;
+			segments [i].material.SetColor ("_EmissionColor", currentColor);
 
-		if (litSegments > 2)
-		{
-			topRenderer.material.color = currentColor;
 		}
-		else
-		{
-			topRenderer.material.color = neutralColor;
-		}
+		for (int i = litSegments; i < segmentNum; i++) {
+			segments[i].material.color = neutralColor;
+			segments [i].material.SetColor ("_EmissionColor", currentColor);
 
+		}
 	}
-
 
 	void CleanCannonballList(){
 		//create new, clean list
@@ -389,12 +404,10 @@ public class Turret : MonoBehaviour
 	}
 	void Fire()
 	{	 
-		print ("firing");
 		//CleanCannonballList ();
 
 		foreach (GameObject Em in Emitter)
 		{
-			print ("firing");
 			GameObject cannonBall;
 
 			if (objectPool.TryGetNextObject (Em.transform.position, Em.transform.rotation, out cannonBall)) {
@@ -440,7 +453,6 @@ public class Turret : MonoBehaviour
 
 	public void Reset()
 	{
-		Debug.Log("RESET");
 		CancelInvoke();
 		ownerNum = 2;
 		owner = Owner.NONE;
@@ -449,14 +461,20 @@ public class Turret : MonoBehaviour
 		completelyOwned = false;
 		AdjustOwnership(owner);
 		AdjustCannonColor();
-		topRenderer.material.color = uncontestableColor;
-		middleRenderer.material.color = uncontestableColor;
-		bottomRenderer.material.color = uncontestableColor;
+//		topRenderer.material.color = uncontestableColor;
+//		middleRenderer.material.color = uncontestableColor;
+//		bottomRenderer.material.color = uncontestableColor;
 		contestable = false;
 		bool turnOff = GetComponent<BallArrayScript>().on = false;
 		hasAddedToBall = false;
 		Invoke("Neutralize", uncontestableTime);
 
+	}
+
+	void ResetAllColors(){
+		for (int i = 0; i < segments.Length; i++) {
+			segments [i].material.color = uncontestableColor;
+		}
 	}
 
 	void Neutralize()
@@ -495,7 +513,7 @@ public class Turret : MonoBehaviour
 
 	public void DetermineDegreeOfOwnership ()
 	{
-		if (litSegments > 2)
+		if (litSegments > segmentNum - 1)
 		{
 
 			if (key)
