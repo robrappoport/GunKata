@@ -93,6 +93,7 @@ public class auraGunBehavior : MonoBehaviour
     public float loadedChargeTime;
     public float laserLengthPercent;
     public GameObject[] wings;
+    public Material wingMat;
     public Color inactiveWingColor;
     public Color activeWingColor;
     public float totalLaserShotTime;
@@ -122,7 +123,7 @@ public class auraGunBehavior : MonoBehaviour
 
             foreach (Renderer r in wingArray)
             {
-                r.material.color = inactiveWingColor;
+                r.material.SetColor("_EmissionColor", inactiveWingColor);
             }
         }
         //find all its own components and static objects 
@@ -239,7 +240,8 @@ public class auraGunBehavior : MonoBehaviour
                             Renderer [] wingArray = wings[i].GetComponentsInChildren<Renderer>();
                             foreach (Renderer r in wingArray)
                             {
-                                r.material.color = activeWingColor;
+                                //r.material.c = activeWingColor;
+                                r.material.SetColor("_EmissionColor", activeWingColor);
                             }
 
 
@@ -294,7 +296,8 @@ public class auraGunBehavior : MonoBehaviour
                         Renderer [] wingArray = g.GetComponentsInChildren<Renderer>();
                         foreach (Renderer r  in wingArray)
                         {
-                            r.material.color = inactiveWingColor;
+                            //r.material.color = inactiveWingColor;
+                            r.material.SetColor("_EmissionColor", inactiveWingColor);
                         }
                     }
                     laserFiring = 0f;
