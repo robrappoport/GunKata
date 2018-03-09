@@ -280,7 +280,7 @@ public class auraGunBehavior : MonoBehaviour
 			}
             if (laserIsFiring)
             {
-                gameObject.GetComponent<AuraCharacterController>().turnSpeed = .2f;
+                gameObject.GetComponent<AuraCharacterController>().turnSpeed = .5f;
                 gameObject.GetComponent<AuraCharacterController>().prevMoveForce = .2f;
                 laserFiring += Time.deltaTime;
                //play laser sound
