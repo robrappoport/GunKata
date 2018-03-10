@@ -150,15 +150,7 @@ public class Turret : MonoBehaviour
 			}
 			litSegments = 0;
 			charge = 0;
-
-			foreach(List<Turret> l in TwoDGameManager.thisInstance.turrets){//scan all turret lists and remove itself from the one containing this turret
-				if(l.Contains(this)){
-					l.Remove(this);
-				}
-			}
-			//add itself to its new owner's list
-			TwoDGameManager.thisInstance.turrets[ownerNum].Add(this);
-
+			AdjustListMembership ();
 		}
 
 
@@ -180,6 +172,17 @@ public class Turret : MonoBehaviour
 
 	}
 
+	void AdjustListMembership(){
+		foreach(List<Turret> l in TwoDGameManager.thisInstance.turrets){//scan all turret lists and remove itself from the one containing this turret
+			if(l.Contains(this)){
+				l.Remove(this);
+			}
+		}
+		//add itself to its new owner's list
+		TwoDGameManager.thisInstance.turrets[ownerNum].Add(this);
+
+
+	}
 
 	void AuraCheck (){
 		if (contestable) {
@@ -490,6 +493,7 @@ public class Turret : MonoBehaviour
 		completelyOwned = false;
 		AdjustOwnership(owner);
 		AdjustCannonColor();
+		AdjustListMembership ();
 //		topRenderer.material.color = uncontestableColor;
 //		middleRenderer.material.color = uncontestableColor;
 //		bottomRenderer.material.color = uncontestableColor;
@@ -499,6 +503,7 @@ public class Turret : MonoBehaviour
 		anim.ResetTrigger ("Open");
 		anim.SetTrigger ("Close");
 		Invoke("Neutralize", uncontestableTime);
+
 
 	}
 
