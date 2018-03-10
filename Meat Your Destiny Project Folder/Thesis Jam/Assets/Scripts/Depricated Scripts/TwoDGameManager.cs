@@ -66,8 +66,18 @@ public class TwoDGameManager : MonoBehaviour {
     public bool ballDestroyed = false;
     public int zoneIndex;
     public float zoneTimeElapsed;
+
 //	GameObject audioManagerClone;
 //	public GameObject audioManagerPrefab;
+
+	[Header("Turret Spawn Vars")]
+	public List<List<Turret>>turrets;
+	public float turretDistanceMod = 3;
+	public float spawnResetTimeLimit = 1;
+	float spawnResetTimer;
+	//uncomment these to watch the lists in realtime
+//	public List<Turret> neutralTurrets, p1Turrets, p2Turrets;
+
 
     void OnApplicationQuit()
     {
@@ -75,6 +85,7 @@ public class TwoDGameManager : MonoBehaviour {
     }
 	void Awake ()
 	{
+		
         cam = Camera.main.GetComponent<CameraMultitarget>();
         StartCoroutine(TimerCo());
         if (thisInstance == null)
@@ -93,9 +104,16 @@ public class TwoDGameManager : MonoBehaviour {
         //		if (!GameObject.Find ("AudioManager(Clone)")) {
         //			audioManagerClone = Instantiate (audioManagerPrefab);
         //		}
+		turrets = new List<List<Turret>> (players.Length + 1);
+		for (int i = 0; i < turrets.Capacity; i++) {
+			turrets.Add (new List<Turret> ());
+		}
 
         /////////GAME INSTANTIATION OCCURS HERE/////////
-        setLevel();
+
+		setLevel();
+
+
         ball = FindObjectOfType<TheBallScript>().gameObject;
 
         ballLoc = ball.transform.position;
@@ -115,13 +133,15 @@ public class TwoDGameManager : MonoBehaviour {
 
     void Update()
     {
+		spawnResetTimer += Time.deltaTime;
         StartCoroutine(BallTimer());
         player1Start.position = player1Spawns[index1];
         player2Start.position = player2Spawns[index2];
         playerScoreUpdate();
         if (playerHealth1.CurrentHealth <= 0 || playerHealth2.CurrentHealth <= 0)
         {
-            cam.Shake(shakeWeight, shakeTime);
+			CheckPlayerWin ();
+			cam.Shake(shakeWeight, shakeTime);
             if (playerHealth1.CurrentHealth <= 0 && addedScore2 == false)
             {
                 //player1Scale = player1.transform.localScale;
@@ -140,7 +160,7 @@ public class TwoDGameManager : MonoBehaviour {
             }
 
         }
-        playerWin();
+      //  playerWin();
         //for (int i = 0; i < keyTurrets.Count; i++)
         //{
         //    if(keyTurrets[i].ownerNum == 2){
@@ -251,8 +271,15 @@ public class TwoDGameManager : MonoBehaviour {
 			Destroy (player1);
 		}
         Debug.Log("Spawning player 1");
-        player1 = Instantiate(player1Prefab, new Vector3 (player1Spawns[index1].x, player1Spawns[index1].y + 5, player1Spawns[index1].z), Quaternion.identity) as GameObject;
         //player1.transform.localScale = player1Scale;
+		if (spawnResetTimer > spawnResetTimeLimit) {
+			Vector3 spawnPos = GetSpawnPosition (0) + Vector3.back * turretDistanceMod + Vector3.up *5;
+			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
+
+			player1 = Instantiate (player1Prefab, player2Start.position = spawnPos, Quaternion.identity) as GameObject;
+		} else {
+			player1 = Instantiate(player1Prefab, new Vector3 (player1Spawns[index1].x, player1Spawns[index1].y + 5, player1Spawns[index1].z), Quaternion.identity) as GameObject;
+		}
 		playerHealth1 = player1.GetComponent<auraPlayerHealth>();
 		players[0] = player1.GetComponent<auraGunBehavior>();
 		GetComponent<bulletManagerManager>().bMan1 = player1.GetComponent<BulletManager>();
@@ -279,14 +306,23 @@ public class TwoDGameManager : MonoBehaviour {
 		if (player2) {
 			Destroy (player2);
 		}
+			
         Debug.Log("Spawning player 2");
+		if (spawnResetTimer > spawnResetTimeLimit) {
+			Vector3 spawnPos = GetSpawnPosition (1) + Vector3.back * turretDistanceMod;
+			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
+			player2 = Instantiate (player2Prefab, player2Start.position = spawnPos, Quaternion.identity) as GameObject;
+		} else {
+			player2 = Instantiate (player2Prefab, player2Start.position = new Vector3 (player2Spawns [index2].x, player2Spawns [index2].y + 5, player2Spawns [index2].z), Quaternion.identity) as GameObject;
+		}
 
-        player2 = Instantiate(player2Prefab, player2Start.position = new Vector3(player2Spawns[index2].x, player2Spawns[index2].y + 5, player2Spawns[index2].z), Quaternion.identity) as GameObject;
         //player2.transform.localScale = player2Scale;
 		playerHealth2 = player2.GetComponent<auraPlayerHealth>();
 		players[1] = player2.GetComponent<auraGunBehavior>();
 		GetComponent<bulletManagerManager>().bMan2 = player2.GetComponent<BulletManager>();
         //Debug.Log("player 2's stamina is"+ player2.GetComponent<auraGunBehavior>().curStamina);
+
+		//aura charge stuff
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[0] = player2Canvas.transform.Find("AuraLvl1/AuraBar1").GetComponent<Image>();
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[0].fillAmount = 1;
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[1] = player2Canvas.transform.Find("AuraLvl2/AuraBar2").GetComponent<Image>();
@@ -306,6 +342,28 @@ public class TwoDGameManager : MonoBehaviour {
 
 	}
 
+	Vector3 GetSpawnPosition(int playerNum, int neutralNum = 2){
+		Vector3 spawnPos = Vector3.zero;
+		if (PlayerCanSpawn (playerNum)) {
+
+			if (TwoDGameManager.thisInstance.turrets [playerNum].Count > 0) {//check if there are any turrets available in the player's spawn; otherwise, spawn from an unowned turret
+				spawnPos = TwoDGameManager.thisInstance.turrets [playerNum] [Random.Range (0, TwoDGameManager.thisInstance.turrets [1].Count - 1)].transform.position;
+			} else {
+				spawnPos = TwoDGameManager.thisInstance.turrets [neutralNum] [Random.Range (0, TwoDGameManager.thisInstance.turrets [2].Count - 1)].transform.position;
+			}
+
+			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
+		} 
+		return spawnPos;
+
+	}
+	bool PlayerCanSpawn(int playerNum, int unownedNum = 2){
+		if (turrets [playerNum].Count < 1 && turrets [unownedNum].Count < 1) {//check if both the player's list and the neutral list are empty
+			return false;
+		} else {
+			return true;
+		}
+	}
     IEnumerator DelayedSpawnPlayer1 ()
     {
         yield return new WaitForSeconds(respawnTime);
@@ -322,25 +380,51 @@ public class TwoDGameManager : MonoBehaviour {
         SpawnPlayer2();
     }
 
+	void CheckPlayerWin(){
+		//        if (player1ScoreNum >= maxScore)
+		if (!PlayerCanSpawn (1)){
+			player1.SetActive (false);
+			player2.SetActive (false);
+			player2Canvas.SetActive (false);
+			player1Canvas.SetActive (false);
+			playerWinner.text = "blue wins";
+			StartCoroutine (gameRestart ());
+		}
+		//       if (player2ScoreNum >= maxScore)
+			if (!PlayerCanSpawn (0)){			
+			player1.SetActive (false);
+			player2.SetActive (false);
+			player2Canvas.SetActive (false);
+			player1Canvas.SetActive (false);
+			playerWinner.text = "red wins";
+			StartCoroutine (gameRestart ());
+
+		}
+
+	}
     void playerWin()
     {
-        if (player1ScoreNum >= maxScore)
-        {
+//        if (player1ScoreNum >= maxScore)
+		if(!PlayerCanSpawn(1))
+		{
             player1.SetActive(false);
             player2.SetActive(false);
             player2Canvas.SetActive(false);
             player1Canvas.SetActive(false);
             playerWinner.text = "blue wins";
             StartCoroutine(gameRestart());
+			spawnResetTimer = 0;
         }
-        if (player2ScoreNum >= maxScore)
-        {
+		if(!PlayerCanSpawn(0))
+ //       if (player2ScoreNum >= maxScore)
+		{
             player1.SetActive(false);
             player2.SetActive(false);
             player2Canvas.SetActive(false);
             player1Canvas.SetActive(false);
             playerWinner.text = "red wins";
             StartCoroutine(gameRestart());
+			spawnResetTimer = 0;
 
         }
     }

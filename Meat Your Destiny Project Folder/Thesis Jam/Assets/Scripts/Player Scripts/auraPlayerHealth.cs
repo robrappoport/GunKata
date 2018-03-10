@@ -72,7 +72,6 @@ public class auraPlayerHealth : MonoBehaviour {
 	{
         if (!invincibilityFramesActive && CurrentHealth > 0) {
 			takingDamage = true;
-			print ("taking damage");	
             //SetHealth ();
             CurrentHealth += amount;
 

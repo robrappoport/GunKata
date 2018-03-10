@@ -80,8 +80,9 @@ public class Turret : MonoBehaviour
 		if(key){
 			TwoDGameManager.thisInstance.keyTurrets.Add(this);
 			uncontestableTime = keyUncontestableTime;
-
 		}
+		TwoDGameManager.thisInstance.turrets [ownerNum].Add (this);
+	
 		objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
 	}
 
@@ -149,6 +150,14 @@ public class Turret : MonoBehaviour
 			}
 			litSegments = 0;
 			charge = 0;
+
+			foreach(List<Turret> l in TwoDGameManager.thisInstance.turrets){//scan all turret lists and remove itself from the one containing this turret
+				if(l.Contains(this)){
+					l.Remove(this);
+				}
+			}
+			//add itself to its new owner's list
+			TwoDGameManager.thisInstance.turrets[ownerNum].Add(this);
 
 		}
 
@@ -487,6 +496,7 @@ public class Turret : MonoBehaviour
 		contestable = false;
 		bool turnOff = GetComponent<BallArrayScript>().on = false;
 		hasAddedToBall = false;
+		anim.ResetTrigger ("Open");
 		anim.SetTrigger ("Close");
 		Invoke("Neutralize", uncontestableTime);
 
