@@ -266,14 +266,13 @@ public class TwoDGameManager : MonoBehaviour {
 		SpawnPlayer2 ();
     }
 
-    void SpawnPlayer1(){
+	void SpawnPlayer1(Vector3 spawnPos = default(Vector3)){
 		if (player1) {
 			Destroy (player1);
 		}
         Debug.Log("Spawning player 1");
         //player1.transform.localScale = player1Scale;
 		if (spawnResetTimer > spawnResetTimeLimit) {
-			Vector3 spawnPos = GetSpawnPosition (0) + Vector3.back * turretDistanceMod + Vector3.up *5;
 			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
 
 			player1 = Instantiate (player1Prefab, player2Start.position = spawnPos, Quaternion.identity) as GameObject;
@@ -302,14 +301,13 @@ public class TwoDGameManager : MonoBehaviour {
 		playerHealth1.StartCoroutine(playerHealth1.colorChange(iFrameFlashDuration, iFrameNumber));
 	}
 
-    void SpawnPlayer2(){
+	void SpawnPlayer2(Vector3 spawnPos = default(Vector3)){
 		if (player2) {
 			Destroy (player2);
 		}
 			
         Debug.Log("Spawning player 2");
 		if (spawnResetTimer > spawnResetTimeLimit) {
-			Vector3 spawnPos = GetSpawnPosition (1) + Vector3.back * turretDistanceMod;
 			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
 			player2 = Instantiate (player2Prefab, player2Start.position = spawnPos, Quaternion.identity) as GameObject;
 		} else {
@@ -366,18 +364,23 @@ public class TwoDGameManager : MonoBehaviour {
 	}
     IEnumerator DelayedSpawnPlayer1 ()
     {
+		Vector3 spawnPos = GetSpawnPosition (0) + Vector3.back * turretDistanceMod;
+
         yield return new WaitForSeconds(respawnTime);
-        Instantiate(respawnBulletDestroyer, player1Spawns[index1], Quaternion.identity);
+		Instantiate(respawnBulletDestroyer, spawnPos, Quaternion.identity);
+//        Instantiate(respawnBulletDestroyer, player1Spawns[index1], Quaternion.identity);
         yield return new WaitForSeconds(.1f);
-        SpawnPlayer1();
+		SpawnPlayer1(spawnPos);
         
     }
     IEnumerator DelayedSpawnPlayer2()
     {
+		Vector3 spawnPos = GetSpawnPosition (1) + Vector3.back * turretDistanceMod;
+
         yield return new WaitForSeconds(respawnTime);
-        Instantiate(respawnBulletDestroyer, player2Spawns[index2], Quaternion.identity);
+		Instantiate(respawnBulletDestroyer, spawnPos, Quaternion.identity);
         yield return new WaitForSeconds(.1f);
-        SpawnPlayer2();
+		SpawnPlayer2(spawnPos);
     }
 
 	void CheckPlayerWin(){
