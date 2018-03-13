@@ -76,7 +76,7 @@ public class TwoDGameManager : MonoBehaviour {
 	public float spawnResetTimeLimit = 1;
 	float spawnResetTimer;
 	//uncomment these to watch the lists in realtime
-//	public List<Turret> neutralTurrets, p1Turrets, p2Turrets;
+	public List<Turret> neutralTurrets, p1Turrets, p2Turrets;
 
 
     void OnApplicationQuit()
@@ -108,6 +108,10 @@ public class TwoDGameManager : MonoBehaviour {
 		for (int i = 0; i < turrets.Capacity; i++) {
 			turrets.Add (new List<Turret> ());
 		}
+		neutralTurrets = turrets [2];
+		p2Turrets = turrets [1];
+		p1Turrets = turrets [0];
+
 
         /////////GAME INSTANTIATION OCCURS HERE/////////
 
@@ -128,6 +132,7 @@ public class TwoDGameManager : MonoBehaviour {
     {
         player1Scale = player1.transform.localScale;
         player2Scale = player2.transform.localScale;
+		ActivateSections (0);
     }
 
 
@@ -485,8 +490,20 @@ public class TwoDGameManager : MonoBehaviour {
                 zones[i].sections[j].Drop();
 
             }
+			ActivateSections (Mathf.Clamp (zoneIndex + 1, 0, zones.Length - 1));
         }
     }
+
+	void ActivateSections(int i = 0){
+		foreach (SectionScript s in zones[i].sections) {
+			print (s.name);
+			if (s.turretCarrier) {
+				print ("activating section " + i.ToString ());
+				s.turretCarrier.ActivateTurrets ();
+			}
+		}
+
+	}
 
     //public static float remapRange(float oldValue, float oldMin, float oldMax, float newMin, float newMax)
     //{

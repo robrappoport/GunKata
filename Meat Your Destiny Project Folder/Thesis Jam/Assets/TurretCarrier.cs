@@ -11,14 +11,15 @@ public class TurretCarrier : MonoBehaviour {
 	public Transform center;
 
 	public bool testBool = false;
-	List<Transform> children;
-	void Start () {
+	public List<Transform> children;
+	void Awake () {
 		children = new List<Transform> ();
-		//generate a list of all transforms
+		//generate a list of all transforms, then deactivate each one
 		Turret[] ts = GetComponentsInChildren<Turret> ();
 		foreach (Turret t in ts) {
 			if (t.gameObject != gameObject) {
 				children.Add (t.transform);
+				t.gameObject.SetActive (false);
 			}
 		}
 //		//get centroid
@@ -33,7 +34,17 @@ public class TurretCarrier : MonoBehaviour {
 
 		//StartCoroutine (SendToEdge());
 	}
-	
+
+	public void ActivateTurrets(){
+		foreach (Transform t in children) {
+			if (t.GetComponent<Turret> ()) {
+				t.gameObject.SetActive (true);
+				t.GetComponent<Turret> ().RegisterTurret ();
+			}
+		}
+	}
+
+
 
 	public IEnumerator SendToEdge(){
 		//remove self from game manager's list of turrets

@@ -22,6 +22,11 @@ public class SectionScript : MonoBehaviour {
 
     void Start()
     {
+		if (turretCarrier) {
+			foreach (Transform t in turretCarrier.children) {
+				sectionTurret.Add (t.GetComponent<Turret> ());
+			}
+		}
         dropSpeed = 15f;
         floorRend = floor.GetComponent<Renderer>();
         normColor = flashColor;

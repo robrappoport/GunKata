@@ -81,10 +81,12 @@ public class Turret : MonoBehaviour
 			TwoDGameManager.thisInstance.keyTurrets.Add(this);
 			uncontestableTime = keyUncontestableTime;
 		}
-		TwoDGameManager.thisInstance.turrets [ownerNum].Add (this);
+		RegisterTurret ();
 	
 		objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
 	}
+
+
 
 	// Update is called once per frame
 	void Update()
@@ -170,6 +172,12 @@ public class Turret : MonoBehaviour
 
 		//	CleanCannonballList ();
 
+	}
+
+	public void RegisterTurret(){
+		if (!TwoDGameManager.thisInstance.turrets [ownerNum].Contains (this)) {
+			TwoDGameManager.thisInstance.turrets [ownerNum].Add (this);
+		}
 	}
 
 	void AdjustListMembership(){
