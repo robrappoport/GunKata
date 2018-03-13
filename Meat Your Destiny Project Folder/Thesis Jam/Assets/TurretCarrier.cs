@@ -6,22 +6,29 @@ public class TurretCarrier : MonoBehaviour {
 	[Tooltip("Speed at which the turrets orbit")]
 	public float orbitingSpeed = 1;
 	[Tooltip("Speed at which the turrets leave the arena")]
-	public float removalSpeed = 1, finalDistance;
+	public float removalSpeed = 1;
+	public float finalDistance;
+	[Tooltip("Time it should take for the turret to rise to the top")]
+	public float risingTime = 2;
 	[Tooltip("Object to define as center")]
 	public Transform center;
-
-	public bool testBool = false;
+	[Tooltip("Children of the carrier (turret transforms)")]
 	public List<Transform> children;
+	Vector3 finalPos; //arrange before runtime
+
 	void Awake () {
+		finalPos = transform.position;
 		children = new List<Transform> ();
 		//generate a list of all transforms, then deactivate each one
 		Turret[] ts = GetComponentsInChildren<Turret> ();
 		foreach (Turret t in ts) {
-			if (t.gameObject != gameObject) {
+			if (t.gameObject != gameObject) {//checks if not self
 				children.Add (t.transform);
 				t.gameObject.SetActive (false);
 			}
 		}
+		transform.position = transform.position + Vector3.down * 100;
+
 //		//get centroid
 //		float x =0, z = 0;
 //		foreach (Transform t in children) {
@@ -35,13 +42,30 @@ public class TurretCarrier : MonoBehaviour {
 		//StartCoroutine (SendToEdge());
 	}
 
-	public void ActivateTurrets(){
+	public IEnumerator ActivateTurrets(){
+		//activate the turrets
 		foreach (Transform t in children) {
 			if (t.GetComponent<Turret> ()) {
 				t.gameObject.SetActive (true);
 				t.GetComponent<Turret> ().RegisterTurret ();
 			}
 		}
+		//send them up
+		float elapsedTime = 0;
+		while (Vector3.Distance (transform.position, finalPos) > 0) {
+			transform.position = Vector3.MoveTowards (transform.position, finalPos, elapsedTime / risingTime);
+			elapsedTime += Time.deltaTime;
+			yield return null;
+		}
+
+		//register them as legal spawnpoints
+		foreach (Transform t in children) {
+			if (t.GetComponent<Turret> ()) {
+				t.GetComponent<Turret> ().RegisterTurret ();
+			}
+		}
+
+
 	}
 
 

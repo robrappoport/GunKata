@@ -77,6 +77,7 @@ public class TwoDGameManager : MonoBehaviour {
 	float spawnResetTimer;
 	//uncomment these to watch the lists in realtime
 	public List<Turret> neutralTurrets, p1Turrets, p2Turrets;
+	public bool readyToActivateNextSections = true;
 
 
     void OnApplicationQuit()
@@ -132,7 +133,7 @@ public class TwoDGameManager : MonoBehaviour {
     {
         player1Scale = player1.transform.localScale;
         player2Scale = player2.transform.localScale;
-		ActivateSections (0);
+		StartCoroutine(ActivateSections (0));
     }
 
 
@@ -490,18 +491,20 @@ public class TwoDGameManager : MonoBehaviour {
                 zones[i].sections[j].Drop();
 
             }
-			ActivateSections (Mathf.Clamp (zoneIndex + 1, 0, zones.Length - 1));
+			StartCoroutine(ActivateSections (Mathf.Clamp (zoneIndex + 1, 0, zones.Length - 1)));
         }
     }
 
-	void ActivateSections(int i = 0){
+	IEnumerator ActivateSections(int i = 0){
+		while (!readyToActivateNextSections) {
+			yield return null;
+		}
 		foreach (SectionScript s in zones[i].sections) {
-			print (s.name);
 			if (s.turretCarrier) {
-				print ("activating section " + i.ToString ());
-				s.turretCarrier.ActivateTurrets ();
+				StartCoroutine(s.turretCarrier.ActivateTurrets ());
 			}
 		}
+		readyToActivateNextSections = false;
 
 	}
 

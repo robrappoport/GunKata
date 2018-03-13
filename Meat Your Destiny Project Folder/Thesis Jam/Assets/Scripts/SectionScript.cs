@@ -72,7 +72,7 @@ public class SectionScript : MonoBehaviour {
             sectionTurret[i].key = false;
         }
 		turretCarrier.StartCoroutine (turretCarrier.SendToEdge ());
-
+		TwoDGameManager.thisInstance.readyToActivateNextSections = true;
         while (floor.transform.position.y > dropTotal)
         {
             floor.transform.position = new Vector3(floor.transform.position.x, 
