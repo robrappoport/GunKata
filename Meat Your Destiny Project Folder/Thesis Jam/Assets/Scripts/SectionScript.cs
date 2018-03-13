@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SectionScript : MonoBehaviour {
-    public Turret[] sectionTurret;
+	public TurretCarrier turretCarrier;
+	public List<Turret> sectionTurret = new List<Turret>();
     public GameObject floor;
     public ShakeMeScript shake;
     private float dropSpeed;
@@ -59,11 +60,14 @@ public class SectionScript : MonoBehaviour {
             yield return new WaitForSeconds(.5f);
 
         }
-        for (int i = 0; i < sectionTurret.Length; i++)
+
+        for (int i = 0; i < sectionTurret.Count; i++)
         {
             sectionTurret[i].withinTimerLimits = false;
             sectionTurret[i].key = false;
         }
+		turretCarrier.StartCoroutine (turretCarrier.SendToEdge ());
+
         while (floor.transform.position.y > dropTotal)
         {
             floor.transform.position = new Vector3(floor.transform.position.x, 

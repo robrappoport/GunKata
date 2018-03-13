@@ -221,6 +221,11 @@ public class TwoDGameManager : MonoBehaviour {
         foreach (Turret t in zones[zoneIndex].GetComponentInChildren<SectionScript>().sectionTurret)
         {
             keyTurrets.Remove(t);
+
+			//remove turrets from score calculations
+			for (int i = 0; i < turrets.Count; i++) {
+				turrets [i].Remove (t);
+			}
         }
         foreach(Turret t in keyTurrets){
             t.Reset();
@@ -385,7 +390,7 @@ public class TwoDGameManager : MonoBehaviour {
 
 	void CheckPlayerWin(){
 		//        if (player1ScoreNum >= maxScore)
-		if (!PlayerCanSpawn (1)){
+		if (!PlayerCanSpawn (1) && playerHealth2.CurrentHealth <= 0){
 			player1.SetActive (false);
 			player2.SetActive (false);
 			player2Canvas.SetActive (false);
@@ -394,7 +399,7 @@ public class TwoDGameManager : MonoBehaviour {
 			StartCoroutine (gameRestart ());
 		}
 		//       if (player2ScoreNum >= maxScore)
-			if (!PlayerCanSpawn (0)){			
+		else if (!PlayerCanSpawn (0) && playerHealth1.CurrentHealth <=0){			
 			player1.SetActive (false);
 			player2.SetActive (false);
 			player2Canvas.SetActive (false);
