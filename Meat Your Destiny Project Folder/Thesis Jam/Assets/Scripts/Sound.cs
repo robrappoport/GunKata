@@ -8,9 +8,11 @@ public class Sound : MonoBehaviour {
     public GameObject sourcePrefab;
     public AudioSource[] sources;
     public int sourceNum;
+    bool interrupt;
 
 	// Use this for initialization
 	void Start () {
+        interrupt = false;
         me = this;
         sources = new AudioSource[sourceNum];
         for (int i = 0; i < sourceNum; i++)
@@ -38,7 +40,7 @@ public class Sound : MonoBehaviour {
         {
             source.pitch = Random.Range(.8f, 1.2f);
         } else {
-            source.pitch = 1f;  
+            source.pitch = 1f;
         }
         source.Play();
 

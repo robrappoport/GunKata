@@ -758,7 +758,6 @@ public class auraGunBehavior : MonoBehaviour
 
     IEnumerator AuraSound()
     {
-        Debug.Log("here");
         Sound.me.Play(playerSounds[1], 1f, true);
         yield return null;
         /*if (!myAudio.isPlaying)
@@ -779,9 +778,26 @@ public class auraGunBehavior : MonoBehaviour
 
     IEnumerator LaserChargeSound()
     {
+
+        //THIS DOESN'T WORK RIGHT NOW
         laserChargeSys.Play();
-        Sound.me.Play(playerSounds[3], .8f, false);
-        yield return null;
+            if (!myAudio.isPlaying)
+            {
+                myAudio.clip = playerSounds[3];
+                myAudio.Play();
+            }
+            if (myCont.primaryFireUp())
+            {
+                myAudio.Stop();
+            }
+            else
+            {
+                yield return new WaitForSeconds(myAudio.clip.length);
+                myAudio.Stop();
+            }
+        //THIS DOESN'T WORK RIGHT NOW
+
+
     }
 
     //public void SetStamina()
