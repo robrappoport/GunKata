@@ -5,6 +5,7 @@ using UnityEngine;
 public class InitSpawnBehaviorScript : MonoBehaviour {
     public float initElapsedTime = 2f;
     public float secondElapsedTime = 3f;
+    public GameObject obelisk;
 
 	// Update is called once per frame
 	void Update () {
@@ -21,13 +22,13 @@ public class InitSpawnBehaviorScript : MonoBehaviour {
 
     void SpawnSink()
     {
-        if (secondElapsedTime >= 0f)
+        if (secondElapsedTime <= 0f)
         {
-            Debug.Log("hello");
-            transform.Translate(Vector3.down * Time.deltaTime * 30f, Space.World);
+            Destroy(obelisk);
         }
         else
-            Destroy(transform.GetComponentInChildren<Transform>().gameObject);
+            obelisk.transform.Translate(Vector3.down * 30f * Time.deltaTime);
+       
         
     }
 }

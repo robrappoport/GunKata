@@ -101,6 +101,7 @@ public class auraGunBehavior : MonoBehaviour
     private float laserFiring = 0f;
     private bool laserIsFiring = false;
     private GameObject laserObj;
+    public ParticleSystem laserChargeSys, laserFireSys;
     //Cave Story Gun Behavior Bools//
     bool gunLevel1, gunLevel2, gunLevel3;
 
@@ -144,7 +145,8 @@ public class auraGunBehavior : MonoBehaviour
         {
             auraLevelCharge[i] = auraLevelChargeMax;
         }
-         
+       
+
     }
 
     // Update is called once per frame
@@ -224,13 +226,15 @@ public class auraGunBehavior : MonoBehaviour
                 }
                 if (myCont.primaryFire() == true)
                 {
+                    laserChargeSys.Play();
                     //Debug.Log(chargeTime);
                     //Debug.Log(loadedChargeTime);
                     //Debug.Log(chargeTime + " " + "chargetime");
-					if (wingMatChangeValue == 0) {
+                    if (wingMatChangeValue == 0) {
 						chargeTime += Time.deltaTime / initialChargeBuffer;
-					} else {
+                    } else {
 						chargeTime += Time.deltaTime;
+                        
 					}
                     wingMatChangeValue = Mathf.FloorToInt((chargeTime / loadedChargeTime) * 3f);
                     myCont.shootSlowDown();
@@ -260,11 +264,12 @@ public class auraGunBehavior : MonoBehaviour
                 myCont.NotShot();
             }
 			if (myCont.primaryFireUp ())
-			if (wingMatChangeValue== 0) {
+            {
+                laserChargeSys.Stop();
+                if (wingMatChangeValue== 0) {
 				chargeTime = 0;
 			} else {
 				if (chargeTime >= 1) {
-                    StartCoroutine(LaserShotSound());
 					myCont.GetComponent<Animator>().SetBool("Laser Firing", true);
 					laserIsFiring = true;
 					chargeTime = 0f;
@@ -278,17 +283,20 @@ public class auraGunBehavior : MonoBehaviour
 					laserObj.GetComponent<LaserShotScript> ().owner = myCont;
 				}
 			}
+            }
+
             if (laserIsFiring)
             {
                 gameObject.GetComponent<AuraCharacterController>().turnSpeed = .5f;
                 gameObject.GetComponent<AuraCharacterController>().prevMoveForce = .2f;
                 laserFiring += Time.deltaTime;
-               //play laser sound
+                StartCoroutine(LaserShotSound());
 
                 if (laserFiring >= totalLaserShotTime)
                 {
 					myCont.GetComponent<Animator>().SetBool("Laser Firing", false);
 
+                    laserFireSys.Stop();
                     gameObject.GetComponent<AuraCharacterController>().turnSpeed = 20f;
                     gameObject.GetComponent<AuraCharacterController>().prevMoveForce = 4f;
                     foreach (GameObject g in wings)
@@ -571,7 +579,7 @@ public class auraGunBehavior : MonoBehaviour
 			
     //        standardHalo.Clear();
     //        standardHalo.Pause();
-    //        DamagedHalo.Play();
+            
     //        StartCoroutine(AuraSound());
     //        //AuraObj.transform.position = transform.position;
     //        isProjecting = true;
@@ -739,8 +747,12 @@ public class auraGunBehavior : MonoBehaviour
         CurrentBullets = MaxBullets;
         isReloading = false;
         //bulletManager.Freeze(false);
+    }
 
-
+    IEnumerator ChargeSound()
+    {
+        Sound.me.Play(playerSounds[3], 1f, true);
+        yield return null;
     }
 
     IEnumerator ShootSound()
@@ -769,7 +781,8 @@ public class auraGunBehavior : MonoBehaviour
 
     IEnumerator LaserShotSound()
     {
-        Sound.me.Play(playerSounds[2], .8f, true);
+        laserFireSys.Play();
+        Sound.me.Play(playerSounds[2], .7f, true);
         yield return null;
     }
 

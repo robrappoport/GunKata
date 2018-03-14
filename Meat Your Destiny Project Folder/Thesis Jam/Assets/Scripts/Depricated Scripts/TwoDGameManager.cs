@@ -141,8 +141,8 @@ public class TwoDGameManager : MonoBehaviour {
     {
 		spawnResetTimer += Time.deltaTime;
         StartCoroutine(BallTimer());
-     //   player1Start.position = player1Spawns[index1];
-     //   player2Start.position = player2Spawns[index2];
+        player1Start.position = player1Spawns[index1];
+        player2Start.position = player2Spawns[index2];
         playerScoreUpdate();
         if (playerHealth1.CurrentHealth <= 0 || playerHealth2.CurrentHealth <= 0)
         {
@@ -303,9 +303,10 @@ public class TwoDGameManager : MonoBehaviour {
         player1.GetComponent<auraGunBehavior>().auraStamImgArray[3].fillAmount = 1;
         player1.GetComponent<auraGunBehavior>().auraStamImgArray[4] = player1Canvas.transform.Find("AuraLvl5/AuraBar5").GetComponent<Image>();
         player1.GetComponent<auraGunBehavior>().auraStamImgArray[4].fillAmount = 1;
-		//player1Tracker.Player = player1.transform;
+        player1.GetComponent<auraGunBehavior>().DamagedHalo.Play();
+        //player1Tracker.Player = player1.transform;
 
-		addedScore2 = false;
+        addedScore2 = false;
 
 		//add invincibility on spawn
 		playerHealth1.StartCoroutine(playerHealth1.colorChange(iFrameFlashDuration, iFrameNumber));
@@ -341,9 +342,10 @@ public class TwoDGameManager : MonoBehaviour {
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[3].fillAmount = 1;
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[4] = player2Canvas.transform.Find("AuraLvl5/AuraBar5").GetComponent<Image>();
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[4].fillAmount = 1;
-		//player2Tracker.Player = player2.transform;
+        player2.GetComponent<auraGunBehavior>().DamagedHalo.Play();
+        //player2Tracker.Player = player2.transform;
 
-		addedScore1 = false;
+        addedScore1 = false;
 
 		//add invincibility on spawn
 		playerHealth2.StartCoroutine(playerHealth2.colorChange(iFrameFlashDuration, iFrameNumber));
