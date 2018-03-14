@@ -101,7 +101,7 @@ public class auraGunBehavior : MonoBehaviour
     private float laserFiring = 0f;
     private bool laserIsFiring = false;
     private GameObject laserObj;
-    public ParticleSystem laserChargeSys, laserFireSys;
+    public ParticleSystem laserChargeSys, laserShotSys;
     //Cave Story Gun Behavior Bools//
     bool gunLevel1, gunLevel2, gunLevel3;
 
@@ -116,6 +116,7 @@ public class auraGunBehavior : MonoBehaviour
 
     void Start()
     {
+        
 		currentAuraChargeLimit = auraStamImgArray.Length;
 		remainingAuraCharge = currentAuraChargeLimit;
         foreach (GameObject g in wings)
@@ -146,13 +147,12 @@ public class auraGunBehavior : MonoBehaviour
             auraLevelCharge[i] = auraLevelChargeMax;
         }
        
-
     }
 
     // Update is called once per frame
     void Update()
     {
-		AuraCharge ();
+        AuraCharge ();
 		drawStamina ();
         //AuraSys();
        // drawStamina(); 
@@ -176,15 +176,6 @@ public class auraGunBehavior : MonoBehaviour
         }
 
         //Debug.DrawRay(transform.position, transform.forward * 50, Color.red);
-        if (myCont.xButtonUp() && CurrentBullets < MaxBullets)
-        {
-            isReloading = true;
-            buttonReload = true;
-            Invoke("Reload", .001f);
-        }
-        else
-        {
-        }
 
         if (CurrentBullets <= 0 && !isReloading && autoReloadEnabled == true)
         {
@@ -226,15 +217,18 @@ public class auraGunBehavior : MonoBehaviour
                 }
                 if (myCont.primaryFire() == true)
                 {
-                    laserChargeSys.Play();
                     //Debug.Log(chargeTime);
                     //Debug.Log(loadedChargeTime);
                     //Debug.Log(chargeTime + " " + "chargetime");
                     if (wingMatChangeValue == 0) {
-						chargeTime += Time.deltaTime / initialChargeBuffer;
-                    } else {
-						chargeTime += Time.deltaTime;
+                        chargeTime += Time.deltaTime / initialChargeBuffer;
+					} else {
+                        if (!laserChargeSys.isPlaying)
+                        {
+                            StartCoroutine(LaserChargeSound());
+                        }
                         
+                        chargeTime += Time.deltaTime;
 					}
                     wingMatChangeValue = Mathf.FloorToInt((chargeTime / loadedChargeTime) * 3f);
                     myCont.shootSlowDown();
@@ -264,12 +258,12 @@ public class auraGunBehavior : MonoBehaviour
                 myCont.NotShot();
             }
 			if (myCont.primaryFireUp ())
-            {
-                laserChargeSys.Stop();
-                if (wingMatChangeValue== 0) {
+			if (wingMatChangeValue== 0) {
 				chargeTime = 0;
 			} else {
 				if (chargeTime >= 1) {
+                    StartCoroutine(LaserShotSound());
+                    laserChargeSys.Stop();
 					myCont.GetComponent<Animator>().SetBool("Laser Firing", true);
 					laserIsFiring = true;
 					chargeTime = 0f;
@@ -283,20 +277,17 @@ public class auraGunBehavior : MonoBehaviour
 					laserObj.GetComponent<LaserShotScript> ().owner = myCont;
 				}
 			}
-            }
-
             if (laserIsFiring)
             {
                 gameObject.GetComponent<AuraCharacterController>().turnSpeed = .5f;
                 gameObject.GetComponent<AuraCharacterController>().prevMoveForce = .2f;
                 laserFiring += Time.deltaTime;
-                StartCoroutine(LaserShotSound());
+               //play laser sound
 
                 if (laserFiring >= totalLaserShotTime)
                 {
 					myCont.GetComponent<Animator>().SetBool("Laser Firing", false);
-
-                    laserFireSys.Stop();
+                    laserShotSys.Stop();
                     gameObject.GetComponent<AuraCharacterController>().turnSpeed = 20f;
                     gameObject.GetComponent<AuraCharacterController>().prevMoveForce = 4f;
                     foreach (GameObject g in wings)
@@ -364,11 +355,11 @@ public class auraGunBehavior : MonoBehaviour
     }
 
 	void AuraCharge(){
-		if (myCont.secondaryFireDown ()) {
+		if (myCont.secondaryFireDown () == true) {
 			currentAuraChargeLimit = remainingAuraCharge;
 			CancelInvoke ("ResetAuraCooldown");
 		}
-		if (myCont.secondaryFire ()) {
+		if (myCont.secondaryFire () == true) {
 				//calculate how much charge remains and how much is to be used
 				sprAura.SetActive (true);
 			remainingAuraCharge = Mathf.Clamp (remainingAuraCharge - Time.deltaTime * auraChargeRate, 0, auraStamImgArray.Length);
@@ -383,8 +374,9 @@ public class auraGunBehavior : MonoBehaviour
 			}
 		}
 
-		if (myCont.secondaryFireUp ()) {
-			coolingDown = true;
+		if (myCont.secondaryFireUp () == true) {
+            StartCoroutine(AuraSound());
+            coolingDown = true;
 			if(currentAuraCharge > 0){//only instantiate an aura if one "charge" has been used
 				AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position,
 					Quaternion.Euler(0, 0, 0))
@@ -427,7 +419,7 @@ public class auraGunBehavior : MonoBehaviour
 		//
 		//        }
 	}
-    void AuraSys()
+    /*void AuraSys()
     {
         
         if (coolingDown)
@@ -436,8 +428,9 @@ public class auraGunBehavior : MonoBehaviour
         }
       
         // when we press the left trigger and you have at least 1 energy bar
-        if (myCont.secondaryFireDown() && activeAura() > -1)
+        if (myCont.secondaryFireDown() == true && activeAura() > -1)
         {
+            
             coolingDown = false;
             curCoolDownAmt = 0f;
             auraIndex = activeAura();
@@ -449,7 +442,7 @@ public class auraGunBehavior : MonoBehaviour
         }
 
         //not holding button
-        if (!myCont.secondaryFire() && curCoolDownAmt <= 0f){
+        if (!myCont.secondaryFire() == true && curCoolDownAmt <= 0f){
             //recharge anything that's not full
             for (int i = auraLevelCharge.Length-1; i >=0; i--){
                 //iterate over auras until we find one that isn't fully charged, then charge it a bit
@@ -463,7 +456,7 @@ public class auraGunBehavior : MonoBehaviour
         }
 
         //while we hold down the left trigger and we still have at least 1 energy bar 
-        if (myCont.secondaryFire() && auraIndex > -1 && auraIndex < auraLevelCharge.Length)
+        if (myCont.secondaryFire() == true && auraIndex > -1 && auraIndex < auraLevelCharge.Length)
         {
             // if you have just pressed the button i.e. have no current aura charges, then quickly reduce the value of the current float to 0
             if (heldCharges == 0)
@@ -514,10 +507,11 @@ public class auraGunBehavior : MonoBehaviour
             sprAura.transform.localScale = Vector3.Lerp(sprAura.transform.localScale, targetScale,0.7f);
 
         }
-        // when you release the button, if the current aura charge is less than 100 but not zero, lerp it back to 100 very quickly
-        if (myCont.secondaryFireUp() && activeAura() > -1)
+
+        if (myCont.secondaryFireUp() == true && activeAura() > -1)
         {
-           curCoolDownAmt = coolDownTotal;
+            StartCoroutine(AuraSound());
+            curCoolDownAmt = coolDownTotal;
             coolingDown = true;
 
             if (auraIndex == auraLevelCharge.Length) {
@@ -554,7 +548,7 @@ public class auraGunBehavior : MonoBehaviour
         }
     
     }
-
+    */
     IEnumerator drainToZero (int auraIndexToDrain)
 
     {
@@ -579,7 +573,7 @@ public class auraGunBehavior : MonoBehaviour
 			
     //        standardHalo.Clear();
     //        standardHalo.Pause();
-            
+    //        DamagedHalo.Play();
     //        StartCoroutine(AuraSound());
     //        //AuraObj.transform.position = transform.position;
     //        isProjecting = true;
@@ -747,12 +741,8 @@ public class auraGunBehavior : MonoBehaviour
         CurrentBullets = MaxBullets;
         isReloading = false;
         //bulletManager.Freeze(false);
-    }
 
-    IEnumerator ChargeSound()
-    {
-        Sound.me.Play(playerSounds[3], 1f, true);
-        yield return null;
+
     }
 
     IEnumerator ShootSound()
@@ -768,6 +758,7 @@ public class auraGunBehavior : MonoBehaviour
 
     IEnumerator AuraSound()
     {
+        Debug.Log("here");
         Sound.me.Play(playerSounds[1], 1f, true);
         yield return null;
         /*if (!myAudio.isPlaying)
@@ -781,8 +772,15 @@ public class auraGunBehavior : MonoBehaviour
 
     IEnumerator LaserShotSound()
     {
-        laserFireSys.Play();
-        Sound.me.Play(playerSounds[2], .7f, true);
+        laserShotSys.Play();
+        Sound.me.Play(playerSounds[2], .8f, false);
+        yield return null;
+    }
+
+    IEnumerator LaserChargeSound()
+    {
+        laserChargeSys.Play();
+        Sound.me.Play(playerSounds[3], .8f, false);
         yield return null;
     }
 
@@ -810,5 +808,5 @@ public class auraGunBehavior : MonoBehaviour
     //    }
 
     //}
-   
+
 }
