@@ -141,8 +141,8 @@ public class TwoDGameManager : MonoBehaviour {
     {
 		spawnResetTimer += Time.deltaTime;
         StartCoroutine(BallTimer());
-        player1Start.position = player1Spawns[index1];
-        player2Start.position = player2Spawns[index2];
+     //   player1Start.position = player1Spawns[index1];
+     //   player2Start.position = player2Spawns[index2];
         playerScoreUpdate();
         if (playerHealth1.CurrentHealth <= 0 || playerHealth2.CurrentHealth <= 0)
         {
@@ -281,7 +281,6 @@ public class TwoDGameManager : MonoBehaviour {
 		if (player1) {
 			Destroy (player1);
 		}
-        Debug.Log("Spawning player 1");
         //player1.transform.localScale = player1Scale;
 		if (spawnResetTimer > spawnResetTimeLimit) {
 			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
