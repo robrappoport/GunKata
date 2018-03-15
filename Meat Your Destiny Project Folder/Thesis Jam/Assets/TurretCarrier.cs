@@ -17,6 +17,7 @@ public class TurretCarrier : MonoBehaviour {
 	Vector3 finalPos; //arrange before runtime
 
 	void Awake () {
+		risingTime = Mathf.Clamp (risingTime, 0.00001f, Mathf.Infinity);
 		finalPos = transform.position;
 		children = new List<Transform> ();
 		//generate a list of all transforms, then deactivate each one
