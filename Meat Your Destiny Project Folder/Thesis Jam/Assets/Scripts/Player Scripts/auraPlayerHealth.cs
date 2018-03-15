@@ -48,9 +48,6 @@ public class auraPlayerHealth : MonoBehaviour {
         {
             
             Instantiate(explosionPrefab, transform.position, transform.rotation);
-            TextManager text = ((GameObject)Instantiate(textPrefab, transform.position, Quaternion.identity)).GetComponent<TextManager>();
-            text.color = enemyPlayerColor;
-            text.pointString = "100";
             ParticleFollowScript followParts = ((GameObject)Instantiate
                                                 (followParticles, transform.position, 
                                                  Quaternion.identity)).GetComponent<ParticleFollowScript>();
