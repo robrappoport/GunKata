@@ -40,7 +40,6 @@ public class Sound : MonoBehaviour {
                 break;
             }
         }
-        Debug.Log(source + " is source");
         source.volume = volume;
         source.clip = clip;
         if (randoPitch)
