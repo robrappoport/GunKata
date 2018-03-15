@@ -152,6 +152,10 @@ public class auraGunBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		if (myAudio.clip == playerSounds [3] && myAudio.isPlaying) {
+			print ("sound is playing");
+		
+		}
         AuraCharge ();
 		drawStamina ();
         //AuraSys();
@@ -225,7 +229,7 @@ public class auraGunBehavior : MonoBehaviour
 					} else {
                         if (!laserChargeSys.isPlaying)
                         {
-                            StartCoroutine(LaserChargeSound());
+                           LaserChargeSound();
                         }
                         
                         chargeTime += Time.deltaTime;
@@ -772,29 +776,23 @@ public class auraGunBehavior : MonoBehaviour
     IEnumerator LaserShotSound()
     {
         laserShotSys.Play();
+		Sound.me.Stop (playerSounds [3]);
         Sound.me.Play(playerSounds[2], .8f, false);
         yield return null;
     }
 
-    IEnumerator LaserChargeSound()
+	void LaserChargeSound()
     {
 
         //THIS DOESN'T WORK RIGHT NOW
         laserChargeSys.Play();
-            if (!myAudio.isPlaying)
-            {
-                myAudio.clip = playerSounds[3];
-                myAudio.Play();
-            }
-            if (myCont.primaryFireUp())
-            {
-                myAudio.Stop();
-            }
-            else
-            {
-                yield return new WaitForSeconds(myAudio.clip.length);
-                myAudio.Stop();
-            }
+		Sound.me.Play (playerSounds [3]);
+//		if (myCont.primaryFireUp ()) {
+//			myAudio.Stop ();
+//		} else {
+//			yield return new WaitForSeconds (myAudio.clip.length);
+//			myAudio.Stop ();
+//		}
         //THIS DOESN'T WORK RIGHT NOW
 
 

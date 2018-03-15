@@ -20,9 +20,16 @@ public class Sound : MonoBehaviour {
             sources[i] = ((GameObject)Instantiate(sourcePrefab, Vector3.zero, Quaternion.identity)).GetComponent<AudioSource>();
         }
 	}
+	public void Stop(AudioClip clip){
+		foreach (AudioSource a in sources) {
+			if (a.clip == clip) {
+				a.Stop ();
+				break;
+			}
+		}
 
-
-    public void Play(AudioClip clip, float volume, bool randoPitch)
+	}
+	public void Play(AudioClip clip, float volume, bool randoPitch, float point = 0)
     {
         AudioSource source = null;
         for (int i = 0; i < sourceNum; i++)
@@ -42,6 +49,10 @@ public class Sound : MonoBehaviour {
         } else {
             source.pitch = 1f;
         }
+
+		if (point > 0) {
+			source.time = point;
+		}
         source.Play();
 
     }
