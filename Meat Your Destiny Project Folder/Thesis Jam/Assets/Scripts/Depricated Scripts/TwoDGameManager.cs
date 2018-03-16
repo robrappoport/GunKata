@@ -164,7 +164,6 @@ public class TwoDGameManager : MonoBehaviour {
                 //player1ScoreNum += 10f;
                 return;
             }
-
         }
       //  playerWin();
         //for (int i = 0; i < keyTurrets.Count; i++)
