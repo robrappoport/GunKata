@@ -24,7 +24,7 @@ public class InitSpawnBehaviorScript : MonoBehaviour {
     {
         if (secondElapsedTime <= 0f)
         {
-            Destroy(obelisk);
+			obelisk.SetActive (false);
         }
         else
             obelisk.transform.Translate(Vector3.down * 30f * Time.deltaTime);

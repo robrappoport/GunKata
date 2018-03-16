@@ -66,11 +66,11 @@ public class Cannonball : MonoBehaviour {
 
 	}
 	void Update(){
-		if (age >= lifetime) {
-			SelfDestruct ();
-		} else {
-			age += Time.deltaTime;
-		}
+//		if (age >= lifetime) {
+//			SelfDestruct ();
+//		} else {
+//			age += Time.deltaTime;
+//		}
 	}
 
 	void FixedUpdate(){
