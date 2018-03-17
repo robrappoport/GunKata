@@ -304,6 +304,7 @@ public class TwoDGameManager : MonoBehaviour {
         player1.GetComponent<auraGunBehavior>().auraStamImgArray[4].fillAmount = 1;
         player1.GetComponent<auraGunBehavior>().DamagedHalo.Play();
         //player1Tracker.Player = player1.transform;
+     
 
         addedScore2 = false;
 
@@ -341,9 +342,9 @@ public class TwoDGameManager : MonoBehaviour {
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[3].fillAmount = 1;
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[4] = player2Canvas.transform.Find("AuraLvl5/AuraBar5").GetComponent<Image>();
         player2.GetComponent<auraGunBehavior>().auraStamImgArray[4].fillAmount = 1;
-        player2.GetComponent<auraGunBehavior>().DamagedHalo.Play();
+        
         //player2Tracker.Player = player2.transform;
-
+        
         addedScore1 = false;
 
 		//add invincibility on spawn
@@ -376,22 +377,24 @@ public class TwoDGameManager : MonoBehaviour {
     IEnumerator DelayedSpawnPlayer1 ()
     {
 		Vector3 spawnPos = GetSpawnPosition (0) + Vector3.back * turretDistanceMod;
-
+        player1.GetComponent<auraGunBehavior>().DamagedHalo.Play();
         yield return new WaitForSeconds(respawnTime);
-		Instantiate(respawnBulletDestroyer, spawnPos, Quaternion.identity);
-//        Instantiate(respawnBulletDestroyer, player1Spawns[index1], Quaternion.identity);
+        
+        //        Instantiate(respawnBulletDestroyer, player1Spawns[index1], Quaternion.identity);
         yield return new WaitForSeconds(.1f);
-		SpawnPlayer1(spawnPos);
+        PlayerSpawnProtect(spawnPos, 12);
+        SpawnPlayer1(spawnPos);
         
     }
     IEnumerator DelayedSpawnPlayer2()
     {
 		Vector3 spawnPos = GetSpawnPosition (1) + Vector3.back * turretDistanceMod;
-
+        player2.GetComponent<auraGunBehavior>().DamagedHalo.Play();
         yield return new WaitForSeconds(respawnTime);
-		Instantiate(respawnBulletDestroyer, spawnPos, Quaternion.identity);
+        
         yield return new WaitForSeconds(.1f);
-		SpawnPlayer2(spawnPos);
+        PlayerSpawnProtect(spawnPos, 13);
+        SpawnPlayer2(spawnPos);
     }
 
 	void CheckPlayerWin(){
@@ -516,4 +519,23 @@ public class TwoDGameManager : MonoBehaviour {
     //    newValue = (((oldValue - oldMin) * newRange) / oldRange) + newMin;
     //    return newValue;
     //}
+
+    void PlayerSpawnProtect(Vector3 center, int owner)
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(center, 60f);
+        
+            foreach (Collider col in hitColliders)
+            {
+                Debug.Log(col.gameObject.name);
+                if (col.gameObject.GetComponent<Cannonball>())
+                {
+                    col.gameObject.GetComponent<Cannonball>().SelfDestruct();
+                }
+                else if (col.gameObject.GetComponent<Bullet>())
+                {
+                    Destroy(col);
+                }
+            }
+           
+    }
 }
