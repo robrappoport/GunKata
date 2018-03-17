@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Turret : MonoBehaviour
 {
 
+
 //	public Renderer topRenderer, middleRenderer, bottomRenderer;
-	public Renderer[] letterRenderers = new Renderer[5];
-	public Renderer[] piecesRenderers = new Renderer[6];
 
 	public Color p1Color, p2Color, neutralColor, currentColor, uncontestableColor, unownedColor;
 	public GameObject CannonballPrefab;
@@ -41,10 +41,25 @@ public class Turret : MonoBehaviour
 	Collider auraCollider;
 
 	Animator anim;
+	[Header("CHARGE PROGRESS VARS")]
+	public Renderer[] letterRenderers = new Renderer[5];
+	public Renderer[] piecesRenderers = new Renderer[6];
+	public GameObject UICanvasPrefab;
+	public GameObject UICanvas;
+	Image progressBar;
+	Image outlineBar;
 
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
 	void Awake(){
+		//find canvas
+		UICanvas = Instantiate (UICanvasPrefab, gameObject.transform) as GameObject;
+		UICanvas.transform.localPosition = new Vector3 (0, 1.6f, -2.4f);
+		progressBar = UICanvas.transform.Find ("TurretFill").GetComponent<Image> ();
+		outlineBar = UICanvas.transform.Find ("TurretFillOutline").GetComponent<Image> ();
+
+		UICanvas.SetActive (false);
+			
 		anim = GetComponent<Animator> ();
 		segmentNum = letterRenderers.Length;
 		p = GetComponentInChildren<ParticleSystem>();
@@ -150,6 +165,7 @@ public class Turret : MonoBehaviour
 			{
 				neutralColor = unownedColor;
 			}
+			outlineBar.color = neutralColor;
 			litSegments = 0;
 			charge = 0;
 			AdjustListMembership ();
@@ -398,6 +414,11 @@ public class Turret : MonoBehaviour
 //	}
 
 	void AdjustCannonColor(){
+		if (progressBar) {
+			progressBar.fillAmount = charge / segmentNum;
+
+			progressBar.color =  Color.Lerp (neutralColor, currentColor, charge / segmentNum);
+		}
 		for (int i = 0; i < litSegments; i++) {//adjust the lit letters
 			letterRenderers [i].material.color = currentColor;
 			letterRenderers [i].material.SetColor ("_EmissionColor", currentColor);
@@ -423,9 +444,10 @@ public class Turret : MonoBehaviour
 		if (litSegments >= segmentNum) {
 			piecesRenderers [piecesRenderers.Length - 1].materials [2].color = currentColor;
 		} else {
-			piecesRenderers [piecesRenderers.Length - 1].materials [2].color = neutralColor;
-		
+			piecesRenderers [piecesRenderers.Length - 1].materials [2].color = neutralColor;		
 		}
+
+		
 	}
 
 	void CleanCannonballList(){
@@ -501,6 +523,8 @@ public class Turret : MonoBehaviour
 		completelyOwned = false;
 		AdjustOwnership(owner);
 		AdjustCannonColor();
+		progressBar.color = Color.white;
+		outlineBar.color = Color.white;
 		AdjustListMembership ();
 //		topRenderer.material.color = uncontestableColor;
 //		middleRenderer.material.color = uncontestableColor;

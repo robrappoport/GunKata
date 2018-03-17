@@ -59,10 +59,11 @@ public class TurretCarrier : MonoBehaviour {
 			yield return null;
 		}
 
-		//register them as legal spawnpoints
+		//register them as legal spawnpoints with active ui;
 		foreach (Transform t in children) {
 			if (t.GetComponent<Turret> ()) {
 				t.GetComponent<Turret> ().RegisterTurret ();
+				t.GetComponent<Turret> ().UICanvas.SetActive (true);
 			}
 		}
 
