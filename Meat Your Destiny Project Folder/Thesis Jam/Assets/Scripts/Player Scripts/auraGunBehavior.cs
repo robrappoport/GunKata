@@ -777,7 +777,7 @@ public class auraGunBehavior : MonoBehaviour
     {
         laserShotSys.Play();
 		Sound.me.Stop (playerSounds [3]);
-        Sound.me.Play(playerSounds[2], .8f, false);
+		Sound.me.Play (playerSounds [2], .8f, false);
         yield return null;
     }
 

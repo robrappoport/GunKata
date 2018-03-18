@@ -46,6 +46,8 @@ public class Turret : MonoBehaviour
 	public Renderer[] piecesRenderers = new Renderer[6];
 	public GameObject UICanvasPrefab;
 	public GameObject UICanvas;
+	Quaternion UIRot;
+	Vector3 UIPos;
 	Image progressBar;
 	Image outlineBar;
 
@@ -57,6 +59,8 @@ public class Turret : MonoBehaviour
 		UICanvas.transform.localPosition = new Vector3 (0, 1.6f, -2.4f);
 		progressBar = UICanvas.transform.Find ("TurretFill").GetComponent<Image> ();
 		outlineBar = UICanvas.transform.Find ("TurretFillOutline").GetComponent<Image> ();
+		UIRot = UICanvas.transform.rotation;
+		UIPos = UICanvas.transform.position;
 
 		UICanvas.SetActive (false);
 			
@@ -106,6 +110,11 @@ public class Turret : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		if (UICanvas) {
+			UICanvas.transform.rotation = UIRot;
+			UICanvas.transform.position = UIPos;
+
+		}
         AuraCheck();
 		AimingTurret();
 
@@ -193,6 +202,26 @@ public class Turret : MonoBehaviour
 	public void RegisterTurret(){
 		if (!TwoDGameManager.thisInstance.turrets [ownerNum].Contains (this)) {
 			TwoDGameManager.thisInstance.turrets [ownerNum].Add (this);
+		}
+	}
+
+	public IEnumerator FadeUIBar (float t = 1){
+		t = Mathf.Clamp (t, 0.00001f, Mathf.Infinity);
+		bool allFaded = false;
+		while (!allFaded) {
+			allFaded = true;
+			float step = 0;
+			foreach (Image i in UICanvas.GetComponentsInChildren<Image>()) {
+				step += Time.deltaTime;
+				i.color = Color.Lerp (i.color, Color.clear, step / t);
+				if (i.color.a > 0) {
+					allFaded = false;
+				}
+			}
+			yield return null;
+		}
+		foreach (Image i in UICanvas.GetComponentsInChildren<Image>()) {
+			i.gameObject.SetActive (false);
 		}
 	}
 

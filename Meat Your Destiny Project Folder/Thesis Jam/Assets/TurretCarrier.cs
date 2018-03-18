@@ -77,6 +77,8 @@ public class TurretCarrier : MonoBehaviour {
 		foreach(Transform t in children){
 			foreach (List<Turret> tur in TwoDGameManager.thisInstance.turrets) {
 				if(tur.Contains(t.GetComponent<Turret>())){
+					t.GetComponent<Turret> ().StartCoroutine (t.GetComponent<Turret> ().FadeUIBar (.1f));
+					//t.GetComponent<Turret>().UICanvas.SetActive(false);
 					tur.Remove (t.GetComponent<Turret> ());
 				}
 			}
@@ -86,6 +88,7 @@ public class TurretCarrier : MonoBehaviour {
 			allTurretsAtEdge = true;
 			//check if all turrets are in position
 			foreach (Transform t in children) {
+				
 				if (Vector2.Distance (new Vector2 (t.position.x, t.position.z), new Vector2 (center.position.x, center.position.z)) < finalDistance) {
 					
 					allTurretsAtEdge = false;
