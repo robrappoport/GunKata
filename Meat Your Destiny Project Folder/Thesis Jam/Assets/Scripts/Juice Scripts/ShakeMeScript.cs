@@ -22,10 +22,12 @@ public class ShakeMeScript : MonoBehaviour {
         if (shaking)
         {
             Vector3 originalPos = transform.position;
-            Vector3 newPos = Random.insideUnitSphere * (shakeAmount);
+            Vector3 newPos = Random.insideUnitCircle * (shakeAmount);
 
-            transform.position += newPos;
-            newPos.y = originalPos.y;
+            originalPos += newPos;
+            newPos.x = originalPos.x;
+            newPos.z = originalPos.z;
+            transform.position = originalPos;
         }
 	}
     public void ShakeMe()
