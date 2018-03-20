@@ -72,6 +72,8 @@ AuraGenerator : MonoBehaviour {
 //
 //		}
 	}
+
+
 	// Update is called once per frame
 	void Update () {
 		if (auraCurLife >0.1f && !GetComponent<MeshDeformer> ()) {

@@ -31,9 +31,12 @@ public class AuraCharacterController : PlayControl
     private Quaternion previousRot;
     private Rigidbody characterCtr;
     private Animator anim;
+	Collider auraCol;
+	List<Collider> cols = new List<Collider> ();
 
 	[Header("MOVEMENT VARS")]
 	bool slow = false;
+	public float currentForce;
     public float moveForce;
     public float dashForce;
     public float slowForce;
@@ -70,6 +73,8 @@ public class AuraCharacterController : PlayControl
     }
     void Start()
     {
+		moveForce = prevMoveForce;
+
         anim = GetComponent<Animator>();
         //prevMoveForce = moveForce;
         transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
@@ -134,7 +139,9 @@ public class AuraCharacterController : PlayControl
     }
     private void Update()
     {
-		
+		print (curForce ());
+
+		AuraCheck ();
 		anim.SetFloat("Velocity X", transform.InverseTransformDirection(OnMove()).x);
 		anim.SetFloat("Velocity Z", transform.InverseTransformDirection(OnMove()).z);
     }
@@ -349,6 +356,8 @@ public class AuraCharacterController : PlayControl
 	//		}
 	//	}
 
+
+
 	private void MoveCharacter() {
 		//		Debug.Log (isDashing);
 		//		currentSpeed = walkSpeed;
@@ -459,44 +468,46 @@ public class AuraCharacterController : PlayControl
 			return false;
 		}
 	}
-	void OnTriggerStay (Collider other)
-	{
-		
-		GameObject otherObj = other.gameObject;
-        //Debug.Log(otherObj.tag);
-		if (otherObj.tag == "PlayerAura"){
-			
-            switch (otherObj.gameObject.GetComponent<AuraGenerator>().auraType)
-            {
-			case AuraGenerator.AuraType.slowdown:
-				slow = true;
-                break;
-			case AuraGenerator.AuraType.projection:
-				if (!playerInteractingWithOwnAura(otherObj.gameObject.GetComponent<AuraGenerator>())) {//excludes this aura from interacting with its owner
-					AuraProject (otherObj.transform);
-				}
-                    break;
-            }
-				
-		} else {
-			slow = false;
-			return;
-		}
-	}
+//	void OnTriggerStay (Collider other)
+//	{
+//		
+//		GameObject otherObj = other.gameObject;
+//        //Debug.Log(otherObj.tag);
+//		if (otherObj.tag == "PlayerAura"){
+//			
+//            switch (otherObj.gameObject.GetComponent<AuraGenerator>().auraType)
+//            {
+//			case AuraGenerator.AuraType.slowdown:
+//				slow = true;
+//                break;
+//			case AuraGenerator.AuraType.projection:
+//				if (!playerInteractingWithOwnAura(otherObj.gameObject.GetComponent<AuraGenerator>())) {//excludes this aura from interacting with its owner
+//					AuraProject (otherObj.transform);
+//				}
+//                    break;
+//            }
+//				
+//		} else {
+//			slow = false;
+//			return;
+//		}
+//	}
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "PlayerAura")
         {
             initDistance = Vector3.Distance(transform.position, other.gameObject.transform.position);
+			cols.Add (other);
         }
     }
-    void OnTriggerExit (Collider other)
-	{
-//		Debug.Log ("test3");
-		slow = false;
+//    void OnTriggerExit (Collider other)
+//	{
+////		Debug.Log ("test3");
+//		slow = false;
+//
+//	}
 
-	}
 
     void AuraProject(Transform t1)
     {
@@ -507,6 +518,56 @@ public class AuraCharacterController : PlayControl
         Vector3 auraVector = transform.position - auraCenter.position;
 		characterCtr.AddForce(auraVector.normalized * projectForce, ForceMode.Impulse);
     }
+
+	Collider GetCurrentAura(){
+		//remove any missing refs from the list; aura no longer exists
+		List<Collider> tempList = new List<Collider>();
+		foreach (Collider c in cols) {
+			if (c) {
+				tempList.Add (c);
+			}
+		}
+		cols = tempList;
+		//if there is only one left in the list, it becomes the aura by default
+		switch (cols.Count) {
+		case 1:
+			return cols [0];
+		case 0:
+			return null;
+		default:
+			Collider finalCol = cols [0];
+			for (int i = 0; i < cols.Count; i++) {
+				if (cols [i].GetComponent<AuraGenerator> ().auraScaleCurrent >= finalCol.GetComponent<AuraGenerator>().auraScaleCurrent) {
+					finalCol = cols [i];
+				}
+			}
+			return finalCol;
+		}
+	}
+
+	void AuraCheck(){
+		auraCol = GetCurrentAura ();
+		if (auraCol) {
+			if (auraCol.bounds.Contains (transform.position)) {
+				switch (auraCol.GetComponent<AuraGenerator> ().auraType) {
+				case AuraGenerator.AuraType.slowdown:
+					slow = true;
+					break;
+				case AuraGenerator.AuraType.projection:
+					if (!playerInteractingWithOwnAura (auraCol.GetComponent<AuraGenerator> ())) {//excludes this aura from interacting with its owner
+						AuraProject (auraCol.transform);
+					}
+					break;
+				}
+
+			} else {
+				slow = false;
+
+			}
+		} else {
+			slow = false;
+		}
+	}
 
 }
 
