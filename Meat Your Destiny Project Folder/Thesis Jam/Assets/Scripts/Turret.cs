@@ -7,7 +7,7 @@ public class Turret : MonoBehaviour
 {
 
 
-//	public Renderer topRenderer, middleRenderer, bottomRenderer;
+	//	public Renderer topRenderer, middleRenderer, bottomRenderer;
 
 	public Color p1Color, p2Color, neutralColor, currentColor, uncontestableColor, unownedColor;
 	public GameObject CannonballPrefab;
@@ -38,6 +38,7 @@ public class Turret : MonoBehaviour
 	private int segmentNum;
 	[Header("PARTICLE SYSTEM VARS")]
 	ParticleSystem p;
+	List<Collider> cols = new List<Collider> ();
 	Collider auraCollider;
 
 	Animator anim;
@@ -63,7 +64,7 @@ public class Turret : MonoBehaviour
 		UIPos = UICanvas.transform.position;
 
 		UICanvas.SetActive (false);
-			
+
 		anim = GetComponent<Animator> ();
 		segmentNum = letterRenderers.Length;
 		p = GetComponentInChildren<ParticleSystem>();
@@ -76,12 +77,12 @@ public class Turret : MonoBehaviour
 		ownerNum = 2;
 		//myShooter = GetComponentInChildren<UbhShotCtrl> ();
 		//set up segments here
-////		topRenderer = transform.Find("Turret Top").GetComponent<Renderer>();
-////		middleRenderer = transform.Find("Turret Middle").GetComponent<Renderer>();
-////		bottomRenderer = transform.Find("Turret Bottom").GetComponent<Renderer>();
-//		SegmentsList.Add (bottomRenderer);
-//		SegmentsList.Add (middleRenderer);
-//		SegmentsList.Add (topRenderer);
+		////		topRenderer = transform.Find("Turret Top").GetComponent<Renderer>();
+		////		middleRenderer = transform.Find("Turret Middle").GetComponent<Renderer>();
+		////		bottomRenderer = transform.Find("Turret Bottom").GetComponent<Renderer>();
+		//		SegmentsList.Add (bottomRenderer);
+		//		SegmentsList.Add (middleRenderer);
+		//		SegmentsList.Add (topRenderer);
 		//
 		//Cannon = topRenderer.gameObject;
 
@@ -101,7 +102,7 @@ public class Turret : MonoBehaviour
 			uncontestableTime = keyUncontestableTime;
 		}
 		RegisterTurret ();
-	
+
 		objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
 	}
 
@@ -115,7 +116,8 @@ public class Turret : MonoBehaviour
 			UICanvas.transform.position = UIPos;
 
 		}
-        AuraCheck();
+		AuraCheck();
+
 		AimingTurret();
 
 		if (charging && contestable) {
@@ -237,58 +239,87 @@ public class Turret : MonoBehaviour
 
 	}
 
+
 	void AuraCheck (){
+		auraCollider = GetCurrentAura ();
 		if (contestable) {
 
-            if (auraCollider)
-            {
-                if (auraCollider.GetComponent<AuraGenerator>())
-                {
-                    if (!auraCollider.GetComponent<AuraGenerator>().isSuper)
-                    {
-                        //ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
+			if (auraCollider)
+			{
+
+				if (auraCollider.GetComponent<AuraGenerator>())
+				{
+					if (!auraCollider.GetComponent<AuraGenerator>().isSuper)
+					{
+						//ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
 						if (litSegments < letterRenderers.Length)
-                        {
-                            charging = true;
+						{
+							charging = true;
 
-                        }
+						}
 
 
-                        if (auraCollider.GetComponent<AuraGenerator>().auraPlayerNum == 0)
-                        {
-                            owner = Owner.Player1;
-                        }
-                        else
-                        {
-                            owner = Owner.Player2;
-                        }
-                        litSegments = (int)charge;
+						if (auraCollider.GetComponent<AuraGenerator>().auraPlayerNum == 0)
+						{
+							owner = Owner.Player1;
+						}
+						else
+						{
+							owner = Owner.Player2;
+						}
+						litSegments = (int)charge;
 
-                        //if the intruding player is hitting the turret , increment the number of lit segments up to a max of 3
-                        if (ownerNum != auraCollider.GetComponent<AuraGenerator>().auraPlayerNum)
-                        {
+						//if the intruding player is hitting the turret , increment the number of lit segments up to a max of 3
+						if (ownerNum != auraCollider.GetComponent<AuraGenerator>().auraPlayerNum)
+						{
 
-                            chargeIncrementSign = 1;
-                        }
-                        else
-                        {
-                            chargeIncrementSign = -1;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                auraCollider = null;
-                charging = false;
-            }
+							chargeIncrementSign = 1;
+						}
+						else
+						{
+							chargeIncrementSign = -1;
+						}
+					}
+				}
+			}
+			else
+			{
+				auraCollider = null;
+				charging = false;
+			}
 
 		}
-        //if (col != col.gameObject.GetComponent<AuraGenerator>())
-        //{
-        //    charging = false;
-        //    col = null;
-        //}
+		//if (col != col.gameObject.GetComponent<AuraGenerator>())
+		//{
+		//    charging = false;
+		//    col = null;
+		//}
+	}
+
+	Collider GetCurrentAura(){
+		//remove any missing refs from the list; aura no longer exists
+		List<Collider> tempList = new List<Collider>();
+		foreach (Collider c in cols) {
+			if (c) {
+				tempList.Add (c);
+			}
+		}
+		cols = tempList;
+		//if there is only one left in the list, it becomes the aura by default
+		switch (cols.Count) {
+		case 1:
+			return cols [0];
+		case 0:
+			return null;
+		default:
+			Collider finalCol = cols [0];
+			for (int i = 0; i < cols.Count; i++) {
+				if (cols [i].GetComponent<AuraGenerator> ().auraScaleCurrent >= finalCol.GetComponent<AuraGenerator>().auraScaleCurrent) {
+					finalCol = cols [i];
+				}
+			}
+			return finalCol;
+		}
 	}
 
 	bool MismatchedOwners(){
@@ -312,8 +343,7 @@ public class Turret : MonoBehaviour
 
 	void OnTriggerEnter(Collider col){
 		if (col.GetComponent<AuraGenerator> ()) {
-			auraCollider = col;
-
+			cols.Add (col);
 		}
 		//    {
 		//        if (col.gameObject.GetComponent<Bullet>())
@@ -410,37 +440,37 @@ public class Turret : MonoBehaviour
 
 
 	}
-//	void AdjustCannonColor()
-//	{//adjusts turret based on the number of lit segments;
-//		
-//		if (litSegments > 0)
-//		{
-//			bottomRenderer.material.color = currentColor;
-//		}
-//		else
-//		{
-//			bottomRenderer.material.color = neutralColor;
-//		}
-//
-//		if (litSegments > 1)
-//		{
-//			middleRenderer.material.color = currentColor;
-//		}
-//		else
-//		{
-//			middleRenderer.material.color = neutralColor;
-//		}
-//
-//		if (litSegments > 2)
-//		{
-//			topRenderer.material.color = currentColor;
-//		}
-//		else
-//		{
-//			topRenderer.material.color = neutralColor;
-//		}
-//
-//	}
+	//	void AdjustCannonColor()
+	//	{//adjusts turret based on the number of lit segments;
+	//		
+	//		if (litSegments > 0)
+	//		{
+	//			bottomRenderer.material.color = currentColor;
+	//		}
+	//		else
+	//		{
+	//			bottomRenderer.material.color = neutralColor;
+	//		}
+	//
+	//		if (litSegments > 1)
+	//		{
+	//			middleRenderer.material.color = currentColor;
+	//		}
+	//		else
+	//		{
+	//			middleRenderer.material.color = neutralColor;
+	//		}
+	//
+	//		if (litSegments > 2)
+	//		{
+	//			topRenderer.material.color = currentColor;
+	//		}
+	//		else
+	//		{
+	//			topRenderer.material.color = neutralColor;
+	//		}
+	//
+	//	}
 
 	void AdjustCannonColor(){
 		if (progressBar) {
@@ -476,7 +506,7 @@ public class Turret : MonoBehaviour
 			piecesRenderers [piecesRenderers.Length - 1].materials [2].color = neutralColor;		
 		}
 
-		
+
 	}
 
 	void CleanCannonballList(){
@@ -555,9 +585,9 @@ public class Turret : MonoBehaviour
 		progressBar.color = Color.white;
 		outlineBar.color = Color.white;
 		AdjustListMembership ();
-//		topRenderer.material.color = uncontestableColor;
-//		middleRenderer.material.color = uncontestableColor;
-//		bottomRenderer.material.color = uncontestableColor;
+		//		topRenderer.material.color = uncontestableColor;
+		//		middleRenderer.material.color = uncontestableColor;
+		//		bottomRenderer.material.color = uncontestableColor;
 		contestable = false;
 		bool turnOff = GetComponent<BallArrayScript>().on = false;
 		hasAddedToBall = false;

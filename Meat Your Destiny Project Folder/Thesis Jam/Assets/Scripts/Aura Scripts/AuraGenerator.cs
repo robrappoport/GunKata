@@ -5,7 +5,7 @@ using UnityEngine;
 public class 
 AuraGenerator : MonoBehaviour {
     public float auraScaleMin;
-    private float auraScaleCurrent;
+    public float auraScaleCurrent;
     public float auraGrowthRate;
 	public float deformingForceModifier, deformingLimit;
     public int auraPlayerNum;
