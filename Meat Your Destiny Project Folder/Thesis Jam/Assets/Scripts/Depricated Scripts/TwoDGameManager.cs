@@ -526,7 +526,7 @@ public class TwoDGameManager : MonoBehaviour {
         
             foreach (Collider col in hitColliders)
             {
-                Debug.Log(col.gameObject.name);
+                //Debug.Log(col.gameObject.name);
                 if (col.gameObject.GetComponent<Cannonball>())
                 {
                     col.gameObject.GetComponent<Cannonball>().SelfDestruct();
