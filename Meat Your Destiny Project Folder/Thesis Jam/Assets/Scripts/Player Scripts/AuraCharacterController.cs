@@ -31,7 +31,9 @@ public class AuraCharacterController : PlayControl
     private Quaternion previousRot;
     private Rigidbody characterCtr;
     private Animator anim;
-    public float curForce;
+
+	[Header("MOVEMENT VARS")]
+	bool slow = false;
     public float moveForce;
     public float dashForce;
     public float slowForce;
@@ -350,9 +352,7 @@ public class AuraCharacterController : PlayControl
 	private void MoveCharacter() {
 		//		Debug.Log (isDashing);
 		//		currentSpeed = walkSpeed;
-		if (!isDashing) {
-			curForce = moveForce;
-		}
+	
 		//		float curDrag = dragForce;
 		//		Debug.Log (currentSpeed);
 		//		moveDirection = OnMove();
@@ -368,11 +368,10 @@ public class AuraCharacterController : PlayControl
 		}
 
 		if (currentDashTime < maxDashTime) {
-			isDashing = true;
+			//isDashing = true;
 			//Debug.Log (isDashing + "Isdashing in the thing");
 			//moveDirection = new Vector3 (moveDirection.x * dashSpeed, 0, moveDirection.z * dashSpeed);
 			currentDashTime += dashStopSpeed;
-			curForce = dashForce;
 			isDashing = false;
 			//			curDrag = dashDrag;
 
@@ -388,7 +387,8 @@ public class AuraCharacterController : PlayControl
 		//			moveDirection = moveDirection.normalized;
 
 
-		characterCtr.AddForce((moveDirForward + moveDirSides).normalized * curForce/ Time.deltaTime);
+		characterCtr.AddForce((moveDirForward + moveDirSides).normalized * curForce()/ Time.deltaTime);
+
 		//		}
 
 		directionPos = transform.position + (RightStickMove());
@@ -441,6 +441,17 @@ public class AuraCharacterController : PlayControl
 
 	}
 
+	float curForce(){
+		if (slow) {
+			return slowForce;
+		} else if (isDashing && currentDashTime < maxDashTime) {
+			return dashForce;
+		} else {
+			return moveForce;
+		}
+	
+	}
+
 	public bool playerInteractingWithOwnAura(AuraGenerator testAura){//use this to exclude auras that don't interact with their owner
 		if (testAura.auraPlayerNum == playerNum) {
 			return true;
@@ -457,9 +468,9 @@ public class AuraCharacterController : PlayControl
 			
             switch (otherObj.gameObject.GetComponent<AuraGenerator>().auraType)
             {
-                case AuraGenerator.AuraType.slowdown:
-                    shootSlowDown();
-                    break;
+			case AuraGenerator.AuraType.slowdown:
+				slow = true;
+                break;
 			case AuraGenerator.AuraType.projection:
 				if (!playerInteractingWithOwnAura(otherObj.gameObject.GetComponent<AuraGenerator>())) {//excludes this aura from interacting with its owner
 					AuraProject (otherObj.transform);
@@ -468,6 +479,7 @@ public class AuraCharacterController : PlayControl
             }
 				
 		} else {
+			slow = false;
 			return;
 		}
 	}
@@ -482,7 +494,8 @@ public class AuraCharacterController : PlayControl
     void OnTriggerExit (Collider other)
 	{
 //		Debug.Log ("test3");
-		curForce = moveForce;
+		slow = false;
+
 	}
 
     void AuraProject(Transform t1)
