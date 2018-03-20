@@ -109,12 +109,6 @@ public class AuraCharacterController : PlayControl
     // Update is called once per frame
     void FixedUpdate()
     {
-        //      if (transform.position.y >= heightValue) {
-        //          transform.position = new Vector3 (transform.position.x, heightValue, transform.position.z);
-        //}
-        //		moveDirection.y = 0;
-        //myController = InputManager.Devices[playerNum];
-        //if (stuckTimer <= 0) {
         if (hitStunnedTimer <= 0)
         {
             MoveCharacter();
@@ -142,6 +136,7 @@ public class AuraCharacterController : PlayControl
 		anim.SetFloat("Velocity X", transform.InverseTransformDirection(OnMove()).x);
 		anim.SetFloat("Velocity Z", transform.InverseTransformDirection(OnMove()).z);
     }
+
 
     private Vector3 OnMove() {
 		if (controlType == ControlType.Controller) {
@@ -462,8 +457,8 @@ public class AuraCharacterController : PlayControl
 			
             switch (otherObj.gameObject.GetComponent<AuraGenerator>().auraType)
             {
-                case AuraGenerator.AuraType.slowdown: 
-                    characterCtr.AddForce((moveDirForward + moveDirSides).normalized * -slowForce);
+                case AuraGenerator.AuraType.slowdown:
+                    shootSlowDown();
                     break;
 			case AuraGenerator.AuraType.projection:
 				if (!playerInteractingWithOwnAura(otherObj.gameObject.GetComponent<AuraGenerator>())) {//excludes this aura from interacting with its owner
