@@ -68,6 +68,7 @@ public class TurretCarrier : MonoBehaviour {
 		}
 
 
+
 	}
 
 
@@ -82,6 +83,9 @@ public class TurretCarrier : MonoBehaviour {
 					tur.Remove (t.GetComponent<Turret> ());
 				}
 			}
+//			if (UIManager.thisInstance.turretList.Contains (t.GetComponent<Turret> ())) {
+//				UIManager.thisInstance.turretList.Remove (t.GetComponent<Turret> ());
+//			}
 		}
 		bool allTurretsAtEdge = false;
 		while (!allTurretsAtEdge) {
@@ -102,6 +106,7 @@ public class TurretCarrier : MonoBehaviour {
 
 			yield return null;
 		}
+		//UIManager.thisInstance.turretList.Clear ();
 		StartCoroutine (OrbitTurrets ());
 	}
 

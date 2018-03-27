@@ -139,7 +139,6 @@ public class AuraCharacterController : PlayControl
     }
     private void Update()
     {
-		print (curForce ());
 
 		AuraCheck ();
 		anim.SetFloat("Velocity X", transform.InverseTransformDirection(OnMove()).x);

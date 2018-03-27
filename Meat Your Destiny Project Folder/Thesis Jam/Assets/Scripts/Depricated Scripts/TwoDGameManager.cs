@@ -502,13 +502,14 @@ public class TwoDGameManager : MonoBehaviour {
 		while (!readyToActivateNextSections) {
 			yield return null;
 		}
+		UIManager.thisInstance.Reset ();
 		foreach (SectionScript s in zones[i].sections) {
 			if (s.turretCarrier) {
 				StartCoroutine(s.turretCarrier.ActivateTurrets ());
 			}
 		}
 		readyToActivateNextSections = false;
-
+		UIManager.thisInstance.Invoke ("DrawScore", 0f);
 	}
 
     //public static float remapRange(float oldValue, float oldMin, float oldMax, float newMin, float newMax)

@@ -35,7 +35,7 @@ public class Turret : MonoBehaviour
 	private Vector3 targetDir;
 	private Vector3 newDir;
 	private Transform target;
-	private int segmentNum;
+	public int segmentNum;
 	[Header("PARTICLE SYSTEM VARS")]
 	ParticleSystem p;
 	List<Collider> cols = new List<Collider> ();
@@ -204,6 +204,9 @@ public class Turret : MonoBehaviour
 	public void RegisterTurret(){
 		if (!TwoDGameManager.thisInstance.turrets [ownerNum].Contains (this)) {
 			TwoDGameManager.thisInstance.turrets [ownerNum].Add (this);
+		}
+		if(!UIManager.thisInstance.turretList.Contains(this)){
+			UIManager.thisInstance.turretList.Add (this);
 		}
 	}
 
