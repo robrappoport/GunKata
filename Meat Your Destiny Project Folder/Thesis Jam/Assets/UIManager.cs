@@ -14,9 +14,8 @@ public  class UIManager : MonoBehaviour {
 	public List<Turret> turretList = new List<Turret> ();
 
 	Vector3 endPos;
-	int numTurrets;
 	float maxDist;
-
+	Text victoryText;
 
 	void Awake(){
 		thisInstance = this;
@@ -24,6 +23,8 @@ public  class UIManager : MonoBehaviour {
 	}
 	// Use this for initialization
 	void Start () {
+		victoryText = GetComponentInChildren<Text> ();
+		victoryText.enabled = false;
 		endPos = new Vector3 (startPos.x * -1, startPos.y, 0);
 		maxDist = Vector3.Distance (startPos, endPos); 
 
@@ -38,14 +39,35 @@ public  class UIManager : MonoBehaviour {
 	void CheckWin(){
 		if (turretList.Count > 0) {
 			bool canWin = true;
+			int winningPlayer = 2;
 			for (int i = 0; i < turretList.Count; i++) {
 				if (turretList [i].ownerNum != turretList [Mathf.Clamp (i - 1, 0, turretList.Count)].ownerNum || turretList [i].ownerNum == 2) {
 					canWin = false;
+					break;
 				}
 			}
+			winningPlayer = turretList [0].GetComponent<Turret> ().ownerNum;
 			if (canWin) {
+				victoryText.enabled = true;
+
 				GetComponent<Image> ().color = Color.yellow;
+				switch (winningPlayer) {
+				case 0:
+					victoryText.text = "blue can win";
+					victoryText.color = Color.blue;
+					break;
+				case 1:
+					victoryText.text = "red can win!";
+					victoryText.color = Color.red;
+					break;
+				default:
+					victoryText.text = "Error";
+					victoryText.color = Color.black;
+					break;
+				}
+
 			} else {
+				victoryText.enabled = false;
 				GetComponent<Image> ().color = Color.gray;
 			}
 		}
