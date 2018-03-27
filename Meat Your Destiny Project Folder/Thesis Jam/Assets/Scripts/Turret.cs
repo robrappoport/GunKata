@@ -149,7 +149,6 @@ public class Turret : MonoBehaviour
 
 		litSegments = (int)charge;
 		AdjustCannonColor ();
-		AdjustOwnership (owner);
 
 		DetermineDegreeOfOwnership();
 		if (completelyOwned) {
@@ -185,7 +184,7 @@ public class Turret : MonoBehaviour
 
 		if (auraCollider && charging && MismatchedOwners()) {
 			var main = p.main;
-
+			AdjustOwnership (auraCollider.GetComponent<AuraGenerator> ().auraPlayerNum);
 			p.gameObject.SetActive (true);
 			if (owner == Owner.Player1) {
 				main.startColor = playerColors [0];
@@ -347,7 +346,9 @@ public class Turret : MonoBehaviour
 	void OnTriggerEnter(Collider col){
 		if (col.GetComponent<AuraGenerator> ()) {
 			cols.Add (col);
+
 		}
+			
 		//    {
 		//        if (col.gameObject.GetComponent<Bullet>())
 		//        {
@@ -394,16 +395,16 @@ public class Turret : MonoBehaviour
 		//        }
 	}
 
-	void AdjustOwnership(Owner ownership)
+	void AdjustOwnership(int num)
 	{
 		//adjust ownership and color based on owner number;
 
-		switch (ownership)
+		switch (num)
 		{
-		case Owner.Player1: //player 1
+		case 0: //player 1
 			currentColor = p1Color;
 			break;
-		case Owner.Player2: //player 2
+		case 1: //player 2
 			currentColor = p2Color;
 			break;
 		default: //neutral
@@ -583,7 +584,7 @@ public class Turret : MonoBehaviour
 		neutralColor = unownedColor;
 		litSegments = 0;
 		completelyOwned = false;
-		AdjustOwnership(owner);
+		AdjustOwnership(2);
 		AdjustCannonColor();
 		progressBar.color = Color.white;
 		outlineBar.color = Color.white;
@@ -660,6 +661,7 @@ public class Turret : MonoBehaviour
 			{
 				anim.SetTrigger ("Open");
 				completelyOwned = true;
+
 				//contestable = false;
 				//Invoke("Reset", immuneTime);
 
@@ -668,6 +670,7 @@ public class Turret : MonoBehaviour
 		else
 		{
 			completelyOwned = false;
+
 		}
 	}
 }
