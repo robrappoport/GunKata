@@ -31,9 +31,25 @@ public  class UIManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		CheckWin ();
 		UpdateScore ();	
 	}
 
+	void CheckWin(){
+		if (turretList.Count > 0) {
+			bool canWin = true;
+			for (int i = 0; i < turretList.Count; i++) {
+				if (turretList [i].ownerNum != turretList [Mathf.Clamp (i - 1, 0, turretList.Count)].ownerNum || turretList [i].ownerNum == 2) {
+					canWin = false;
+				}
+			}
+			if (canWin) {
+				GetComponent<Image> ().color = Color.yellow;
+			} else {
+				GetComponent<Image> ().color = Color.gray;
+			}
+		}
+	}
 	void UpdateScore(){
 		turretList = turretList.OrderBy (
 			x => Camera.main.WorldToScreenPoint (x.transform.position).x).ToList ();
