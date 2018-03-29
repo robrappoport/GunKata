@@ -556,6 +556,7 @@ public class Turret : MonoBehaviour
 				//            {
 
 				if (ownerNum ==0) {
+                    Em.GetComponent<Renderer>().material.color = p1Color;
 					cannonBall.GetComponent<Renderer> ().material = cannonBall.GetComponent<Cannonball> ().player1BulletMaterial;
 					Physics.IgnoreCollision (TwoDGameManager.thisInstance.player1.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
 					cannonBall.layer = LayerMask.NameToLayer ("Player1OwnsTurret");
@@ -563,6 +564,7 @@ public class Turret : MonoBehaviour
 
 
 				} else if (ownerNum == 1) {
+                    Em.GetComponent<Renderer>().material.color = p2Color;
 					cannonBall.GetComponent<Renderer> ().material = cannonBall.GetComponent<Cannonball> ().player2BulletMaterial;
 					Physics.IgnoreCollision (TwoDGameManager.thisInstance.player2.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
 					cannonBall.layer = LayerMask.NameToLayer ("Player2OwnsTurret");
@@ -578,7 +580,11 @@ public class Turret : MonoBehaviour
 
 	public void Reset()
 	{
-		CancelInvoke();
+        foreach (GameObject Em in Emitter)
+        {
+            Em.GetComponent<Renderer>().material.color = neutralColor;
+        }
+        CancelInvoke();
 		ownerNum = 2;
 		owner = Owner.NONE;
 		neutralColor = unownedColor;
