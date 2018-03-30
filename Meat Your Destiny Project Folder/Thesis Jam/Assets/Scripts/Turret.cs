@@ -57,6 +57,7 @@ public class Turret : MonoBehaviour
 	void Awake(){
 		//find canvas
 		UICanvas = Instantiate (UICanvasPrefab, gameObject.transform) as GameObject;
+		//TODO:alter the position of the UI relative to the transform here!
 		UICanvas.transform.localPosition = new Vector3 (0, 28.6f, -2.4f);
 		progressBar = UICanvas.transform.Find ("TurretFill").GetComponent<Image> ();
 		outlineBar = UICanvas.transform.Find ("TurretFillOutline").GetComponent<Image> ();
