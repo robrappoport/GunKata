@@ -115,14 +115,21 @@ public class ParticleFollowScript : MonoBehaviour {
     IEnumerator PlayerSeek ()
     {
         yield return new WaitForSeconds (1.5f);
-            if (owner == 0)
-        {
-            target = GameObject.Find("Player1(Clone)").transform;
-        }
-        else if (owner == 1)
-        {
-            target = GameObject.Find("Player2(Clone)").transform;
-        }
+		if (TwoDGameManager.thisInstance.GetPlayer (owner)) {
+			target = TwoDGameManager.thisInstance.GetPlayer (owner).transform;
+		}
+
+//            if (owner == 0)
+//        {
+//			if (TwoDGameManager.thisInstance.GetPlayer (owner)) {
+//				target = TwoDGameManager.thisInstance.GetPlayer(owner)
+//			}
+//            target = GameObject.Find("Player1(Clone)").transform;
+//        }
+//        else if (owner == 1)
+//        {
+//            target = GameObject.Find("Player2(Clone)").transform;
+//        }
         respawning = false;
         particleRandCount = new float[psys.particleCount];
 
