@@ -37,7 +37,7 @@ public class Turret : MonoBehaviour
 	private Transform target;
 	public int segmentNum;
 	[Header("PARTICLE SYSTEM VARS")]
-	ParticleSystem p;
+    ParticleSystem lightningParticle, circleParticle;
 	List<Collider> cols = new List<Collider> ();
 	Collider auraCollider;
 
@@ -67,9 +67,9 @@ public class Turret : MonoBehaviour
 
 		anim = GetComponent<Animator> ();
 		segmentNum = letterRenderers.Length;
-		p = GetComponentInChildren<ParticleSystem>();
-		p.transform.localPosition = new Vector3 (0, 6.5f, 0);
-		p.gameObject.SetActive (false);
+		lightningParticle = GetComponentInChildren<ParticleSystem>();
+		lightningParticle.transform.localPosition = new Vector3 (0, 6.5f, 0);
+		lightningParticle.gameObject.SetActive (false);
 		//set emitters
 		//Emitter[0] = GameObject.Find(name + "/N_Emitter");
 		//Emitter[1] = GameObject.Find(name + "/E_Emitter"); 
@@ -183,9 +183,9 @@ public class Turret : MonoBehaviour
 
 
 		if (auraCollider && charging && MismatchedOwners()) {
-			var main = p.main;
+			var main = lightningParticle.main;
 			AdjustOwnership (auraCollider.GetComponent<AuraGenerator> ().auraPlayerNum);
-			p.gameObject.SetActive (true);
+			lightningParticle.gameObject.SetActive (true);
 			if (owner == Owner.Player1) {
 				main.startColor = playerColors [0];
 			} else {
@@ -193,7 +193,7 @@ public class Turret : MonoBehaviour
 
 			}
 		} else {
-			p.gameObject.SetActive (false);
+			lightningParticle.gameObject.SetActive (false);
 		}
 
 		//	CleanCannonballList ();
