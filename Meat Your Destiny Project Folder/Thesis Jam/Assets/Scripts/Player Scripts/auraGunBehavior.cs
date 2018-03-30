@@ -152,10 +152,6 @@ public class auraGunBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if (myAudio.clip == playerSounds [3] && myAudio.isPlaying) {
-			print ("sound is playing");
-		
-		}
         AuraCharge ();
 		drawStamina ();
         //AuraSys();
@@ -234,22 +230,24 @@ public class auraGunBehavior : MonoBehaviour
                         
                         chargeTime += Time.deltaTime;
 					}
+					myCont.shootSlowDown();
+
                     wingMatChangeValue = Mathf.FloorToInt((chargeTime / loadedChargeTime) * 3f);
-                    myCont.shootSlowDown();
-                    if (wingMatChangeValue != tempValue){
-                        for (int i = 0; i < wingMatChangeValue; i++)
-                        {
-                            Renderer [] wingArray = wings[i].GetComponentsInChildren<Renderer>();
-                            foreach (Renderer r in wingArray)
-                            {
-                                //r.material.c = activeWingColor;
-                                r.material.SetColor("_EmissionColor", activeWingColor);
-                            }
-
-
-                        }
-                        tempValue = wingMatChangeValue;
-                    }
+// DEPRECATED: wings changing color on laser charge
+//                    if (wingMatChangeValue != tempValue){
+//                        for (int i = 0; i < wingMatChangeValue; i++)
+//                        {
+//                            Renderer [] wingArray = wings[i].GetComponentsInChildren<Renderer>();
+//                            foreach (Renderer r in wingArray)
+//                            {
+//                                //r.material.c = activeWingColor;
+//                                r.material.SetColor("_EmissionColor", activeWingColor);
+//                            }
+//
+//
+//                        }
+//                        tempValue = wingMatChangeValue;
+//                    }
                    
 
 
@@ -294,15 +292,15 @@ public class auraGunBehavior : MonoBehaviour
                     laserShotSys.Stop();
                     gameObject.GetComponent<AuraCharacterController>().turnSpeed = 20f;
                     gameObject.GetComponent<AuraCharacterController>().prevMoveForce = 4f;
-                    foreach (GameObject g in wings)
-                    {
-                        Renderer [] wingArray = g.GetComponentsInChildren<Renderer>();
-                        foreach (Renderer r  in wingArray)
-                        {
-                            //r.material.color = inactiveWingColor;
-                            r.material.SetColor("_EmissionColor", inactiveWingColor);
-                        }
-                    }
+//                    foreach (GameObject g in wings)
+//                    {
+//                        Renderer [] wingArray = g.GetComponentsInChildren<Renderer>();
+//                        foreach (Renderer r  in wingArray)
+//                        {
+//                            //r.material.color = inactiveWingColor;
+//                            r.material.SetColor("_EmissionColor", inactiveWingColor);
+//                        }
+//                    }
                     laserFiring = 0f;
                     laserIsFiring = false;
                     laserObj.GetComponent<LaserShotScript>().on = false;
@@ -364,18 +362,52 @@ public class auraGunBehavior : MonoBehaviour
 			CancelInvoke ("ResetAuraCooldown");
 		}
 		if (myCont.secondaryFire () == true) {
-				//calculate how much charge remains and how much is to be used
-				sprAura.SetActive (true);
+			//calculate how much charge remains and how much is to be used
+			sprAura.SetActive (true);
 			remainingAuraCharge = Mathf.Clamp (remainingAuraCharge - Time.deltaTime * auraChargeRate, 0, auraStamImgArray.Length);
 			currentAuraCharge = Mathf.Clamp (currentAuraCharge + Time.deltaTime * auraChargeRate, 0, currentAuraChargeLimit);
+			//change the wing materials
+			if (remainingAuraCharge > 0) {
+				if ((int)currentAuraCharge != tempValue) {
+					for (int i = 0; i < (int)currentAuraCharge; i++) {
+						Renderer[] wingArray = wings [Mathf.Clamp (i, 0, wings.Length -1)].GetComponentsInChildren<Renderer> ();
+						foreach (Renderer r in wingArray) {
+							//r.material.c = activeWingColor;
+							r.material.SetColor ("_EmissionColor", activeWingColor);
+						}
+					}
+					tempValue = wingMatChangeValue;
+				}
+			}
+
 	
-				//lerp the outline to the target scale
-			Vector3 targetScale = auraScales [Mathf.Clamp((int)currentAuraCharge -1, 0, auraScales.Length - 1)] * Vector3.one;
-				sprAura.transform.localScale = Vector3.Lerp (sprAura.transform.localScale, targetScale, 0.7f);
-			} else {
+			//lerp the outline to the target scale
+			Vector3 targetScale = auraScales [Mathf.Clamp ((int)currentAuraCharge - 1, 0, auraScales.Length - 1)] * Vector3.one;
+			sprAura.transform.localScale = Vector3.Lerp (sprAura.transform.localScale, targetScale, 0.7f);
+		} else {
 			if (!coolingDown) {
+				//recharge the aura over time
 				remainingAuraCharge = Mathf.Clamp (remainingAuraCharge + Time.deltaTime * auraRechargeRate, 0, auraStamImgArray.Length);
 			}
+			//restore the wings to their neutral color or make them "dead" depending on remaining charge
+
+			foreach (GameObject g in wings) {
+				Renderer[] wingArray = g.GetComponentsInChildren<Renderer> ();
+				foreach (Renderer r  in wingArray) {
+					if (remainingAuraCharge > 0.02f) {
+
+						//anim.settrigger("open wings")
+						r.material.SetColor ("_EmissionColor", inactiveWingColor);
+						r.material.color = inactiveWingColor;
+					} else {
+						r.material.SetColor ("_EmissionColor", new Color(0, 0, 0, 0));
+						r.material.color = Color.black;
+
+					}
+				}
+
+			}
+
 		}
 
 		if (myCont.secondaryFireUp () == true) {
