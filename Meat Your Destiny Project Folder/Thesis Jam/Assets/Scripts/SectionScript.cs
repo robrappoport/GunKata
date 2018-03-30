@@ -49,7 +49,6 @@ public class SectionScript : MonoBehaviour {
 
     public IEnumerator DropCo ()
     {
-       
         for (int i = 0; i < flashTime; i++)
         {
             normColor = flashColor;

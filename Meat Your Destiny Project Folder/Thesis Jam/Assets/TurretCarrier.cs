@@ -48,7 +48,7 @@ public class TurretCarrier : MonoBehaviour {
 		foreach (Transform t in children) {
 			if (t.GetComponent<Turret> ()) {
 				t.gameObject.SetActive (true);
-				t.GetComponent<Turret> ().RegisterTurret ();
+				//t.GetComponent<Turret> ().RegisterTurret ();
 			}
 		}
 		//send them up
@@ -71,9 +71,21 @@ public class TurretCarrier : MonoBehaviour {
 
 	}
 
+	public void RemoveTurretFocus(){
+		foreach (Transform t in children) {
+			foreach (List<Turret> tur in TwoDGameManager.thisInstance.turrets) {
+				if (tur.Contains (t.GetComponent<Turret> ())) {
+					if (t.GetComponentInChildren<CameraMultiTargetObjective> ()) {
+						Destroy (t.GetComponentInChildren<CameraMultiTargetObjective> ());
+					}
+				}
+			}
+		}
+	}
 
 
 	public IEnumerator SendToEdge(){
+		RemoveTurretFocus ();
 		//remove self from game manager's list of turrets
 		foreach(Transform t in children){
 			foreach (List<Turret> tur in TwoDGameManager.thisInstance.turrets) {

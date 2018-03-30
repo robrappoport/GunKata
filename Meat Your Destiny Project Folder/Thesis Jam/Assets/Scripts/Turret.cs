@@ -51,11 +51,12 @@ public class Turret : MonoBehaviour
 	Vector3 UIPos;
 	Image progressBar;
 	Image outlineBar;
-
+	//CameraMultiTargetObjective camTar;
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
 	void Awake(){
 		//find canvas
+
 		UICanvas = Instantiate (UICanvasPrefab, gameObject.transform) as GameObject;
 		//TODO:alter the position of the UI relative to the transform here!
 		UICanvas.transform.localPosition = new Vector3 (0, 28.6f, -2.4f);
@@ -105,6 +106,7 @@ public class Turret : MonoBehaviour
 		RegisterTurret ();
 
 		objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
+
 	}
 
 
@@ -207,6 +209,8 @@ public class Turret : MonoBehaviour
 		}
 		if(!UIManager.thisInstance.turretList.Contains(this)){
 			UIManager.thisInstance.turretList.Add (this);
+
+			GetComponentInChildren<MeshRenderer> ().gameObject.AddComponent<CameraMultiTargetObjective> ();
 		}
 	}
 
