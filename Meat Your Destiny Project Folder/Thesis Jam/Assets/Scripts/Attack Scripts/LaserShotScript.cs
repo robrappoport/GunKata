@@ -102,7 +102,7 @@ public class LaserShotScript : MonoBehaviour {
         
         col.transform.parent = lineRend.transform; // Collider is added as child object of line
         float lineLength = Vector3.Distance(startPos.localPosition, endPos.localPosition); // length of line
-        col.size = new Vector3(2f, 10f, lineLength); // size of collider is set where X is length of line, Y is width of line, Z will be set as per requirement
+        col.size = new Vector3(2f, 50f, lineLength); // size of collider is set where X is length of line, Y is width of line, Z will be set as per requirement
         Vector3 midPoint = (startPos.localPosition + endPos.localPosition) / 2;
         col.center = midPoint; // setting position of collider object
         // Following lines calculate the angle between startPos and endPos
