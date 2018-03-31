@@ -367,18 +367,24 @@ public class auraGunBehavior : MonoBehaviour
 			remainingAuraCharge = Mathf.Clamp (remainingAuraCharge - Time.deltaTime * auraChargeRate, 0, auraStamImgArray.Length);
 			currentAuraCharge = Mathf.Clamp (currentAuraCharge + Time.deltaTime * auraChargeRate, 0, currentAuraChargeLimit);
 			//change the wing materials
-			if (remainingAuraCharge > 0) {
-				if ((int)currentAuraCharge != tempValue) {
-					for (int i = 0; i < (int)currentAuraCharge; i++) {
-						Renderer[] wingArray = wings [Mathf.Clamp (i, 0, wings.Length -1)].GetComponentsInChildren<Renderer> ();
-						foreach (Renderer r in wingArray) {
-							//r.material.c = activeWingColor;
-							r.material.SetColor ("_EmissionColor", activeWingColor);
-						}
-					}
-					tempValue = wingMatChangeValue;
+		
+			if (currentAuraCharge != tempValue) {
+				//adjust the charge loop to account for the first and last turns
+				int chargeLoopLimit = (int)currentAuraCharge;
+				if (chargeLoopLimit == 0) {
+					chargeLoopLimit += 1;
 				}
+				for (int i = 0; i < chargeLoopLimit; i++) {
+					Renderer[] wingArray = wings [Mathf.Clamp (i, 0, auraStamImgArray.Length)].GetComponentsInChildren<Renderer> ();
+					foreach (Renderer r in wingArray) {
+						//r.material.c = activeWingColor;
+						print (r.name);
+						r.material.SetColor ("_EmissionColor", activeWingColor);
+					}
+				}
+				tempValue = wingMatChangeValue;
 			}
+			
 
 	
 			//lerp the outline to the target scale
