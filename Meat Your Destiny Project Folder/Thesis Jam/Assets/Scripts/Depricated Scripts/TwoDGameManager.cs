@@ -317,7 +317,7 @@ public class TwoDGameManager : MonoBehaviour {
 			Destroy (player2);
 		}
 			
-        Debug.Log("Spawning player 2");
+        //Debug.Log("Spawning player 2");
 		if (spawnResetTimer > spawnResetTimeLimit) {
 			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
 			player2 = Instantiate (player2Prefab, player2Start.position = spawnPos, Quaternion.identity) as GameObject;

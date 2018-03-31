@@ -378,7 +378,6 @@ public class auraGunBehavior : MonoBehaviour
 					Renderer[] wingArray = wings [Mathf.Clamp (i, 0, auraStamImgArray.Length)].GetComponentsInChildren<Renderer> ();
 					foreach (Renderer r in wingArray) {
 						//r.material.c = activeWingColor;
-						print (r.name);
 						r.material.SetColor ("_EmissionColor", activeWingColor);
 					}
 				}
