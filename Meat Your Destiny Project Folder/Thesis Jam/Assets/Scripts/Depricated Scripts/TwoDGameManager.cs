@@ -144,7 +144,7 @@ public class TwoDGameManager : MonoBehaviour {
         player1Start.position = player1Spawns[index1];
         player2Start.position = player2Spawns[index2];
         playerScoreUpdate();
-        if (playerHealth1.CurrentHealth <= 0 || playerHealth2.CurrentHealth <= 0)
+        if (playerHealth1.dead || playerHealth2.dead)
         {
 			CheckPlayerWin ();
 			cam.Shake(shakeWeight, shakeTime);
@@ -399,7 +399,7 @@ public class TwoDGameManager : MonoBehaviour {
 
 	void CheckPlayerWin(){
 		//        if (player1ScoreNum >= maxScore)
-		if (!PlayerCanSpawn (1) && playerHealth2.CurrentHealth <= 0){
+		if (!PlayerCanSpawn (1) && playerHealth2.dead){
 			player1.SetActive (false);
 			player2.SetActive (false);
 			player2Canvas.SetActive (false);
@@ -408,7 +408,7 @@ public class TwoDGameManager : MonoBehaviour {
 			StartCoroutine (gameRestart ());
 		}
 		//       if (player2ScoreNum >= maxScore)
-		else if (!PlayerCanSpawn (0) && playerHealth1.CurrentHealth <=0){			
+		else if (!PlayerCanSpawn (0) && playerHealth1.dead){			
 			player1.SetActive (false);
 			player2.SetActive (false);
 			player2Canvas.SetActive (false);

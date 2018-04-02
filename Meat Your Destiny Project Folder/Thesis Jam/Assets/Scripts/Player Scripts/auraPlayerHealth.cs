@@ -26,16 +26,20 @@ public class auraPlayerHealth : MonoBehaviour {
     public GameObject textPrefab;
     public Color enemyPlayerColor;
     public float hitStun;
+	public bool dying = false, dead= false;
+	public float deathTime = 5;
+	Animator anim;
 
 	// Use this for initialization
 	void Start () {
+		dead = false;
 		render.material = playerColor;
 		//Debug.Log (render.material);
 		playerColor = normalColor;
 		CurrentHealth = MaxHealth;
 		//SetHealth ();
 		takingDamage = false;
-
+		anim = GetComponent<Animator> ();
 
 
 	}
@@ -44,14 +48,26 @@ public class auraPlayerHealth : MonoBehaviour {
 	{
 		render.material = playerColor;
         GroundCheck();
-        if (CurrentHealth <= 0f)
-        {
-			Die ();
-        }
-	}
+		if (!dying) {
+			if (CurrentHealth <= 0f) {
+				
+				StartDying ();
+			}
+		} 
 
+	
+	}
+	void StartDying(){
+		dying = true;
+
+		anim.SetTrigger ("Die");
+		Invoke ("Die", deathTime);
+
+
+	}
 	public void Die(){
-		CurrentHealth = 0;
+
+		dead = true;
 		Instantiate(explosionPrefab, transform.position, transform.rotation);
 		ParticleFollowScript followParts = ((GameObject)Instantiate
 			(followParticles, transform.position, 
@@ -103,7 +119,9 @@ public class auraPlayerHealth : MonoBehaviour {
 	//	HealthBar.fillAmount = CurrentHealth*.01f;
 
 	//}
-
+	void Fall(){
+		StartDying ();
+	}
 
 	public IEnumerator colorChange(float damageTime, float flashNum)
 	{
@@ -133,11 +151,11 @@ public class auraPlayerHealth : MonoBehaviour {
 		if (!Physics.Raycast (transform.position, groundCheck, groundCheckHeight)) {
 			//Debug.Log("hello?");
 			if (!steppedOffLedge) {
-				Invoke ("Die", fallTimer);
+				Invoke ("Fall", fallTimer);
 				steppedOffLedge = true;
 			}
 		} else {
-			CancelInvoke ();
+			CancelInvoke ("Fall");
 			steppedOffLedge = false;
 		}
 
