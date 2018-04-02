@@ -195,8 +195,7 @@ public class Turret : MonoBehaviour
 			captureParticleMain.startColor = playerColors [ownerNum];
 			captureParticle.Play ();
 				
-		} else {
-		}
+		} 
 
 
 		if (auraCollider && charging && MismatchedOwners()) {

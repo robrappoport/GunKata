@@ -10,9 +10,9 @@ public class auraPlayerHealth : MonoBehaviour {
 	public bool takingDamage;
     public float groundCheckHeight;
 	//public GameObject playerCanvas;
-	public float damageTime;
+	public float damageTime, fallTimer = 1;
 	public Renderer render;
-	public bool invincibilityFramesActive;
+	public bool invincibilityFramesActive, steppedOffLedge = false;
 	public Material playerColor;
 	public Material damagedColor;
 	public Material normalColor;
@@ -46,24 +46,28 @@ public class auraPlayerHealth : MonoBehaviour {
         GroundCheck();
         if (CurrentHealth <= 0f)
         {
-            
-            Instantiate(explosionPrefab, transform.position, transform.rotation);
-            ParticleFollowScript followParts = ((GameObject)Instantiate
-                                                (followParticles, transform.position, 
-                                                 Quaternion.identity)).GetComponent<ParticleFollowScript>();
-            if (gameObject.GetComponent<auraGunBehavior>().playerNum == 0)
-            {
-                followParts.owner = 1;
-            }
-            else
-            {
-                followParts.owner = 0;
-            }
-            //Debug.Log("dying");
-            gameObject.SetActive(false);
+			Die ();
         }
 	}
 
+	public void Die(){
+		CurrentHealth = 0;
+		Instantiate(explosionPrefab, transform.position, transform.rotation);
+		ParticleFollowScript followParts = ((GameObject)Instantiate
+			(followParticles, transform.position, 
+				Quaternion.identity)).GetComponent<ParticleFollowScript>();
+		if (gameObject.GetComponent<auraGunBehavior>().playerNum == 0)
+		{
+			followParts.owner = 1;
+		}
+		else
+		{
+			followParts.owner = 0;
+		}
+		//Debug.Log("dying");
+		gameObject.SetActive(false);
+
+	}
 
 	public void takeDamage (float amount)
 	{
@@ -126,11 +130,16 @@ public class auraPlayerHealth : MonoBehaviour {
     {
         Vector3 groundCheck = transform.TransformDirection(Vector3.down);
 
-        if (!Physics.Raycast(transform.position, groundCheck, groundCheckHeight ))
-        {
-            //Debug.Log("hello?");
-            CurrentHealth = 0;
-        }
+		if (!Physics.Raycast (transform.position, groundCheck, groundCheckHeight)) {
+			//Debug.Log("hello?");
+			if (!steppedOffLedge) {
+				Invoke ("Die", fallTimer);
+				steppedOffLedge = true;
+			}
+		} else {
+			CancelInvoke ();
+			steppedOffLedge = false;
+		}
 
 
     }

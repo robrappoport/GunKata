@@ -450,6 +450,13 @@ public class AuraCharacterController : PlayControl
 	}
 
 	float curForce(){
+		if (GetComponent<auraPlayerHealth>().steppedOffLedge) {
+			if (slow) {
+				return slowForce / 2;
+			} else {
+				return slowForce;
+			}
+		}
 		if (slow) {
 			return slowForce;
 		} else if (isDashing && currentDashTime < maxDashTime) {
