@@ -20,19 +20,22 @@ public class AuraCharacterController : PlayControl
     //	public Transform cameraTrans;
     public int playerNum;
     public float turnSpeed = 4f;
+	private float initDistance;
+
     //	public float walkSpeed = 2;
-    public float maxDashTime = 1.0f;
-    public float dashSpeed = 4.0f;
-    public float dashStopSpeed = 0.1f;
-    private float initDistance;
-    public float currentDashTime;
-    //	private float currentSpeed = 0;
-    public bool isDashing;
     private Quaternion previousRot;
     private Rigidbody characterCtr;
     private Animator anim;
 	Collider auraCol;
 	List<Collider> cols = new List<Collider> ();
+	[Header("DASH VARS")]
+	public float maxDashTime = 1.0f;
+	public float dashSpeed = 4.0f;
+	public float dashStopSpeed = 0.1f;
+	public float currentDashTime;
+	//	private float currentSpeed = 0;
+	public bool isDashing;
+	public float dashAuraDrainRate = 1;
 
 	[Header("MOVEMENT VARS")]
 	bool slow = false;
@@ -378,8 +381,8 @@ public class AuraCharacterController : PlayControl
 
 		//		moveDirection.y = 0;
 
-		if (bButtonDown () && gunBehave.remainingAuraCharge > 0) {
-			gunBehave.DrainAura (1);
+		if (bButtonDown () && gunBehave.remainingAuraCharge > 0 && !isDashing) {
+			StartCoroutine (AuraDashDrain ());
 			gunBehave.Invoke ("ResetAuraCooldown", gunBehave.coolDownDuration);
 			gunBehave.CurrentBullets--;
 			currentDashTime = 0.0f;
@@ -396,7 +399,7 @@ public class AuraCharacterController : PlayControl
 		} else {
 			isDashing = false;
 		}
-
+			
 		//moveDirection *= currentSpeed;
 
 		//		if (moveDirection.magnitude < .25f) {
@@ -458,6 +461,18 @@ public class AuraCharacterController : PlayControl
 		}
 		//		Debug.Log (isDashing+"is dashing outside of the thing");
 
+
+	}
+
+	IEnumerator AuraDashDrain(){
+		print ("draining aura from dash");
+		float totalDrainAmount = 0;
+		while (totalDrainAmount < 1) {
+			gunBehave.DrainAura (Time.deltaTime * dashAuraDrainRate);
+			totalDrainAmount += Time.deltaTime * dashAuraDrainRate;
+			yield return null;
+		}
+		print ("finishing aura drain");
 
 	}
 

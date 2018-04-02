@@ -358,6 +358,7 @@ public class auraGunBehavior : MonoBehaviour
 		remainingAuraCharge = Mathf.Clamp (remainingAuraCharge - difference, 0, auraStamImgArray.Length);
 		CancelInvoke ("ResetAuraCooldown");
 		coolingDown = true;
+		Invoke ("ResetAuraCooldown", coolDownDuration);
 
 	
 	}
