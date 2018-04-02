@@ -54,6 +54,7 @@ public class AuraCharacterController : PlayControl
     public ControlType controlType;
 
     private auraGunBehavior gunBehave;
+	private auraPlayerHealth health;
     public float hitStunnedTimer;
     //	public float dragForce;
     //	public float dashDrag;
@@ -103,7 +104,7 @@ public class AuraCharacterController : PlayControl
         //		XAttackAnim = GetComponent<Animator>();
         //		YAttackAnim = GetComponent<Animator>();
         //		BAttackAnim = GetComponent<Animator>();
-
+		health = GetComponent<auraPlayerHealth>();
     }
 
     public void shootSlowDown()
@@ -119,7 +120,7 @@ public class AuraCharacterController : PlayControl
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (hitStunnedTimer <= 0)
+		if (hitStunnedTimer <= 0 && !health.dying)
         {
             MoveCharacter();
         }
@@ -479,7 +480,7 @@ public class AuraCharacterController : PlayControl
 	float curForce(){
 		//TODO redo in terms of multipliers instead of mutual exclusive branches
 		float dashBuff =1, slowDebuff = 1, ledgeDebuff = 1;
-		if (GetComponent<auraPlayerHealth> ().steppedOffLedge) {
+		if (health.steppedOffLedge) {
 			ledgeDebuff = slowForce / moveForce;
 			if (slow) {
 				ledgeDebuff = 0.5f;

@@ -16,6 +16,7 @@ public class auraGunBehavior : MonoBehaviour
 
     public int playerNum;
 
+	private auraPlayerHealth health;
     private float bulletOffsetNorm = 0f;
 	[Header("SHOOTING VARS")]
     public int MaxBullets;
@@ -146,16 +147,18 @@ public class auraGunBehavior : MonoBehaviour
         {
             auraLevelCharge[i] = auraLevelChargeMax;
         }
-       
+		health = GetComponent<auraPlayerHealth> ();
     }
 
     // Update is called once per frame
     void Update()
-    {
-        AuraCharge ();
+	{		
 		drawStamina ();
-		ChangeAura ();
-		Shoot ();
+		if (!health.dying) {
+			AuraCharge ();
+			ChangeAura ();
+			Shoot ();
+		}
 
         //AuraSys();
        // drawStamina(); 

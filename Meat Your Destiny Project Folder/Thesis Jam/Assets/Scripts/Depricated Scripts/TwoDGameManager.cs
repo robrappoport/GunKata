@@ -145,10 +145,10 @@ public class TwoDGameManager : MonoBehaviour {
         player2Start.position = player2Spawns[index2];
         playerScoreUpdate();
         if (playerHealth1.dead || playerHealth2.dead)
-        {
+		{
 			CheckPlayerWin ();
 			cam.Shake(shakeWeight, shakeTime);
-            if (playerHealth1.CurrentHealth <= 0 && addedScore2 == false)
+			if (playerHealth1.dead && addedScore2 == false)
             {
                 //player1Scale = player1.transform.localScale;
                 StartCoroutine(DelayedSpawnPlayer1());
@@ -156,7 +156,7 @@ public class TwoDGameManager : MonoBehaviour {
                 //player2ScoreNum += 10f;
                 return;
             }
-            if (playerHealth2.CurrentHealth <= 0 && addedScore1 == false)
+            if (playerHealth2.dead && addedScore1 == false)
             {
                 //player2Scale = player2.transform.localScale;
                 StartCoroutine(DelayedSpawnPlayer2());
