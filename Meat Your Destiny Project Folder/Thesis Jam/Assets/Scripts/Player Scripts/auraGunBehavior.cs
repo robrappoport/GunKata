@@ -154,38 +154,16 @@ public class auraGunBehavior : MonoBehaviour
     {
         AuraCharge ();
 		drawStamina ();
+		ChangeAura ();
+		Shoot ();
+
         //AuraSys();
        // drawStamina(); 
 
         //AURA CHANGER
-        if (myCont.yButton())
-        {
-            AuraObj = ProjectAuraObj;
-        }
-        if (myCont.xButton())
-        {
-            AuraObj = SlowAuraobj;
-        }
         //AURA CHANGER
 
-        if (shootTime > 0)
-        {
-            //          Debug.Log ("test shootime");
-            shootTime -= Time.deltaTime;
-            isFiring = false;
-        }
 
-        //Debug.DrawRay(transform.position, transform.forward * 50, Color.red);
-
-        if (CurrentBullets <= 0 && !isReloading && autoReloadEnabled == true)
-        {
-            isReloading = true;
-            Invoke("Reload", .001f);
-        }
-        if (isReloading)
-        {
-            return;
-        }
         //auraProject();
 
 
@@ -197,119 +175,139 @@ public class auraGunBehavior : MonoBehaviour
         //}
 
 
+    }
 
-        if (CurrentBullets > 0)
-        {
-            if (chargeTime >= loadedChargeTime && !laserIsFiring)
-            {
-                chargeTime = loadedChargeTime;
-                //Debug.Log("laser fully charged");
-                //play charge sound
-            }
-            if (myCont.primaryFireDown() == true || myCont.primaryFire() == true)
-            {
-                if (myCont.primaryFireDown() == true)
-                {
-                    isFiring = true;
-                    shootTime = initShootTime;
-                    PrimaryFire();
-                    StartCoroutine(ShootSound());
-                }
-                if (myCont.primaryFire() == true)
-                {
-                    //Debug.Log(chargeTime);
-                    //Debug.Log(loadedChargeTime);
-                    //Debug.Log(chargeTime + " " + "chargetime");
-                    if (wingMatChangeValue == 0) {
-                        chargeTime += Time.deltaTime / initialChargeBuffer;
+	void ChangeAura(){
+		if (myCont.yButton())
+		{
+			AuraObj = ProjectAuraObj;
+		}
+		if (myCont.xButton ()) {
+			AuraObj = SlowAuraobj;
+		}
+
+	}
+	void Shoot(){
+		if (shootTime > 0)
+		{
+			//          Debug.Log ("test shootime");
+			shootTime -= Time.deltaTime;
+			isFiring = false;
+		}
+
+		//Debug.DrawRay(transform.position, transform.forward * 50, Color.red);
+
+		if (CurrentBullets <= 0 && !isReloading && autoReloadEnabled == true)
+		{
+			isReloading = true;
+			Invoke("Reload", .001f);
+		}
+		if (isReloading) {
+			return;
+		}
+
+		if (CurrentBullets > 0) {
+			if (chargeTime >= loadedChargeTime && !laserIsFiring) {
+				chargeTime = loadedChargeTime;
+				//Debug.Log("laser fully charged");
+				//play charge sound
+			}
+			if (myCont.primaryFireDown () == true || myCont.primaryFire () == true) {
+				if (myCont.primaryFireDown () == true) {
+					isFiring = true;
+					shootTime = initShootTime;
+					PrimaryFire ();
+					StartCoroutine (ShootSound ());
+				}
+				if (myCont.primaryFire () == true) {
+					//Debug.Log(chargeTime);
+					//Debug.Log(loadedChargeTime);
+					//Debug.Log(chargeTime + " " + "chargetime");
+					if (wingMatChangeValue == 0) {
+						chargeTime += Time.deltaTime / initialChargeBuffer;
 					} else {
-                        if (!laserChargeSys.isPlaying)
-                        {
-                           LaserChargeSound();
-                        }
-                        
-                        chargeTime += Time.deltaTime;
+						if (!laserChargeSys.isPlaying) {
+							LaserChargeSound ();
+						}
+
+						chargeTime += Time.deltaTime;
 					}
-					myCont.shootSlowDown();
+					myCont.shootSlowDown ();
 
-                    wingMatChangeValue = Mathf.FloorToInt((chargeTime / loadedChargeTime) * 3f);
-// DEPRECATED: wings changing color on laser charge
-//                    if (wingMatChangeValue != tempValue){
-//                        for (int i = 0; i < wingMatChangeValue; i++)
-//                        {
-//                            Renderer [] wingArray = wings[i].GetComponentsInChildren<Renderer>();
-//                            foreach (Renderer r in wingArray)
-//                            {
-//                                //r.material.c = activeWingColor;
-//                                r.material.SetColor("_EmissionColor", activeWingColor);
-//                            }
-//
-//
-//                        }
-//                        tempValue = wingMatChangeValue;
-//                    }
-                   
-
+					wingMatChangeValue = Mathf.FloorToInt ((chargeTime / loadedChargeTime) * 3f);
+					// DEPRECATED: wings changing color on laser charge
+					//                    if (wingMatChangeValue != tempValue){
+					//                        for (int i = 0; i < wingMatChangeValue; i++)
+					//                        {
+					//                            Renderer [] wingArray = wings[i].GetComponentsInChildren<Renderer>();
+					//                            foreach (Renderer r in wingArray)
+					//                            {
+					//                                //r.material.c = activeWingColor;
+					//                                r.material.SetColor("_EmissionColor", activeWingColor);
+					//                            }
+					//
+					//
+					//                        }
+					//                        tempValue = wingMatChangeValue;
+					//                    }
 
 
-                }
 
-            }
-            else
-            {
-                myCont.NotShot();
-            }
+
+				}
+
+			} else {
+				myCont.NotShot ();
+			}
 			if (myCont.primaryFireUp ())
-			if (wingMatChangeValue== 0) {
+			if (wingMatChangeValue == 0) {
 				chargeTime = 0;
 			} else {
 				if (chargeTime >= 1) {
-                    StartCoroutine(LaserShotSound());
-                    laserChargeSys.Stop();
-					myCont.GetComponent<Animator>().SetBool("Laser Firing", true);
+					StartCoroutine (LaserShotSound ());
+					laserChargeSys.Stop ();
+					myCont.GetComponent<Animator> ().SetBool ("Laser Firing", true);
 					laserIsFiring = true;
 					chargeTime = 0f;
 
 					laserObj = Instantiate (LaserBullet, 
 						Bullet_Emitter.transform.position, 
 						gameObject.transform.rotation) 
-                                                    as GameObject;
+						as GameObject;
 					laserObj.transform.parent = gameObject.transform;
 					laserObj.GetComponent<LaserShotScript> ().on = true;
 					laserObj.GetComponent<LaserShotScript> ().owner = myCont;
 				}
 			}
-            if (laserIsFiring)
-            {
-                gameObject.GetComponent<AuraCharacterController>().turnSpeed = .5f;
-                gameObject.GetComponent<AuraCharacterController>().prevMoveForce = .2f;
-                laserFiring += Time.deltaTime;
-               //play laser sound
+			if (laserIsFiring) {
+				gameObject.GetComponent<AuraCharacterController> ().turnSpeed = .5f;
+				gameObject.GetComponent<AuraCharacterController> ().prevMoveForce = .2f;
+				laserFiring += Time.deltaTime;
+				//play laser sound
 
-                if (laserFiring >= totalLaserShotTime)
-                {
-					myCont.GetComponent<Animator>().SetBool("Laser Firing", false);
-                    laserShotSys.Stop();
-                    gameObject.GetComponent<AuraCharacterController>().turnSpeed = 20f;
-                    gameObject.GetComponent<AuraCharacterController>().prevMoveForce = 4f;
-//                    foreach (GameObject g in wings)
-//                    {
-//                        Renderer [] wingArray = g.GetComponentsInChildren<Renderer>();
-//                        foreach (Renderer r  in wingArray)
-//                        {
-//                            //r.material.color = inactiveWingColor;
-//                            r.material.SetColor("_EmissionColor", inactiveWingColor);
-//                        }
-//                    }
-                    laserFiring = 0f;
-                    laserIsFiring = false;
-                    laserObj.GetComponent<LaserShotScript>().on = false;
-                }
-            }
-        }
+				if (laserFiring >= totalLaserShotTime) {
+					myCont.GetComponent<Animator> ().SetBool ("Laser Firing", false);
+					laserShotSys.Stop ();
+					gameObject.GetComponent<AuraCharacterController> ().turnSpeed = 20f;
+					gameObject.GetComponent<AuraCharacterController> ().prevMoveForce = 4f;
+					//                    foreach (GameObject g in wings)
+					//                    {
+					//                        Renderer [] wingArray = g.GetComponentsInChildren<Renderer>();
+					//                        foreach (Renderer r  in wingArray)
+					//                        {
+					//                            //r.material.color = inactiveWingColor;
+					//                            r.material.SetColor("_EmissionColor", inactiveWingColor);
+					//                        }
+					//                    }
+					laserFiring = 0f;
+					laserIsFiring = false;
+					laserObj.GetComponent<LaserShotScript> ().on = false;
+				}
+			}
+		}
 
-    }
-
+		
+	}
     void Reload()
     {
         if (CurrentBullets != MaxBullets)
