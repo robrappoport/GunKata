@@ -310,6 +310,14 @@ public class AuraCharacterController : PlayControl
 		if (controlType == ControlType.Controller) {
 			return (myController.Action2.WasReleased);
 		} else {
+			return (Input.GetKeyUp (KeyCode.N));
+		}
+	}
+
+	public bool bButtonDown (){
+		if (controlType == ControlType.Controller) {
+			return (myController.Action2.WasPressed);
+		} else {
 			return (Input.GetKeyDown (KeyCode.N));
 		}
 	}
@@ -370,9 +378,12 @@ public class AuraCharacterController : PlayControl
 
 		//		moveDirection.y = 0;
 
-		if (bButtonUp () && gunBehave.CurrentBullets > 0) {
+		if (bButtonDown () && gunBehave.remainingAuraCharge > 0) {
+			gunBehave.DrainAura (1);
+			gunBehave.Invoke ("ResetAuraCooldown", gunBehave.coolDownDuration);
 			gunBehave.CurrentBullets--;
 			currentDashTime = 0.0f;
+			isDashing = true;
 		}
 
 		if (currentDashTime < maxDashTime) {
@@ -380,9 +391,10 @@ public class AuraCharacterController : PlayControl
 			//Debug.Log (isDashing + "Isdashing in the thing");
 			//moveDirection = new Vector3 (moveDirection.x * dashSpeed, 0, moveDirection.z * dashSpeed);
 			currentDashTime += dashStopSpeed;
-			isDashing = false;
 			//			curDrag = dashDrag;
 
+		} else {
+			isDashing = false;
 		}
 
 		//moveDirection *= currentSpeed;
@@ -450,21 +462,43 @@ public class AuraCharacterController : PlayControl
 	}
 
 	float curForce(){
-		if (GetComponent<auraPlayerHealth>().steppedOffLedge) {
+		//TODO redo in terms of multipliers instead of mutual exclusive branches
+		float dashBuff =1, slowDebuff = 1, ledgeDebuff = 1;
+		if (GetComponent<auraPlayerHealth> ().steppedOffLedge) {
+			ledgeDebuff = slowForce / moveForce;
 			if (slow) {
-				return slowForce / 2;
-			} else {
-				return slowForce;
+				ledgeDebuff = 0.5f;
 			}
 		}
 		if (slow) {
-			return slowForce;
-		} else if (isDashing && currentDashTime < maxDashTime) {
-			return dashForce;
-		} else {
-			return moveForce;
+			slowDebuff = slowForce / moveForce;
 		}
+		if (isDashing && currentDashTime < maxDashTime) {
+			dashBuff = dashForce / prevMoveForce;
+			slowDebuff = 1;
+			ledgeDebuff = 1;
+		}
+
+//		if (GetComponent<auraPlayerHealth>().steppedOffLedge) {
+//			if (isDashing && currentDashTime < maxDashTime) {
+//				return dashForce;
+//			}
+//			else if (slow) {
+//				return slowForce / 2;
+//			} else {
+//				return slowForce;
+//			}
+//		}
+//		if (slow) {
+//			return slowForce;
+//		} else if (isDashing && currentDashTime < maxDashTime) {
+//			print ("dashing");
+//			return dashForce;
+//		} else {
+//			return moveForce;
+//		}
 	
+		return moveForce * slowDebuff * ledgeDebuff * dashBuff;
 	}
 
 	public bool playerInteractingWithOwnAura(AuraGenerator testAura){//use this to exclude auras that don't interact with their owner

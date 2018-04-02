@@ -72,7 +72,7 @@ public class auraGunBehavior : MonoBehaviour
     private int startingAuraIndex;
 
 	public float auraChargeRate = 1f, auraRechargeRate = 1f, coolDownDuration;
-	float currentAuraCharge, remainingAuraCharge, currentAuraChargeLimit;
+	public float currentAuraCharge, remainingAuraCharge, currentAuraChargeLimit;
 
 
     //[Header ("SPRITE AURA VARS")]
@@ -353,7 +353,14 @@ public class auraGunBehavior : MonoBehaviour
         }
         return -1;
     }
+		
+	public void DrainAura(float difference){
+		remainingAuraCharge = Mathf.Clamp (remainingAuraCharge - difference, 0, auraStamImgArray.Length);
+		CancelInvoke ("ResetAuraCooldown");
+		coolingDown = true;
 
+	
+	}
 	void AuraCharge(){
 		if (myCont.secondaryFireDown () == true) {
 			currentAuraChargeLimit = remainingAuraCharge;
@@ -362,8 +369,11 @@ public class auraGunBehavior : MonoBehaviour
 		if (myCont.secondaryFire () == true) {
 			//calculate how much charge remains and how much is to be used
 			sprAura.SetActive (true);
-			remainingAuraCharge = Mathf.Clamp (remainingAuraCharge - Time.deltaTime * auraChargeRate, 0, auraStamImgArray.Length);
+			DrainAura (Time.deltaTime * auraChargeRate);
 			currentAuraCharge = Mathf.Clamp (currentAuraCharge + Time.deltaTime * auraChargeRate, 0, currentAuraChargeLimit);
+
+	//		remainingAuraCharge = Mathf.Clamp (remainingAuraCharge - Time.deltaTime * auraChargeRate, 0, auraStamImgArray.Length);
+	//		currentAuraCharge = Mathf.Clamp (currentAuraCharge + Time.deltaTime * auraChargeRate, 0, currentAuraChargeLimit);
 			//change the wing materials
 		
 			if (currentAuraCharge != tempValue) {
@@ -448,6 +458,10 @@ public class auraGunBehavior : MonoBehaviour
 		//draw the remainder
 		if (remainingAuraCharge < auraStamImgArray.Length) {
 			auraStamImgArray [(int)remainingAuraCharge].fillAmount = remainingAuraCharge - (int)remainingAuraCharge;
+			//drain the empties
+			for(int i = (int)remainingAuraCharge + 1; i < auraStamImgArray.Length; i++){
+				auraStamImgArray [i].fillAmount = 0;
+			}
 		}
 		//        for (int i = 0; i < auraStamImgArray.Length; i++)
 		//        {
