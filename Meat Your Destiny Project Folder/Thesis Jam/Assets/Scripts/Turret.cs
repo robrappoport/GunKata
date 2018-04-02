@@ -37,7 +37,8 @@ public class Turret : MonoBehaviour
 	private Transform target;
 	public int segmentNum;
 	[Header("PARTICLE SYSTEM VARS")]
-    ParticleSystem lightningParticle, circleParticle;
+	public TurretParticles tp;
+	public ParticleSystem lightningParticle, circleParticle, captureParticle;
 	List<Collider> cols = new List<Collider> ();
 	Collider auraCollider;
 
@@ -69,9 +70,18 @@ public class Turret : MonoBehaviour
 
 		anim = GetComponent<Animator> ();
 		segmentNum = letterRenderers.Length;
-		lightningParticle = GetComponentInChildren<ParticleSystem>();
-		lightningParticle.transform.localPosition = new Vector3 (0, 6.5f, 0);
+
+
+		lightningParticle = Instantiate (tp.chargeParticles, transform) as ParticleSystem;
+		lightningParticle.transform.localPosition = tp.chargeParticlesLocation;
 		lightningParticle.gameObject.SetActive (false);
+		circleParticle = Instantiate (tp.circleParticles, transform) as ParticleSystem;
+		circleParticle.transform.localPosition = tp.circleParticlesLocation;
+		circleParticle.gameObject.SetActive (false);
+		captureParticle = Instantiate (tp.captureParticles, transform) as ParticleSystem;
+		captureParticle.transform.localPosition = tp.captureParticlesLocation;
+		captureParticle.gameObject.SetActive (false);
+
 		//set emitters
 		//Emitter[0] = GameObject.Find(name + "/N_Emitter");
 		//Emitter[1] = GameObject.Find(name + "/E_Emitter"); 
@@ -173,30 +183,42 @@ public class Turret : MonoBehaviour
 					neutralColor = p2Color;
 
 				}
-			}
-			else
-			{
+			} else {
 				neutralColor = unownedColor;
 			}
 			outlineBar.color = neutralColor;
 			litSegments = 0;
 			charge = 0;
 			AdjustListMembership ();
+			captureParticle.gameObject.SetActive (true);
+			var captureParticleMain = captureParticle.main;
+			captureParticleMain.startColor = playerColors [ownerNum];
+			captureParticle.Play ();
+				
+		} else {
 		}
 
 
 		if (auraCollider && charging && MismatchedOwners()) {
-			var main = lightningParticle.main;
 			AdjustOwnership (auraCollider.GetComponent<AuraGenerator> ().auraPlayerNum);
+			var lightningMain = lightningParticle.main;
+			var circleMain = circleParticle.main;
 			lightningParticle.gameObject.SetActive (true);
-			if (owner == Owner.Player1) {
-				main.startColor = playerColors [0];
-			} else {
-				main.startColor= playerColors [1];
+			circleParticle.gameObject.SetActive (true);
+			if (circleParticle.isPlaying) {
 
+				print ("playing");
+			}
+			if (owner == Owner.Player1) {
+				lightningMain.startColor = playerColors [0];
+				circleMain.startColor = playerColors [0];
+			} else {
+				lightningMain.startColor= playerColors [1];
+				circleMain.startColor = playerColors [1];
 			}
 		} else {
 			lightningParticle.gameObject.SetActive (false);
+			circleParticle.gameObject.SetActive (false);
 		}
 
 		//	CleanCannonballList ();
@@ -672,7 +694,6 @@ public class Turret : MonoBehaviour
 			{
 				anim.SetTrigger ("Open");
 				completelyOwned = true;
-
 				//contestable = false;
 				//Invoke("Reset", immuneTime);
 
