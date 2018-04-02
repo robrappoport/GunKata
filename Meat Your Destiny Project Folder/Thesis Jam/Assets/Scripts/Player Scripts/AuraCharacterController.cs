@@ -466,14 +466,12 @@ public class AuraCharacterController : PlayControl
 	}
 
 	IEnumerator AuraDashDrain(){
-		print ("draining aura from dash");
 		float totalDrainAmount = 0;
 		while (totalDrainAmount < 1) {
 			gunBehave.DrainAura (Time.deltaTime * dashAuraDrainRate);
 			totalDrainAmount += Time.deltaTime * dashAuraDrainRate;
 			yield return null;
 		}
-		print ("finishing aura drain");
 
 	}
 
