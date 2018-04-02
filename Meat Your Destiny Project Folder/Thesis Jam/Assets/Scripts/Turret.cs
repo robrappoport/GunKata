@@ -205,10 +205,6 @@ public class Turret : MonoBehaviour
 			var circleMain = circleParticle.main;
 			lightningParticle.gameObject.SetActive (true);
 			circleParticle.gameObject.SetActive (true);
-			if (circleParticle.isPlaying) {
-
-				print ("playing");
-			}
 			if (owner == Owner.Player1) {
 				lightningMain.startColor = playerColors [0];
 				circleMain.startColor = playerColors [0];
