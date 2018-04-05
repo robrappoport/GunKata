@@ -13,7 +13,7 @@ public  class UIManager : MonoBehaviour {
 	public GameObject scoreCardPrefab;
 	public List<Turret> turretList = new List<Turret> ();
 	public float timeSlowScale = 0.5f, timeSlowingDuration = 1, timeSlowedDuration = 1, timeReturnDuration = 1;
-	public float winChanceSendUpTime = 1, winChanceRemainTime = 1, winChanceTargetFontSize = 36;
+	public float winChanceSendUpTime = 1, winChanceRemainTime = 1, winChanceTargetSize = 36;
 	public float timeSlowZoomMaxDistance = 900, timeSlowZoomInDuration = 0.2f, timeSlowZoomOutDuration = 0.2f;
 	Vector3 endPos;
 	float maxDist;
@@ -66,26 +66,24 @@ public  class UIManager : MonoBehaviour {
 				if (!winChanceCoroutinesStarted) {
 					winChanceCoroutinesStarted = true;
 					StartCoroutine (SlowTimeTemporarily (timeSlowScale, timeSlowingDuration, timeSlowedDuration, timeReturnDuration));
-					StartCoroutine (SendWinChanceTextUp (winningPlayer, winChanceSendUpTime, winChanceSendUpTime));
+					StartCoroutine (SendWinChanceTextUp (winningPlayer, winChanceSendUpTime, winChanceRemainTime, winChanceTargetSize));
 					StartCoroutine (TimeSlowCamZoom (timeSlowZoomMaxDistance, timeSlowZoomInDuration, timeSlowZoomOutDuration));
-				}
-				//victoryText.enabled = true;
+				
+					//victoryText.enabled = true;
 
-//				GetComponent<Image> ().color = Color.yellow;
-//				switch (winningPlayer) {
-//				case 0:
-//					victoryText.text = "blue can win";
-//					victoryText.color = Color.blue;
-//					break;
-//				case 1:
-//					victoryText.text = "red can win!";
-//					victoryText.color = Color.red;
-//					break;
-//				default:
-//					victoryText.text = "Error";
-//					victoryText.color = Color.black;
-//					break;
-//				}
+					GetComponent<Image> ().color = Color.yellow;
+					switch (winningPlayer) {
+					case 0:
+						victoryText.color = Color.blue;
+						break;
+					case 1:
+						victoryText.color = Color.red;
+						break;
+					default:
+						victoryText.color = Color.black;
+						break;
+					}
+				}
 
 			} else {
 				winChanceCoroutinesStarted = false;
@@ -126,11 +124,15 @@ public  class UIManager : MonoBehaviour {
 		CameraMultitarget cam = Camera.main.GetComponent<CameraMultitarget> ();
 		float elapsedTime = 0;
 		float totalTime = timeSlowedDuration + timeSlowingDuration + timeReturnDuration - zoomInDuration - zoomOutDuration;
-		float startingZoom = cam.maxDistanceToTarget;
-
+		float startingMaxZoom = cam.maxDistanceToTarget;
+		float startingMinZoom = cam.minDistanceToTarget;
 		while (elapsedTime < zoomInDuration) {
 			elapsedTime += Time.deltaTime;
-			cam.maxDistanceToTarget = Mathf.Lerp (startingZoom, zoomDistance, elapsedTime / zoomInDuration);
+			cam.maxDistanceToTarget = Mathf.Lerp (startingMaxZoom, zoomDistance, elapsedTime / zoomInDuration);
+			if (cam.minDistanceToTarget >= cam.maxDistanceToTarget) {
+				cam.minDistanceToTarget = Mathf.Lerp (startingMinZoom, zoomDistance, elapsedTime / zoomInDuration);
+
+			}
 			yield return null;
 		}
 		totalTime -= elapsedTime;
@@ -138,7 +140,12 @@ public  class UIManager : MonoBehaviour {
 		yield return new WaitForSeconds (totalTime);
 		while (elapsedTime < zoomOutDuration) {
 			elapsedTime += Time.deltaTime;
-			cam.maxDistanceToTarget = Mathf.Lerp (zoomDistance, startingZoom, elapsedTime / zoomOutDuration);
+			cam.maxDistanceToTarget = Mathf.Lerp (zoomDistance, startingMaxZoom, elapsedTime / zoomOutDuration);
+			if (cam.minDistanceToTarget >= cam.maxDistanceToTarget) {
+				cam.minDistanceToTarget = Mathf.Lerp (zoomDistance, startingMinZoom, elapsedTime / zoomInDuration);
+
+			}
+
 			yield return null;
 		}
 
@@ -151,24 +158,27 @@ public  class UIManager : MonoBehaviour {
 	/// <param name="playerNum">Number of player who can win.</param>
 	/// <param name="sendUpTime">Time it takes for text to rise.</param>
 	/// <param name="remainTime">Time text remains on screen.</param>
-	IEnumerator SendWinChanceTextUp(int playerNum, float sendUpTime = 1, float remainTime = 1, float targetFontSize = 36){
+	IEnumerator SendWinChanceTextUp(int playerNum, float sendUpTime = 1, float remainTime = 1, float targetSize = 5){
 		float elapsedTime = 0;
+		float startTime = Time.realtimeSinceStartup;
 		victoryText.enabled = true;
-		int startingFontSize = victoryText.fontSize;
 		victoryText.text = TwoDGameManager.thisInstance.playerNames [playerNum].ToLower() + " can seize victory!";
 		RectTransform victorTextRectTransform = victoryText.GetComponent<RectTransform> ();
+		Vector3 startingSize = victorTextRectTransform.localScale;
+		Vector3 finalSize = startingSize * targetSize;
 		Vector2 startingPosition = victorTextRectTransform.anchoredPosition;
-		Vector2 middleOfScreen = new Vector2 (Screen.width / 2, Screen.height / 2);
-		while (Vector2.Distance (victorTextRectTransform.anchoredPosition, middleOfScreen) < 0.01f) {
-			elapsedTime += Time.deltaTime;
+		Vector2 middleOfScreen = new Vector2 (0, 100);
+		while (elapsedTime < sendUpTime) {
+			elapsedTime = Time.realtimeSinceStartup - startTime;
+
 			victorTextRectTransform.anchoredPosition = Vector2.Lerp (startingPosition, middleOfScreen, elapsedTime / sendUpTime);
-			victoryText.fontSize = (int)Mathf.Lerp (startingFontSize, targetFontSize, elapsedTime / sendUpTime);
+			victorTextRectTransform.localScale = Vector3.Lerp (startingSize, finalSize, elapsedTime / sendUpTime);
 			yield return null;
 		
 		}
 		yield return new WaitForSeconds (remainTime);
 		victorTextRectTransform.anchoredPosition = startingPosition;
-		victoryText.fontSize = startingFontSize;
+		victorTextRectTransform.localScale = startingSize;
 		victoryText.enabled = false;
 	}
 	void UpdateScore(){
