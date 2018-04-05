@@ -104,7 +104,9 @@ public class Bullet : MonoBehaviour {
 		} else {
             if (BMan != null)
             {
-                Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), BMan.gameObject.GetComponent<Collider>(), false);
+				if (GetComponent<Collider> () && BMan.GetComponent<Collider> ()) {
+					Physics.IgnoreCollision (gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), false);
+				}
             }
 			render.enabled = true;
 		}
