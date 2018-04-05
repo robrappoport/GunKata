@@ -265,7 +265,7 @@ public class Turret : MonoBehaviour
 
 
 	void AuraCheck (){
-		auraCollider = GetCurrentAura ();
+		auraCollider = AuraGenerator.GetCurrentAura (cols);
 		if (contestable) {
 
 			if (auraCollider)
@@ -320,31 +320,7 @@ public class Turret : MonoBehaviour
 		//}
 	}
 
-	Collider GetCurrentAura(){
-		//remove any missing refs from the list; aura no longer exists
-		List<Collider> tempList = new List<Collider>();
-		foreach (Collider c in cols) {
-			if (c) {
-				tempList.Add (c);
-			}
-		}
-		cols = tempList;
-		//if there is only one left in the list, it becomes the aura by default
-		switch (cols.Count) {
-		case 1:
-			return cols [0];
-		case 0:
-			return null;
-		default:
-			Collider finalCol = cols [0];
-			for (int i = 0; i < cols.Count; i++) {
-				if (cols [i].GetComponent<AuraGenerator> ().auraScaleCurrent >= finalCol.GetComponent<AuraGenerator>().auraScaleCurrent) {
-					finalCol = cols [i];
-				}
-			}
-			return finalCol;
-		}
-	}
+
 
 	bool MismatchedOwners(){
 		if (ownerNum == 0 && owner != Owner.Player1) {

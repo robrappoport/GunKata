@@ -168,7 +168,31 @@ AuraGenerator : MonoBehaviour {
         auraCurLife = 0;
 
     }
-
+	public static Collider GetCurrentAura(List<Collider> colliders){
+		//remove any missing refs from the list; aura no longer exists
+		List<Collider> tempList = new List<Collider>();
+		foreach (Collider c in colliders) {
+			if (c) {
+				tempList.Add (c);
+			}
+		}
+		colliders = tempList;
+		//if there is only one left in the list, it becomes the aura by default
+		switch (colliders.Count) {
+		case 1:
+			return colliders [0];
+		case 0:
+			return null;
+		default:
+			Collider finalCol = colliders [0];
+			for (int i = 0; i < colliders.Count; i++) {
+				if (colliders [i].GetComponent<AuraGenerator> ().auraScaleCurrent >= finalCol.GetComponent<AuraGenerator>().auraScaleCurrent) {
+					finalCol = colliders [i];
+				}
+			}
+			return finalCol;
+		}
+	}
     public enum AuraType
     {
         slowdown, projection
