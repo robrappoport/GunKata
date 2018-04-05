@@ -13,7 +13,8 @@ public  class UIManager : MonoBehaviour {
 	public GameObject scoreCardPrefab;
 	public List<Turret> turretList = new List<Turret> ();
 	public float timeSlowScale = 0.5f, timeSlowingDuration = 1, timeSlowedDuration = 1, timeReturnDuration = 1;
-	public float winChanceSendUpTime = 1, winChanceRemainTime = 1, winChanceTargetSize = 36;
+	public float winChanceSendUpTime = 1, winChanceRemainTime = 1;
+	public int winChanceTargetSize = 36;
 	public float timeSlowZoomMaxDistance = 900, timeSlowZoomInDuration = 0.2f, timeSlowZoomOutDuration = 0.2f;
 	Vector3 endPos;
 	float maxDist;
@@ -158,27 +159,31 @@ public  class UIManager : MonoBehaviour {
 	/// <param name="playerNum">Number of player who can win.</param>
 	/// <param name="sendUpTime">Time it takes for text to rise.</param>
 	/// <param name="remainTime">Time text remains on screen.</param>
-	IEnumerator SendWinChanceTextUp(int playerNum, float sendUpTime = 1, float remainTime = 1, float targetSize = 5){
+	IEnumerator SendWinChanceTextUp(int playerNum, float sendUpTime = 1, float remainTime = 1, int targetSize = 5){
 		float elapsedTime = 0;
 		float startTime = Time.realtimeSinceStartup;
 		victoryText.enabled = true;
 		victoryText.text = TwoDGameManager.thisInstance.playerNames [playerNum].ToLower() + " can seize victory!";
 		RectTransform victorTextRectTransform = victoryText.GetComponent<RectTransform> ();
-		Vector3 startingSize = victorTextRectTransform.localScale;
-		Vector3 finalSize = startingSize * targetSize;
+		int startingFont = victoryText.fontSize;
+		int targetFont = targetSize;
+//		Vector3 startingSize = victorTextRectTransform.localScale;
+//		Vector3 finalSize = startingSize * targetSize;
 		Vector2 startingPosition = victorTextRectTransform.anchoredPosition;
 		Vector2 middleOfScreen = new Vector2 (0, 100);
 		while (elapsedTime < sendUpTime) {
 			elapsedTime = Time.realtimeSinceStartup - startTime;
 
 			victorTextRectTransform.anchoredPosition = Vector2.Lerp (startingPosition, middleOfScreen, elapsedTime / sendUpTime);
-			victorTextRectTransform.localScale = Vector3.Lerp (startingSize, finalSize, elapsedTime / sendUpTime);
+		//	victorTextRectTransform.localScale = Vector3.Lerp (startingSize, finalSize, elapsedTime / sendUpTime);
+			victoryText.fontSize = (int)Mathf.Lerp(startingFont, targetFont, elapsedTime/sendUpTime);
 			yield return null;
 		
 		}
 		yield return new WaitForSeconds (remainTime);
 		victorTextRectTransform.anchoredPosition = startingPosition;
-		victorTextRectTransform.localScale = startingSize;
+	//	victorTextRectTransform.localScale = startingSize;
+		victoryText.fontSize = startingFont;
 		victoryText.enabled = false;
 	}
 	void UpdateScore(){
