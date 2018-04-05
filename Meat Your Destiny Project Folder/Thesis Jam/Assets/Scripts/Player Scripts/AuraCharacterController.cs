@@ -36,15 +36,16 @@ public class AuraCharacterController : PlayControl
 	//	private float currentSpeed = 0;
 	public bool isDashing;
 	public float dashAuraDrainRate = 1;
+	bool slow = false;
 
 	[Header("MOVEMENT VARS")]
-	bool slow = false;
 	public float currentForce;
     public float moveForce;
     public float dashForce;
     public float slowForce;
     public float shootForce;
     public float prevMoveForce;
+	public float moveMultiplier;
     float stuckTimer;
     public float stuckTime = .1f;
     public enum ControlType { Keyboard, Controller, NONE };/// <summary>
@@ -143,7 +144,6 @@ public class AuraCharacterController : PlayControl
     }
     private void Update()
     {
-
 		AuraCheck ();
 		anim.SetFloat("Velocity X", transform.InverseTransformDirection(OnMove()).x);
 		anim.SetFloat("Velocity Z", transform.InverseTransformDirection(OnMove()).z);
@@ -411,7 +411,7 @@ public class AuraCharacterController : PlayControl
 		//			moveDirection = moveDirection.normalized;
 
 
-		characterCtr.AddForce((moveDirForward + moveDirSides).normalized * curForce()/ Time.deltaTime);
+		characterCtr.AddForce((moveDirForward + moveDirSides).normalized * curForce() * Time.deltaTime * moveMultiplier);
 
 		//		}
 

@@ -39,6 +39,7 @@ public class TwoDGameManager : MonoBehaviour {
 
     public Vector3[] player1Spawns;
     public Vector3[] player2Spawns;
+	public string[] playerNames;
 
     private int index1 = 0;
     private int index2 = 0;

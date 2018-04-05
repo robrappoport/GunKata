@@ -12,10 +12,13 @@ public  class UIManager : MonoBehaviour {
 	public Hashtable h;
 	public GameObject scoreCardPrefab;
 	public List<Turret> turretList = new List<Turret> ();
-
+	public float timeSlowScale = 0.5f, timeSlowingDuration = 1, timeSlowedDuration = 1, timeReturnDuration = 1;
+	public float winChanceSendUpTime = 1, winChanceRemainTime = 1, winChanceTargetFontSize = 36;
+	public float timeSlowZoomMaxDistance = 900, timeSlowZoomInDuration = 0.2f, timeSlowZoomOutDuration = 0.2f;
 	Vector3 endPos;
 	float maxDist;
 	Text victoryText;
+	bool winChanceCoroutinesStarted = false;
 
 	void Awake(){
 		thisInstance = this;
@@ -33,7 +36,9 @@ public  class UIManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		CheckWin ();
+
 		UpdateScore ();	
+
 	}
 
 	void GenerateCardPool (int j){
@@ -42,7 +47,8 @@ public  class UIManager : MonoBehaviour {
 			scoreCardPool.Add (scoreCard);
 			scoreCard.transform.SetParent (thisInstance.transform);
 			scoreCard.SetActive (false);
-		
+
+
 		}
 	}
 	void CheckWin(){
@@ -57,29 +63,113 @@ public  class UIManager : MonoBehaviour {
 			}
 			winningPlayer = turretList [0].GetComponent<Turret> ().ownerNum;
 			if (canWin) {
-				victoryText.enabled = true;
-
-				GetComponent<Image> ().color = Color.yellow;
-				switch (winningPlayer) {
-				case 0:
-					victoryText.text = "blue can win";
-					victoryText.color = Color.blue;
-					break;
-				case 1:
-					victoryText.text = "red can win!";
-					victoryText.color = Color.red;
-					break;
-				default:
-					victoryText.text = "Error";
-					victoryText.color = Color.black;
-					break;
+				if (!winChanceCoroutinesStarted) {
+					winChanceCoroutinesStarted = true;
+					StartCoroutine (SlowTimeTemporarily (timeSlowScale, timeSlowingDuration, timeSlowedDuration, timeReturnDuration));
+					StartCoroutine (SendWinChanceTextUp (winningPlayer, winChanceSendUpTime, winChanceSendUpTime));
+					StartCoroutine (TimeSlowCamZoom (timeSlowZoomMaxDistance, timeSlowZoomInDuration, timeSlowZoomOutDuration));
 				}
+				//victoryText.enabled = true;
+
+//				GetComponent<Image> ().color = Color.yellow;
+//				switch (winningPlayer) {
+//				case 0:
+//					victoryText.text = "blue can win";
+//					victoryText.color = Color.blue;
+//					break;
+//				case 1:
+//					victoryText.text = "red can win!";
+//					victoryText.color = Color.red;
+//					break;
+//				default:
+//					victoryText.text = "Error";
+//					victoryText.color = Color.black;
+//					break;
+//				}
 
 			} else {
+				winChanceCoroutinesStarted = false;
 				victoryText.enabled = false;
 				GetComponent<Image> ().color = Color.gray;
 			}
 		}
+	}
+	/// <summary>
+	/// Slows time temporarily.
+	/// </summary>
+	/// <param name="timeScale">Time scale while slowed.</param>
+	/// <param name="slowingDuration">How long it should take to slow down.</param>
+	/// <param name="slowedDuration">How long it should stay slowed.</param>
+	/// <param name="returnDuration">How long it should take to return back to normal time.</param>
+	public static IEnumerator SlowTimeTemporarily(float slowedTimeScale = 0.5f, float slowingDuration = 1, float slowedDuration = 1, float returnDuration = 1){
+
+		float startingTimeScale = Time.timeScale;
+		float elapsedTime = 0;
+		while (elapsedTime < slowingDuration) {
+
+			elapsedTime += Time.deltaTime;
+			Time.timeScale = Mathf.Lerp (1, slowedTimeScale, elapsedTime / slowingDuration);
+			Time.fixedDeltaTime = Time.timeScale * 0.02f;
+			yield return null;
+		}
+		yield return new WaitForSeconds (slowedDuration);
+		elapsedTime = 0;
+		while (elapsedTime < returnDuration) {
+			elapsedTime += Time.deltaTime; 
+			Time.timeScale = Mathf.Lerp (slowedTimeScale, 1, elapsedTime / returnDuration);
+			Time.fixedDeltaTime = Time.timeScale * 0.02f;
+			yield return null;
+		}
+	}
+
+	IEnumerator TimeSlowCamZoom (float zoomDistance = 900, float zoomInDuration = 0.2f, float zoomOutDuration= 0.2f){
+		CameraMultitarget cam = Camera.main.GetComponent<CameraMultitarget> ();
+		float elapsedTime = 0;
+		float totalTime = timeSlowedDuration + timeSlowingDuration + timeReturnDuration - zoomInDuration - zoomOutDuration;
+		float startingZoom = cam.maxDistanceToTarget;
+
+		while (elapsedTime < zoomInDuration) {
+			elapsedTime += Time.deltaTime;
+			cam.maxDistanceToTarget = Mathf.Lerp (startingZoom, zoomDistance, elapsedTime / zoomInDuration);
+			yield return null;
+		}
+		totalTime -= elapsedTime;
+		elapsedTime = 0;
+		yield return new WaitForSeconds (totalTime);
+		while (elapsedTime < zoomOutDuration) {
+			elapsedTime += Time.deltaTime;
+			cam.maxDistanceToTarget = Mathf.Lerp (zoomDistance, startingZoom, elapsedTime / zoomOutDuration);
+			yield return null;
+		}
+
+
+	}
+	/// <summary>
+	/// Sends the win chance text up 
+	/// </summary>
+	/// <returns>The window chance text up.</returns>
+	/// <param name="playerNum">Number of player who can win.</param>
+	/// <param name="sendUpTime">Time it takes for text to rise.</param>
+	/// <param name="remainTime">Time text remains on screen.</param>
+	IEnumerator SendWinChanceTextUp(int playerNum, float sendUpTime = 1, float remainTime = 1, float targetFontSize = 36){
+		float elapsedTime = 0;
+		victoryText.enabled = true;
+		int startingFontSize = victoryText.fontSize;
+		victoryText.text = TwoDGameManager.thisInstance.playerNames [playerNum].ToLower() + " can seize victory!";
+		RectTransform victorTextRectTransform = victoryText.GetComponent<RectTransform> ();
+		Vector2 startingPosition = victorTextRectTransform.anchoredPosition;
+		Vector2 middleOfScreen = new Vector2 (Screen.width / 2, Screen.height / 2);
+		while (Vector2.Distance (victorTextRectTransform.anchoredPosition, middleOfScreen) < 0.01f) {
+			elapsedTime += Time.deltaTime;
+			victorTextRectTransform.anchoredPosition = Vector2.Lerp (startingPosition, middleOfScreen, elapsedTime / sendUpTime);
+			victoryText.fontSize = (int)Mathf.Lerp (startingFontSize, targetFontSize, elapsedTime / sendUpTime);
+			yield return null;
+		
+		}
+		yield return new WaitForSeconds (remainTime);
+		victorTextRectTransform.anchoredPosition = startingPosition;
+		victoryText.fontSize = startingFontSize;
+		victoryText.enabled = false;
 	}
 	void UpdateScore(){
 		turretList = turretList.OrderBy (
