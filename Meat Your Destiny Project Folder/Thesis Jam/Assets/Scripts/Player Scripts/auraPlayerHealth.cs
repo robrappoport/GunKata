@@ -24,14 +24,18 @@ public class auraPlayerHealth : MonoBehaviour {
     public AudioClip damageSnd;
 
     public GameObject textPrefab;
+	public GameObject deathBeamPrefab;
     public Color enemyPlayerColor;
     public float hitStun;
 	public bool dying = false, dead= false;
 	public float deathTime = 5;
 	Animator anim;
 
+	GameObject deathBeam;
 	// Use this for initialization
 	void Start () {
+		deathBeam = Instantiate (deathBeamPrefab, transform) as GameObject;
+		deathBeam.SetActive (false);
 		dead = false;
 		render.material = playerColor;
 		//Debug.Log (render.material);
@@ -81,6 +85,10 @@ public class auraPlayerHealth : MonoBehaviour {
 			followParts.owner = 0;
 		}
 		//Debug.Log("dying");
+		deathBeam.SetActive(true);
+		deathBeam.transform.SetParent(null);
+		deathBeam.transform.position = transform.position;
+		deathBeam.transform.localScale = Vector3.one;
 		gameObject.SetActive(false);
 
 	}
