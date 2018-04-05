@@ -34,8 +34,6 @@ public class auraPlayerHealth : MonoBehaviour {
 	GameObject deathBeam;
 	// Use this for initialization
 	void Start () {
-		deathBeam = Instantiate (deathBeamPrefab, transform) as GameObject;
-		deathBeam.SetActive (false);
 		dead = false;
 		render.material = playerColor;
 		//Debug.Log (render.material);
@@ -84,12 +82,12 @@ public class auraPlayerHealth : MonoBehaviour {
 		{
 			followParts.owner = 0;
 		}
-		//Debug.Log("dying");
-		deathBeam.SetActive(true);
+        deathBeam = Instantiate(deathBeamPrefab, transform) as GameObject;
 		deathBeam.transform.SetParent(null);
 		deathBeam.transform.position = transform.position;
 		deathBeam.transform.localScale = Vector3.one;
 		gameObject.SetActive(false);
+        Destroy(deathBeam, 1f);
 
 	}
 
