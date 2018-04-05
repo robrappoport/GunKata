@@ -549,7 +549,7 @@ public class AuraCharacterController : PlayControl
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "PlayerAura")
+        if (other.gameObject.tag == "PlayerAura" && playerInteractingWithOwnAura(other.GetComponent<AuraGenerator>())==false)
         {
             initDistance = Vector3.Distance(transform.position, other.gameObject.transform.position);
 			cols.Add (other);

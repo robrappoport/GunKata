@@ -75,7 +75,7 @@ public  class UIManager : MonoBehaviour {
 					GetComponent<Image> ().color = Color.yellow;
 					switch (winningPlayer) {
 					case 0:
-						victoryText.color = Color.blue;
+                            victoryText.color = new Color (174, 255, 246, 255);
 						break;
 					case 1:
 						victoryText.color = Color.red;
@@ -137,7 +137,7 @@ public  class UIManager : MonoBehaviour {
 		float elapsedTime = 0;
 		float startTime = Time.realtimeSinceStartup;
 		victoryText.enabled = true;
-		victoryText.text = TwoDGameManager.thisInstance.playerNames [playerNum].ToLower() + " can seize victory!";
+		victoryText.text = TwoDGameManager.thisInstance.playerNames [playerNum] + " Godhood Imminent \n Praise Be the New God!";
 		RectTransform victorTextRectTransform = victoryText.GetComponent<RectTransform> ();
 		int startingFont = victoryText.fontSize;
 		int targetFont = targetSize;
