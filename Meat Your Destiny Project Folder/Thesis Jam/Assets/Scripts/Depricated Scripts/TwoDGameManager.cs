@@ -540,4 +540,15 @@ public class TwoDGameManager : MonoBehaviour {
             }
            
     }
+
+
+	public static List<Collider> CleanColliderList(List<Collider> colliders){
+		List<Collider> tempList = new List<Collider>();
+		foreach (Collider c in colliders) {
+			if (c) {
+				tempList.Add (c);
+			}
+		}
+		return tempList; 
+	}
 }

@@ -170,13 +170,6 @@ AuraGenerator : MonoBehaviour {
     }
 	public static Collider GetCurrentAura(List<Collider> colliders){
 		//remove any missing refs from the list; aura no longer exists
-		List<Collider> tempList = new List<Collider>();
-		foreach (Collider c in colliders) {
-			if (c) {
-				tempList.Add (c);
-			}
-		}
-		colliders = tempList;
 		//if there is only one left in the list, it becomes the aura by default
 		switch (colliders.Count) {
 		case 1:
@@ -193,6 +186,7 @@ AuraGenerator : MonoBehaviour {
 			return finalCol;
 		}
 	}
+
     public enum AuraType
     {
         slowdown, projection

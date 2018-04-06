@@ -265,6 +265,7 @@ public class Turret : MonoBehaviour
 
 
 	void AuraCheck (){
+		cols = TwoDGameManager.CleanColliderList (cols);
 		auraCollider = AuraGenerator.GetCurrentAura (cols);
 		if (contestable) {
 
