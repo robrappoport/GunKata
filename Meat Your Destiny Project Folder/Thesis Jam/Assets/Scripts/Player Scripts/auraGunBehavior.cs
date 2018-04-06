@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
+
 public class auraGunBehavior : MonoBehaviour
 {
     //Drag in the Bullet Emitter from the Component Inspector.
@@ -71,6 +73,10 @@ public class auraGunBehavior : MonoBehaviour
     private float displayDrainRate = 100f;
     private float staminaToDisplay;
     private int startingAuraIndex;
+
+	//Manual Turret Fire vars
+	List<Turret> myTurrets = new List<Turret>();
+
 
 	public float auraChargeRate = 1f, auraRechargeRate = 1f, coolDownDuration;
 	public float currentAuraCharge, remainingAuraCharge, currentAuraChargeLimit;
@@ -148,6 +154,7 @@ public class auraGunBehavior : MonoBehaviour
             auraLevelCharge[i] = auraLevelChargeMax;
         }
 		health = GetComponent<auraPlayerHealth> ();
+		myTurrets = TwoDGameManager.thisInstance.turrets [playerNum];
     }
 
     // Update is called once per frame
@@ -336,6 +343,10 @@ public class auraGunBehavior : MonoBehaviour
             RyuBullet,
             Bullet_Emitter.transform.position,
             Quaternion.Euler(new Vector3(0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
+		//fire all turrets
+		foreach(Turret t in myTurrets){
+			t.Fire ();
+		}
     
       
     }

@@ -166,7 +166,7 @@ public class Turret : MonoBehaviour
 		DetermineDegreeOfOwnership();
 		if (completelyOwned) {
 			CancelInvoke ();
-			InvokeRepeating ("Fire", repeatTime - (Time.timeSinceLevelLoad % repeatTime), repeatTime);
+			//InvokeRepeating ("Fire", repeatTime - (Time.timeSinceLevelLoad % repeatTime), repeatTime);
 			//contestable = false;
 			//myShooter.StartShotRoutine ();
 			if (owner == Owner.Player1) {
@@ -416,21 +416,22 @@ public class Turret : MonoBehaviour
 	void AimingTurret()
 	{
 		// if the turret has an owner
-		if (ownerNum != 2)
-		{
-			//check the owner number
-			if (ownerNum == 0)
-			{
-				//get the other player
-				curTarget = TwoDGameManager.thisInstance.players[1].transform;
-			}
-
-			if (ownerNum == 1)
-			{
-				//get the other player
-				curTarget = TwoDGameManager.thisInstance.players[0].transform;
-			}
-
+		if (ownerNum != 2){
+//		{
+//			//check the owner number
+//			if (ownerNum == 0)
+//			{
+//				//get the other player
+//				curTarget = TwoDGameManager.thisInstance.players[1].transform;
+//			}
+//
+//			if (ownerNum == 1)
+//			{
+//				//get the other player
+//				curTarget = TwoDGameManager.thisInstance.players[0].transform;
+//			}
+//
+			curTarget = TwoDGameManager.thisInstance.players[ownerNum].transform;
 			//face that player over a period of time
 			target = curTarget;
 			float rotSpeed = 2f;
@@ -526,7 +527,7 @@ public class Turret : MonoBehaviour
 		}
 		cannonBallList = newCannonBallList;
 	}
-	void Fire()
+	public void Fire()
 	{	 
 		//CleanCannonballList ();
 
