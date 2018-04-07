@@ -22,7 +22,6 @@ public  class UIManager : MonoBehaviour {
 	bool winChanceCoroutinesStarted = false;
 
     [Header("Player UI Element Vars")]
-    public List<GameObject> playerStamList = new List<GameObject>();
     private List<Image> playerStamFillList = new List<Image>(), playerStamCircuitBrightnessList = new List<Image>();
     public GameObject playerStamPrefab;
     public GameObject tickMarkPrefab;
@@ -40,7 +39,7 @@ public  class UIManager : MonoBehaviour {
 		endPos = new Vector3 (startPos.x * -1, startPos.y, 0);
 		maxDist = Vector3.Distance (startPos, endPos); 
 		GenerateCardPool (30);
-        playerStamList.Capacity = TwoDGameManager.thisInstance.players.Length;
+        playerStamFillList.Capacity = TwoDGameManager.thisInstance.players.Length;
         DrawPlayerCanvas();
 	}
 		
@@ -234,7 +233,7 @@ public  class UIManager : MonoBehaviour {
     {
 
         //set the x positions of the UI elements
-        List<float> barXPositions = new List<float>((int)Mathf.Clamp(playerStamList.Capacity, 1, 4));
+        List<float> barXPositions = new List<float>((int)Mathf.Clamp(playerStamFillList.Capacity, 1, 4));
         for (int i = 0; i < barXPositions.Capacity; i++)
         {
             barXPositions.Add(0);
@@ -257,16 +256,16 @@ public  class UIManager : MonoBehaviour {
             }
         } 
 
-        for (int i = 0; i < playerStamList.Capacity; i++)
+        for (int i = 0; i < playerStamFillList.Capacity; i++)
         {
-            playerStamList.Add(Instantiate(playerStamPrefab, transform) as GameObject);
-            playerStamFillList.Add(playerStamList[i].transform.Find("PlayerStamMeterFill").GetComponent<Image>());
+            GameObject stamBar = Instantiate(playerStamPrefab, transform) as GameObject;
+            playerStamFillList.Add(stamBar.transform.Find("PlayerStamMeterFill").GetComponent<Image>());
             playerStamFillList[i].color = TwoDGameManager.thisInstance.playerColors[i];
-            playerStamCircuitBrightnessList.Add(playerStamList[i].transform.Find("PlayerStamCircuits").GetComponent<Image>());
+            playerStamCircuitBrightnessList.Add(stamBar.transform.Find("PlayerStamCircuits").GetComponent<Image>());
 
-            playerStamList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(barXPositions[i], UIY);
-            if(playerStamList.Capacity != 3){
-                if((float)i/playerStamList.Capacity >=0.5f){
+            stamBar.GetComponent<RectTransform>().anchoredPosition = new Vector2(barXPositions[i], UIY);
+            if(playerStamFillList.Capacity != 3){
+                if((float)i/playerStamFillList.Capacity >=0.5f){
                     //playerStamList[i].GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 180);
                     playerStamFillList[i].fillOrigin = (int)Image.OriginHorizontal.Left;
                 }
@@ -274,7 +273,7 @@ public  class UIManager : MonoBehaviour {
 
             for (int j = 1; j < TwoDGameManager.thisInstance.players[i].staminaSegmentNum ; j++)
             {
-                GameObject tickMark = Instantiate(tickMarkPrefab, playerStamList[i].transform) as GameObject;
+                GameObject tickMark = Instantiate(tickMarkPrefab, stamBar.transform) as GameObject;
                 tickMark.GetComponent<RectTransform>().anchoredPosition = new Vector2(
                     tickMarkLeftX + (float)j/TwoDGameManager.thisInstance.players[i].staminaSegmentNum * Mathf.Abs(tickMarkLeftX * 2), tickMarkY);
             }

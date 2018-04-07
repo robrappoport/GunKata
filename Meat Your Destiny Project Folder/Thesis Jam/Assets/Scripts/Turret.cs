@@ -48,10 +48,12 @@ public class Turret : MonoBehaviour
 	public Renderer[] piecesRenderers = new Renderer[6];
 	public GameObject UICanvasPrefab;
 	public GameObject UICanvas;
+    public Vector3 UILocalPos;
 	Quaternion UIRot;
 	Vector3 UIPos;
 	Image progressBar;
 	Image outlineBar;
+
 	//CameraMultiTargetObjective camTar;
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
@@ -59,8 +61,8 @@ public class Turret : MonoBehaviour
 		//find canvas
 
 		UICanvas = Instantiate (UICanvasPrefab, gameObject.transform) as GameObject;
-		//TODO:alter the position of the UI relative to the transform here!
-		UICanvas.transform.localPosition = new Vector3 (0, 28.6f, -2.4f);
+        //TODO:alter the position of the UI relative to the transform here!
+        UICanvas.transform.localPosition = UILocalPos;
 		progressBar = UICanvas.transform.Find ("TurretFill").GetComponent<Image> ();
 		outlineBar = UICanvas.transform.Find ("TurretFillOutline").GetComponent<Image> ();
 		UIRot = UICanvas.transform.rotation;
