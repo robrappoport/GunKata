@@ -496,21 +496,22 @@ public class auraGunBehavior : MonoBehaviour
 
 	public void drawStamina()
 	{
-		//draw all full bars
-		for (int i = 0; i < staminaSegmentNum; i++) {
-			if ((int)remainingStamina > i ) {
-				auraStamImgArray [i].fillAmount = 1;
-			}
+        UIManager.thisInstance.UpdatePlayerCanvas(playerNum, remainingStamina/staminaSegmentNum);
+		////draw all full bars
+		//for (int i = 0; i < staminaSegmentNum; i++) {
+		//	if ((int)remainingStamina > i ) {
+		//		auraStamImgArray [i].fillAmount = 1;
+		//	}
 
-		}
-		//draw the remainder
-		if (remainingStamina < staminaSegmentNum) {
-			auraStamImgArray [(int)remainingStamina].fillAmount = remainingStamina - (int)remainingStamina;
-			//drain the empties
-			for(int i = (int)remainingStamina + 1; i < staminaSegmentNum; i++){
-				auraStamImgArray [i].fillAmount = 0;
-			}
-		}
+		//}
+		////draw the remainder
+		//if (remainingStamina < staminaSegmentNum) {
+		//	auraStamImgArray [(int)remainingStamina].fillAmount = remainingStamina - (int)remainingStamina;
+		//	//drain the empties
+		//	for(int i = (int)remainingStamina + 1; i < staminaSegmentNum; i++){
+		//		auraStamImgArray [i].fillAmount = 0;
+		//	}
+		//}
 		//        for (int i = 0; i < auraStamImgArray.Length; i++)
 		//        {
 		//            //float targetStamina = 

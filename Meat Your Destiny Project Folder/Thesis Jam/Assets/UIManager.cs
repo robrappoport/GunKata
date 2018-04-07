@@ -21,6 +21,14 @@ public  class UIManager : MonoBehaviour {
 	Text victoryText;
 	bool winChanceCoroutinesStarted = false;
 
+    [Header("Player UI Element Vars")]
+    public List<GameObject> playerStamList = new List<GameObject>();
+    private List<Image> playerStamFillList = new List<Image>(), playerStamCircuitBrightnessList = new List<Image>();
+    public GameObject playerStamPrefab;
+    public GameObject tickMarkPrefab;
+    public float UIPlayer1X, UIExtremeX,UIY, tickMarkLeftX, tickMarkY;
+
+
 	void Awake(){
 		thisInstance = this;
 
@@ -32,6 +40,8 @@ public  class UIManager : MonoBehaviour {
 		endPos = new Vector3 (startPos.x * -1, startPos.y, 0);
 		maxDist = Vector3.Distance (startPos, endPos); 
 		GenerateCardPool (30);
+        playerStamList.Capacity = TwoDGameManager.thisInstance.players.Length;
+        DrawPlayerCanvas();
 	}
 		
 	// Update is called once per frame
@@ -94,7 +104,10 @@ public  class UIManager : MonoBehaviour {
 		}
 	}
 
-
+    public void UpdatePlayerCanvas(int playerNum, float newFillAmount){
+        playerStamFillList[playerNum].fillAmount = newFillAmount;
+        playerStamCircuitBrightnessList[playerNum].color = Color.Lerp(Color.black, Color.white, newFillAmount);
+    }
 	IEnumerator TimeSlowCamZoom (float zoomDistance = 900, float zoomInDuration = 0.2f, float zoomOutDuration= 0.2f){
 		CameraMultitarget cam = Camera.main.GetComponent<CameraMultitarget> ();
 		float elapsedTime = 0;
@@ -215,4 +228,60 @@ public  class UIManager : MonoBehaviour {
 		scoreCards.Clear ();
 		turretList.Clear ();
 	}
+
+    public void DrawPlayerCanvas ()
+
+    {
+
+        //set the x positions of the UI elements
+        List<float> barXPositions = new List<float>((int)Mathf.Clamp(playerStamList.Capacity, 1, 4));
+        for (int i = 0; i < barXPositions.Capacity; i++)
+        {
+            barXPositions.Add(0);
+        }
+        barXPositions[0] = UIPlayer1X;
+        if (barXPositions.Capacity > 1)
+        {
+            if (barXPositions.Capacity < 4f)
+            {
+                barXPositions[1] = UIExtremeX;
+                if(barXPositions.Capacity == 3){
+                    barXPositions[1] = UIPlayer1X + (UIExtremeX - UIPlayer1X);
+                    barXPositions[2] = UIExtremeX;
+                }
+            }else{
+                for (int i = 1; i < barXPositions.Capacity; i++)
+                {
+                    barXPositions[i] = UIExtremeX + i * (UIExtremeX - UIPlayer1X/3);
+                }
+            }
+        } 
+
+        for (int i = 0; i < playerStamList.Capacity; i++)
+        {
+            playerStamList.Add(Instantiate(playerStamPrefab, transform) as GameObject);
+            playerStamFillList.Add(playerStamList[i].transform.Find("PlayerStamMeterFill").GetComponent<Image>());
+            playerStamFillList[i].color = TwoDGameManager.thisInstance.playerColors[i];
+            playerStamCircuitBrightnessList.Add(playerStamList[i].transform.Find("PlayerStamCircuits").GetComponent<Image>());
+
+            playerStamList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(barXPositions[i], UIY);
+            if(playerStamList.Capacity != 3){
+                if((float)i/playerStamList.Capacity >=0.5f){
+                    //playerStamList[i].GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 180);
+                    playerStamFillList[i].fillOrigin = (int)Image.OriginHorizontal.Left;
+                }
+            }
+
+            for (int j = 1; j < TwoDGameManager.thisInstance.players[i].staminaSegmentNum ; j++)
+            {
+                GameObject tickMark = Instantiate(tickMarkPrefab, playerStamList[i].transform) as GameObject;
+                tickMark.GetComponent<RectTransform>().anchoredPosition = new Vector2(
+                    tickMarkLeftX + (float)j/TwoDGameManager.thisInstance.players[i].staminaSegmentNum * Mathf.Abs(tickMarkLeftX * 2), tickMarkY);
+            }
+        }
+
+
+
+
+    }
 }
