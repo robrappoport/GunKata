@@ -78,7 +78,7 @@ public class auraGunBehavior : MonoBehaviour
     private float staminaToDisplay;
     private int startingAuraIndex;
 	int chargeIndex;
-
+    Animator wingAnim;
 
 	//Manual Turret Fire vars
 	List<Turret> myTurrets = new List<Turret>();
@@ -162,7 +162,14 @@ public class auraGunBehavior : MonoBehaviour
         }
 		health = GetComponent<auraPlayerHealth> ();
 		myTurrets = TwoDGameManager.thisInstance.turrets [playerNum];
-		shootingStaminaCost = (float)staminaSegmentNum / MaxBullets;
+		shootingStaminaCost = (float)staminaSegmentNum / MaxBullets;   
+        foreach(Animator a in GetComponentsInChildren<Animator>()){
+            if(a.name == "Wings"){
+                wingAnim = a;
+                break;
+            }
+        }
+
     }
 
     // Update is called once per frame
@@ -460,9 +467,12 @@ public class auraGunBehavior : MonoBehaviour
 						//anim.settrigger("open wings")
 						r.material.SetColor ("_EmissionColor", inactiveWingColor);
 						r.material.color = inactiveWingColor;
+                        wingAnim.SetBool("Out Of Stamina", false);
 					} else {
 						r.material.SetColor ("_EmissionColor", new Color(0, 0, 0, 0));
 						r.material.color = Color.black;
+                        wingAnim.SetBool("Out Of Stamina", true);
+                        print(wingAnim.GetBool("Out Of Stamina"));
 
 					}
 				}
