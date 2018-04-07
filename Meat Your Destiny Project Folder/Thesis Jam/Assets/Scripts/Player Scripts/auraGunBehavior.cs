@@ -101,6 +101,7 @@ public class auraGunBehavior : MonoBehaviour
     [Header("Charge Shot Vars")]
     public float buttonDownTime;
 	public float chargeTime; 
+	public float laserStaminaDrainRate = 1;
 	[Tooltip("The length of the buffer before the initial charge. Higher value results in a longer time before charge.")]
 	public float initialChargeBuffer;
     public float loadedChargeTime;
@@ -237,10 +238,11 @@ public class auraGunBehavior : MonoBehaviour
 					StartCoroutine (ShootSound ());
 					StartCoroutine (DrainAuraOverTime (shootingStaminaCost, shootingStaminaDrainRate));
 				}
-				if (myCont.primaryFire () == true) {
+				if (myCont.primaryFire () == true && remainingStamina > shootingStaminaCost) {
 					//Debug.Log(chargeTime);
 					//Debug.Log(loadedChargeTime);
 					//Debug.Log(chargeTime + " " + "chargetime");
+
 					if (wingMatChangeValue == 0) {
 						chargeTime += Time.deltaTime / initialChargeBuffer;
 					} else {
@@ -248,11 +250,11 @@ public class auraGunBehavior : MonoBehaviour
 							LaserChargeSound ();
 						}
 
-						if (remainingStamina > 0) {
+					
 							chargeTime += Time.deltaTime;
-						}
-						if (chargeTime/loadedChargeTime <3f) {
-							DrainAura (Time.deltaTime);
+
+						if (chargeTime < loadedChargeTime) {
+							DrainAura (Time.deltaTime * laserStaminaDrainRate);
 						}
 					}
 					myCont.shootSlowDown ();
