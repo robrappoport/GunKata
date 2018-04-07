@@ -1,0 +1,10 @@
+diff a/Meat Your Destiny Project Folder/Thesis Jam/Assets/Scripts/Player Scripts/auraGunBehavior.cs b/Meat Your Destiny Project Folder/Thesis Jam/Assets/Scripts/Player Scripts/auraGunBehavior.cs	(rejected hunks)
+@@ -26,7 +26,7 @@
+     public float shootTime;
+     public float shootVol;
+ 	public float shootAnimationDelay;
+-    private bool isFiring;
++    public bool isFiring;
+     public bool autoReloadEnabled;
+     private bool autoReload;
+     private bool buttonReload;

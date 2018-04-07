@@ -36,6 +36,7 @@ public class AuraCharacterController : PlayControl
 	//	private float currentSpeed = 0;
 	public bool isDashing;
 	public float dashAuraDrainRate = 1;
+	public float dashCost;
 	bool slow = false;
 
 	[Header("MOVEMENT VARS")]
@@ -382,8 +383,8 @@ public class AuraCharacterController : PlayControl
 
 		//		moveDirection.y = 0;
 
-		if (bButtonDown () && gunBehave.remainingAuraCharge > 0 && !isDashing) {
-			StartCoroutine (AuraDashDrain ());
+		if (bButtonDown () && gunBehave.remainingStamina > dashCost && !isDashing) {
+			StartCoroutine (AuraDashDrain (dashCost));
 			gunBehave.Invoke ("ResetAuraCooldown", gunBehave.coolDownDuration);
 			gunBehave.CurrentBullets--;
 			currentDashTime = 0.0f;
@@ -465,9 +466,9 @@ public class AuraCharacterController : PlayControl
 
 	}
 
-	IEnumerator AuraDashDrain(){
+	IEnumerator AuraDashDrain(float dashCostLimit = 1){
 		float totalDrainAmount = 0;
-		while (totalDrainAmount < 1) {
+		while (totalDrainAmount < dashCostLimit) {
 			gunBehave.DrainAura (Time.deltaTime * dashAuraDrainRate);
 			totalDrainAmount += Time.deltaTime * dashAuraDrainRate;
 			yield return null;

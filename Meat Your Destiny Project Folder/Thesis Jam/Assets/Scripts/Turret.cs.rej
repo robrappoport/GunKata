@@ -1,0 +1,23 @@
+diff a/Meat Your Destiny Project Folder/Thesis Jam/Assets/Scripts/Turret.cs b/Meat Your Destiny Project Folder/Thesis Jam/Assets/Scripts/Turret.cs	(rejected hunks)
+@@ -608,6 +608,21 @@
+ 
+ 	}
+ 
++    void ownerFiringCheck ()
++    {
++        if (TwoDGameManager.thisInstance.player1.gameObject.GetComponent<auraGunBehavior>().isFiring)
++        {
++           
++            Fire();
++        }
++
++        if (TwoDGameManager.thisInstance.player2.gameObject.GetComponent<auraGunBehavior>().isFiring)
++        {
++           
++            Fire();
++        }
++    }
++
+ 	public void Reset()
+ 	{
+         foreach (GameObject Em in Emitter)
