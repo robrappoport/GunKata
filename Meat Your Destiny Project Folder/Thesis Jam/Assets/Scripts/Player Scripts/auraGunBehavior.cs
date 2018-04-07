@@ -248,7 +248,12 @@ public class auraGunBehavior : MonoBehaviour
 							LaserChargeSound ();
 						}
 
-						chargeTime += Time.deltaTime;
+						if (remainingStamina > 0) {
+							chargeTime += Time.deltaTime;
+						}
+						if (chargeTime/loadedChargeTime <3f) {
+							DrainAura (Time.deltaTime);
+						}
 					}
 					myCont.shootSlowDown ();
 
@@ -643,18 +648,18 @@ public class auraGunBehavior : MonoBehaviour
     
     }
     */
-    IEnumerator drainToZero (int auraIndexToDrain)
-
-    {
-        float currentLevel = auraLevelCharge[auraIndexToDrain];
-        while (currentLevel > 0f)
-        {
-            currentLevel = Mathf.MoveTowards(currentLevel, 0f, displayDrainRate * Time.deltaTime);
-            auraLevelCharge[auraIndexToDrain] = currentLevel;
-            yield return 0f;
-        }
-
-    }
+//    IEnumerator drainToZero (int auraIndexToDrain)
+//
+//    {
+//        float currentLevel = auraLevelCharge[auraIndexToDrain];
+//        while (currentLevel > 0f)
+//        {
+//            currentLevel = Mathf.MoveTowards(currentLevel, 0f, displayDrainRate * Time.deltaTime);
+//            auraLevelCharge[auraIndexToDrain] = currentLevel;
+//            yield return 0f;
+//        }
+//
+//    }
 
 
     //void auraProject()
