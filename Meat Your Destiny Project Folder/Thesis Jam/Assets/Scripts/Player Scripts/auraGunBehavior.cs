@@ -472,7 +472,6 @@ public class auraGunBehavior : MonoBehaviour
 						r.material.SetColor ("_EmissionColor", new Color(0, 0, 0, 0));
 						r.material.color = Color.black;
                         wingAnim.SetBool("Out Of Stamina", true);
-                        print(wingAnim.GetBool("Out Of Stamina"));
 
 					}
 				}

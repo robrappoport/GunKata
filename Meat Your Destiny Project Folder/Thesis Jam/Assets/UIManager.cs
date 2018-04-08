@@ -27,7 +27,7 @@ public  class UIManager : MonoBehaviour {
     public GameObject tickMarkPrefab;
     public float UIPlayer1X, UIExtremeX,UIY, tickMarkLeftX, tickMarkY;
     private List<List<Image>> PlayerTickMarListList = new List<List<Image>>();
-
+    int currentTurretNum;
 	void Awake(){
 		thisInstance = this;
 
@@ -189,14 +189,19 @@ public  class UIManager : MonoBehaviour {
 	void UpdateScore(){
 		turretList = turretList.OrderBy (
 			x => Camera.main.WorldToScreenPoint (x.transform.position).x).ToList ();
+        
+        currentTurretNum = 0;
+        foreach(List<Turret> t in TwoDGameManager.thisInstance.turrets){
+            currentTurretNum += t.Count;
 
-		if (turretList.Count > 0) {
+        }
+        if (turretList.Count > 0) {
 			for (int i = 0; i < scoreCards.Count; i++) {
 				int j = Mathf.Clamp (i, 0, turretList.Count - 1);
 				scoreCards [i].transform.Find ("Top Card").GetComponent<Image> ().color = turretList [j].currentColor;
 				scoreCards [i].transform.Find ("Bottom Card").GetComponent<Image> ().color = turretList [j].neutralColor;
 
-				scoreCards [i].transform.Find ("Top Card").GetComponent<Image> ().fillAmount = turretList [j].charge / turretList [i].segmentNum;
+				scoreCards [i].transform.Find ("Top Card").GetComponent<Image> ().fillAmount = turretList [j].charge / turretList [j].segmentNum;
 
 			}
 		} else {
@@ -205,7 +210,7 @@ public  class UIManager : MonoBehaviour {
 			}
 		}
 	}
-	void DrawScore(){
+	public void DrawScore(){
 		scoreCards = new List<GameObject> ();
 		//for each turret, draw a number of scorecards 
 	
@@ -219,11 +224,11 @@ public  class UIManager : MonoBehaviour {
 		//register each of the current turrets to it 
 	}
 
-	void DrawCard(int i = 0){
+	public void DrawCard(int i = 0){
 		if (scoreCards.Count < turretList.Count ) {
 			GameObject scoreCard = scoreCardPool [i];
 			scoreCard.SetActive (true);
-			scoreCardPool.Remove (scoreCard);
+			//scoreCardPool.Remove (scoreCard);
 			scoreCard.transform.SetParent (this.transform);
 			scoreCard.transform.localPosition = Vector3.zero;
 			Vector2 cardPos = new Vector2 (startPos.x + ((float)(i) / (turretList.Count - 1) * maxDist), startPos.y);

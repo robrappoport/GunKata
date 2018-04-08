@@ -28,7 +28,7 @@ public class TurretCarrier : MonoBehaviour {
 				t.gameObject.SetActive (false);
 			}
 		}
-		transform.position = transform.position + Vector3.down * 100;
+		//transform.position = transform.position + Vector3.down * 100;
 
 //		//get centroid
 //		float x =0, z = 0;
@@ -94,6 +94,11 @@ public class TurretCarrier : MonoBehaviour {
 					t.GetComponent<Turret> ().StartCoroutine (t.GetComponent<Turret> ().FadeUIBar (.1f));
 					//t.GetComponent<Turret>().UICanvas.SetActive(false);
 					tur.Remove (t.GetComponent<Turret> ());
+
+                    //UIManager.thisInstance.Reset();
+                    //UIManager.thisInstance.DrawScore();
+                    //UIManager.thisInstance.scoreCards[UIManager.thisInstance.turretList.IndexOf(t.GetComponent<Turret>())].SetActive(false);
+                    //UIManager.thisInstance.turretList.Remove(t.GetComponent<Turret>());
 				}
 			}
 //			if (UIManager.thisInstance.turretList.Contains (t.GetComponent<Turret> ())) {
@@ -113,12 +118,18 @@ public class TurretCarrier : MonoBehaviour {
 
 				} else {
 					t.GetComponent<Turret> ().contestable = false;
+
 				}
 			}
 			//if all turrets are not at the edge, translate them there
 
 			yield return null;
 		}
+        foreach(Transform t in children){
+            UIManager.thisInstance.scoreCards[UIManager.thisInstance.turretList.IndexOf(t.GetComponent<Turret>())].SetActive(false);
+
+            UIManager.thisInstance.turretList.Remove(t.GetComponent<Turret>());
+        }
 		//UIManager.thisInstance.turretList.Clear ();
 		StartCoroutine (OrbitTurrets ());
 	}

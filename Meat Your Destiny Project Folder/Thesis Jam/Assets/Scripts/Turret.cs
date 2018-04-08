@@ -60,17 +60,7 @@ public class Turret : MonoBehaviour
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
 	void Awake(){
         
-		//find canvas
-
-		UICanvas = Instantiate (UICanvasPrefab, gameObject.transform) as GameObject;
-        //TODO:alter the position of the UI relative to the transform here!
-        UICanvas.transform.localPosition = UILocalPos;
-		progressBar = UICanvas.transform.Find ("TurretFill").GetComponent<Image> ();
-		outlineBar = UICanvas.transform.Find ("TurretFillBack").GetComponent<Image> ();
-		UIRot = UICanvas.transform.rotation;
-		UIPos = UICanvas.transform.position;
-
-		UICanvas.SetActive (false);
+		
 
 		anim = GetComponent<Animator> ();
 		segmentNum = letterRenderers.Length;
@@ -141,6 +131,20 @@ public class Turret : MonoBehaviour
             {
                 emitterAnimators.Add(g.GetComponentInChildren<Animator>());
             }
+        }
+        //find canvas
+
+        UICanvas = Instantiate(UICanvasPrefab, gameObject.transform) as GameObject;
+        if (UICanvas)
+        {
+
+            //TODO:alter the position of the UI relative to the transform here!
+            UICanvas.transform.localPosition = UILocalPos;
+            progressBar = UICanvas.transform.Find("TurretFill").GetComponent<Image>();
+            outlineBar = UICanvas.transform.Find("TurretFillBack").GetComponent<Image>();
+            UIRot = UICanvas.transform.rotation;
+            UIPos = UICanvas.transform.position;
+
         }
 	}
 
@@ -262,23 +266,31 @@ public class Turret : MonoBehaviour
 	}
 
 	public IEnumerator FadeUIBar (float t = 1){
-		t = Mathf.Clamp (t, 0.00001f, Mathf.Infinity);
-		bool allFaded = false;
-		while (!allFaded) {
-			allFaded = true;
-			float step = 0;
-			foreach (Image i in UICanvas.GetComponentsInChildren<Image>()) {
-				step += Time.deltaTime;
-				i.color = Color.Lerp (i.color, Color.clear, step / t);
-				if (i.color.a > 0) {
-					allFaded = false;
-				}
-			}
-			yield return null;
-		}
-		foreach (Image i in UICanvas.GetComponentsInChildren<Image>()) {
-			i.gameObject.SetActive (false);
-		}
+        if (UICanvas)
+        {
+            t = Mathf.Clamp(t, 0.00001f, Mathf.Infinity);
+            bool allFaded = false;
+            while (!allFaded)
+            {
+                allFaded = true;
+                float step = 0;
+                foreach (Image i in UICanvas.GetComponentsInChildren<Image>())
+                {
+                    step += Time.deltaTime;
+                    i.color = Color.Lerp(i.color, Color.clear, step / t);
+                    if (i.color.a > 0)
+                    {
+                        allFaded = false;
+                    }
+                }
+                yield return null;
+            }
+
+            foreach (Image i in UICanvas.GetComponentsInChildren<Image>())
+            {
+                i.gameObject.SetActive(false);
+            }
+        }
 	}
 
 	void AdjustListMembership(){

@@ -9,12 +9,11 @@ using UnityEngine.UI;
 public class TwoDGameManager : MonoBehaviour {
     public static TwoDGameManager thisInstance;
     public ZoneScript[] zones;
-	public float respawnTime = 1;
+    public float maxRespawnTime = 1, respawnBalanceBuffer, minRespawnTime;
 	public auraPlayerHealth playerHealth1;
 	public auraPlayerHealth playerHealth2;
     const int maxPlayers = 2;
 	public auraGunBehavior[] players;
-    public GameObject respawnBulletDestroyer;
     public GameObject RespawnBeamPrefab;
     private int restartTime = 1;
 	public Text playerWinner;
@@ -360,7 +359,7 @@ public class TwoDGameManager : MonoBehaviour {
 		if (PlayerCanSpawn (playerNum)) {
 
 			if (TwoDGameManager.thisInstance.turrets [playerNum].Count > 0) {//check if there are any turrets available in the player's spawn; otherwise, spawn from an unowned turret
-				spawnPos = TwoDGameManager.thisInstance.turrets [playerNum] [Random.Range (0, TwoDGameManager.thisInstance.turrets [1].Count - 1)].transform.position;
+                spawnPos = TwoDGameManager.thisInstance.turrets [playerNum] [Random.Range (0, TwoDGameManager.thisInstance.turrets [playerNum].Count - 1)].transform.position;
 			} else {
 				spawnPos = TwoDGameManager.thisInstance.turrets [neutralNum] [Random.Range (0, TwoDGameManager.thisInstance.turrets [2].Count - 1)].transform.position;
 			}
@@ -383,10 +382,8 @@ public class TwoDGameManager : MonoBehaviour {
 
 
         player1.GetComponent<auraGunBehavior>().DamagedHalo.Play();
-        yield return new WaitForSeconds(respawnTime);
-        
-        //        Instantiate(respawnBulletDestroyer, player1Spawns[index1], Quaternion.identity);
-        yield return new WaitForSeconds(.1f);
+        yield return new WaitForSeconds(Mathf.Clamp(maxRespawnTime - respawnBalanceBuffer * turrets[1].Count, minRespawnTime, maxRespawnTime));
+
         PlayerSpawnProtect(spawnPos, 12);
         SpawnPlayer1(spawnPos);
         GameObject lifeBeam = Instantiate(RespawnBeamPrefab) as GameObject;
@@ -403,9 +400,7 @@ public class TwoDGameManager : MonoBehaviour {
     {
 		Vector3 spawnPos = GetSpawnPosition (1) + Vector3.back * turretDistanceMod;
         player2.GetComponent<auraGunBehavior>().DamagedHalo.Play();
-        yield return new WaitForSeconds(respawnTime);
-        
-        yield return new WaitForSeconds(.1f);
+        yield return new WaitForSeconds(Mathf.Clamp(maxRespawnTime - respawnBalanceBuffer * turrets[0].Count, minRespawnTime, maxRespawnTime));     
         PlayerSpawnProtect(spawnPos, 13);
         SpawnPlayer2(spawnPos);
         GameObject lifeBeam = Instantiate(RespawnBeamPrefab) as GameObject;
@@ -525,7 +520,6 @@ public class TwoDGameManager : MonoBehaviour {
         //	yield return null;
         //}
         yield return null;
-		UIManager.thisInstance.Reset ();
 
         foreach (ZoneScript z in zones)
         {
