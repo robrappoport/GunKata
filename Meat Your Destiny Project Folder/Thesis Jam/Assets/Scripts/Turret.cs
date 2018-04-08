@@ -194,6 +194,7 @@ public class Turret : MonoBehaviour
 
 		DetermineDegreeOfOwnership();
 		if (completelyOwned) {
+            StartCoroutine(TimeManipulation.SlowTimeTemporarily(0.7f, 0.1f, .2f, 0.1f));
 			CancelInvoke ();
 			//InvokeRepeating ("Fire", repeatTime - (Time.timeSinceLevelLoad % repeatTime), repeatTime);
 			//contestable = false;
@@ -253,6 +254,7 @@ public class Turret : MonoBehaviour
 		//	CleanCannonballList ();
 
 	}
+
 
 	public void RegisterTurret(){
 		if (!TwoDGameManager.thisInstance.turrets [ownerNum].Contains (this)) {
