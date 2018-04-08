@@ -26,8 +26,8 @@ public class Turret : MonoBehaviour
 
 	public List<Cannonball> cannonBallList = new List<Cannonball>();
 
-	public GameObject[] Emitter;
-	public Transform EmitterRotators;
+    public List<GameObject> Emitters = new List<GameObject>();
+	public Transform EmitterRotator;
 	public GameObject[] turretTypes;
 	public GameObject[] impactPrefabs;
 	public Color[] playerColors;
@@ -108,7 +108,6 @@ public class Turret : MonoBehaviour
 		unownedColor = neutralColor;
 		//InvokeRepeating("Fire", startTime, repeatTime);
 		//amountOwnedIncrease = false;
-
 	}
 
 
@@ -121,7 +120,22 @@ public class Turret : MonoBehaviour
 		RegisterTurret ();
 
 		objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
-        foreach (GameObject g in Emitter)
+
+        //get all emitters
+
+        foreach(Transform t in transform){
+            if(t.CompareTag("Rotator")){
+                EmitterRotator = t;
+                break;
+            }
+        }
+
+        foreach(Transform t in EmitterRotator){
+            if(t.GetChild(0).CompareTag("Emitter")){
+                Emitters.Add(t.GetChild(0).gameObject);
+            }
+        }
+        foreach (GameObject g in Emitters)
         {
             if (g.GetComponentInChildren<Animator>())
             {
@@ -205,6 +219,11 @@ public class Turret : MonoBehaviour
 			var captureParticleMain = captureParticle.main;
 			captureParticleMain.startColor = playerColors [ownerNum];
 			captureParticle.Play ();
+            foreach (Transform t in EmitterRotator) {
+                foreach(Transform c in t.GetChild(0).transform){
+                    c.GetComponent<Renderer>().material.color = neutralColor;
+                }
+            }
 				
 		} 
 
@@ -446,7 +465,7 @@ public class Turret : MonoBehaviour
 			//face that player over a period of time
 			target = curTarget;
 			float rotSpeed = 2f;
-			targetDir = new Vector3(target.position.x, EmitterRotators.transform.position.y, target.position.z) - EmitterRotators.transform.position;
+			targetDir = new Vector3(target.position.x, EmitterRotator.transform.position.y, target.position.z) - EmitterRotator.transform.position;
 			float step = rotSpeed * Time.deltaTime;
 			newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0F);
 			//Debug.DrawRay(transform.position, newDir, Color.red, 50f);
@@ -542,7 +561,7 @@ public class Turret : MonoBehaviour
 	{	 
 		//CleanCannonballList ();
 
-		foreach (GameObject Em in Emitter)
+		foreach (GameObject Em in Emitters)
 		{
 			GameObject cannonBall;
 
@@ -567,7 +586,6 @@ public class Turret : MonoBehaviour
 				//            {
 
 				if (ownerNum ==0) {
-                    Em.GetComponent<Renderer>().material.color = p1Color;
 					cannonBall.GetComponent<Renderer> ().material = cannonBall.GetComponent<Cannonball> ().player1BulletMaterial;
 					Physics.IgnoreCollision (TwoDGameManager.thisInstance.player1.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
 					cannonBall.layer = LayerMask.NameToLayer ("Player1OwnsTurret");
@@ -575,7 +593,6 @@ public class Turret : MonoBehaviour
 
 
 				} else if (ownerNum == 1) {
-                    Em.GetComponent<Renderer>().material.color = p2Color;
 					cannonBall.GetComponent<Renderer> ().material = cannonBall.GetComponent<Cannonball> ().player2BulletMaterial;
 					Physics.IgnoreCollision (TwoDGameManager.thisInstance.player2.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
 					cannonBall.layer = LayerMask.NameToLayer ("Player2OwnsTurret");
@@ -593,7 +610,7 @@ public class Turret : MonoBehaviour
 
 	public void Reset()
 	{
-        foreach (GameObject Em in Emitter)
+        foreach (GameObject Em in Emitters)
         {
             Em.GetComponent<Renderer>().material.color = neutralColor;
         }

@@ -136,7 +136,7 @@ public class TwoDGameManager : MonoBehaviour {
     {
         player1Scale = player1.transform.localScale;
         player2Scale = player2.transform.localScale;
-		StartCoroutine(ActivateSections (0));
+		StartCoroutine(ActivateSections ());
     }
 
 
@@ -516,20 +516,29 @@ public class TwoDGameManager : MonoBehaviour {
                 zones[i].sections[j].Drop();
 
             }
-			StartCoroutine(ActivateSections (Mathf.Clamp (zoneIndex + 1, 0, zones.Length - 1)));
+			//StartCoroutine(ActivateSections (Mathf.Clamp (zoneIndex + 1, 0, zones.Length - 1)));
         }
     }
 
-	IEnumerator ActivateSections(int i = 0){
-		while (!readyToActivateNextSections) {
-			yield return null;
-		}
+	IEnumerator ActivateSections(){
+        //while (!readyToActivateNextSections) {
+        //	yield return null;
+        //}
+        yield return null;
 		UIManager.thisInstance.Reset ();
-		foreach (SectionScript s in zones[i].sections) {
-			if (s.turretCarrier) {
-				StartCoroutine(s.turretCarrier.ActivateTurrets ());
-			}
-		}
+
+        foreach (ZoneScript z in zones)
+        {
+
+
+            foreach (SectionScript s in z.sections)
+            {
+                if (s.turretCarrier)
+                {
+                    StartCoroutine(s.turretCarrier.ActivateTurrets());
+                }
+            }
+        }
 		readyToActivateNextSections = false;
 		UIManager.thisInstance.Invoke ("DrawScore", 0f);
 	}

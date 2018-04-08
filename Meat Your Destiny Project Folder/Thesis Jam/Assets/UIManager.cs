@@ -26,7 +26,7 @@ public  class UIManager : MonoBehaviour {
     public GameObject playerStamPrefab;
     public GameObject tickMarkPrefab;
     public float UIPlayer1X, UIExtremeX,UIY, tickMarkLeftX, tickMarkY;
-
+    private List<List<Image>> PlayerTickMarListList = new List<List<Image>>();
 
 	void Awake(){
 		thisInstance = this;
@@ -41,7 +41,7 @@ public  class UIManager : MonoBehaviour {
 		GenerateCardPool (30);
         playerStamFillList.Capacity = TwoDGameManager.thisInstance.players.Length;
         DrawPlayerCanvas();
-	}
+    }
 		
 	// Update is called once per frame
 	void Update () {
@@ -104,9 +104,23 @@ public  class UIManager : MonoBehaviour {
 	}
 
     public void UpdatePlayerCanvas(int playerNum, float newFillAmount){
-        playerStamFillList[playerNum].fillAmount = newFillAmount;
+        int totalStamina = TwoDGameManager.thisInstance.players[playerNum].staminaSegmentNum;
+        playerStamFillList[playerNum].fillAmount = newFillAmount / totalStamina;
+
+        //draw all bright marks
+        for (int i = 0; i < Mathf.Clamp((int)newFillAmount, 0, PlayerTickMarListList[playerNum].Count); i++)
+        {
+            PlayerTickMarListList[playerNum][i].color = TwoDGameManager.thisInstance.playerColors[playerNum];
+        }
+
+        for (int i = Mathf.Clamp((int)newFillAmount,0, PlayerTickMarListList[playerNum].Count) ; i < PlayerTickMarListList[playerNum].Count; i++)
+            
+        {
+            PlayerTickMarListList[playerNum][i].color = Color.black;
+        }
         playerStamCircuitBrightnessList[playerNum].color = Color.Lerp(Color.black, Color.white, newFillAmount);
     }
+
 	IEnumerator TimeSlowCamZoom (float zoomDistance = 900, float zoomInDuration = 0.2f, float zoomOutDuration= 0.2f){
 		CameraMultitarget cam = Camera.main.GetComponent<CameraMultitarget> ();
 		float elapsedTime = 0;
@@ -231,6 +245,11 @@ public  class UIManager : MonoBehaviour {
     public void DrawPlayerCanvas ()
 
     {
+        for (int i = 0; i < playerStamFillList.Capacity; i++)
+        {
+            PlayerTickMarListList.Add(new List<Image>());
+        }
+
 
         //set the x positions of the UI elements
         List<float> barXPositions = new List<float>((int)Mathf.Clamp(playerStamFillList.Capacity, 1, 4));
@@ -274,6 +293,7 @@ public  class UIManager : MonoBehaviour {
             for (int j = 1; j < TwoDGameManager.thisInstance.players[i].staminaSegmentNum ; j++)
             {
                 GameObject tickMark = Instantiate(tickMarkPrefab, stamBar.transform) as GameObject;
+                PlayerTickMarListList[i].Add(tickMark.GetComponent<Image>());
                 tickMark.GetComponent<RectTransform>().anchoredPosition = new Vector2(
                     tickMarkLeftX + (float)j/TwoDGameManager.thisInstance.players[i].staminaSegmentNum * Mathf.Abs(tickMarkLeftX * 2), tickMarkY);
             }

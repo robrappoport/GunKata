@@ -506,7 +506,7 @@ public class auraGunBehavior : MonoBehaviour
 
 	public void drawStamina()
 	{
-        UIManager.thisInstance.UpdatePlayerCanvas(playerNum, remainingStamina/staminaSegmentNum);
+        UIManager.thisInstance.UpdatePlayerCanvas(playerNum, remainingStamina);
 		////draw all full bars
 		//for (int i = 0; i < staminaSegmentNum; i++) {
 		//	if ((int)remainingStamina > i ) {
