@@ -1,0 +1,27 @@
+fileFormatVersion: 2
+guid: 9b72d78bd4e3e46599cf338c839d7b1b
+timeCreated: 1523222983
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Attitude
+  fontNames:
+  - Attitude
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 16b914f15a5474746aab259c94361a5a, type: 3}
+  - {fileID: 12800000, guid: 84c4ab84177cb42978034a7f462a42ee, type: 3}
+  - {fileID: 12800000, guid: 01afa679c59ae4b9b9c4ab37bc5f1fff, type: 3}
+  - {fileID: 12800000, guid: 1e40e7afda1f24c768da28ceba649fbf, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

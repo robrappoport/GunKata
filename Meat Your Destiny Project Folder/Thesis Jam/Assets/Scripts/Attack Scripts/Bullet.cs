@@ -54,7 +54,7 @@ public class Bullet : MonoBehaviour {
 	void Awake(){
 		r = GetComponent<Rigidbody> ();
 		tr = GetComponent<TrailRenderer> ();
-		render = GetComponent<Renderer> ();
+		//render = GetComponent<Renderer> ();
 
 	}
 	void Start () {
@@ -76,11 +76,11 @@ public class Bullet : MonoBehaviour {
 			normBullet = playerTwoBullet;
 		}
 
-		render.material = normBullet;
+		//render.material = normBullet;
 		freezeVal = RigidbodyConstraints.FreezeRotation;
 		normalBehavior = RigidbodyConstraints.FreezePositionY;
 		r.constraints = normalBehavior | freezeVal;
-		render.enabled = false;
+		//render.enabled = false;
 
 	}
 
@@ -100,7 +100,7 @@ public class Bullet : MonoBehaviour {
             {
                 Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), BMan.gameObject.GetComponent<Collider>(), true);
             }
-			render.enabled = false;
+			//render.enabled = false;
 		} else {
             if (BMan != null)
             {
@@ -108,7 +108,7 @@ public class Bullet : MonoBehaviour {
 					Physics.IgnoreCollision (gameObject.GetComponent<Collider> (), BMan.gameObject.GetComponent<Collider> (), false);
 				}
             }
-			render.enabled = true;
+			//render.enabled = true;
 		}
 	}
 	void FixedUpdate(){
@@ -394,7 +394,7 @@ public class Bullet : MonoBehaviour {
 
 	void auraStop ()
 	{
-		render.material = frozenBullet;
+		//render.material = frozenBullet;
 			bulletSpeed = stopBulletSpeed;
 			float angle = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
 			r.velocity = new Vector3 (Mathf.Sin (angle), 0, Mathf.Cos (angle)) * bulletSpeed;

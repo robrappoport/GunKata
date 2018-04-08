@@ -109,7 +109,7 @@ public class Turret : MonoBehaviour
 		}
 		RegisterTurret ();
 
-		objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
+//		objectPool = GameObject.Find ("Cannonball pool").GetComponent<EZObjectPools.EZObjectPool>();
 
         //get all emitters
 
@@ -216,6 +216,8 @@ public class Turret : MonoBehaviour
 			} else {
 				neutralColor = unownedColor;
 			}
+
+            objectPool = GameObject.Find("Cannonball Pool " + ownerNum.ToString()).GetComponent<EZObjectPools.EZObjectPool>();
 			outlineBar.color = neutralColor;
 			litSegments = 0;
 			charge = 0;
@@ -600,19 +602,19 @@ public class Turret : MonoBehaviour
 				//            {
 
 				if (ownerNum ==0) {
-					cannonBall.GetComponent<Renderer> ().material = cannonBall.GetComponent<Cannonball> ().player1BulletMaterial;
+				//	cannonBall.GetComponent<Renderer> ().material = cannonBall.GetComponent<Cannonball> ().player1BulletMaterial;
 					Physics.IgnoreCollision (TwoDGameManager.thisInstance.player1.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
 					cannonBall.layer = LayerMask.NameToLayer ("Player1OwnsTurret");
 
 
 
 				} else if (ownerNum == 1) {
-					cannonBall.GetComponent<Renderer> ().material = cannonBall.GetComponent<Cannonball> ().player2BulletMaterial;
+					//cannonBall.GetComponent<Renderer> ().material = cannonBall.GetComponent<Cannonball> ().player2BulletMaterial;
 					Physics.IgnoreCollision (TwoDGameManager.thisInstance.player2.GetComponentInChildren<Collider> (), cannonBall.GetComponent<Collider> ());
 					cannonBall.layer = LayerMask.NameToLayer ("Player2OwnsTurret");
 
 				} else {
-					cannonBall.GetComponent<Renderer> ().material.color = neutralColor;
+					//cannonBall.GetComponent<Renderer> ().material.color = neutralColor;
 
 				}
 			}

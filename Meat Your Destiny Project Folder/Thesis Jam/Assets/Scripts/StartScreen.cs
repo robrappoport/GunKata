@@ -44,8 +44,9 @@ public class StartScreen : MonoBehaviour {
 					controls.SetActive (false);
 				}
 			} else {
-				SceneManager.LoadScene ("LevelSelectScreen");
-
+                ///TODO: Replace when more levels are active
+//				SceneManager.LoadScene ("LevelSelectScreen");
+                SceneManager.LoadScene("Heaven");
 			}
 		}
 

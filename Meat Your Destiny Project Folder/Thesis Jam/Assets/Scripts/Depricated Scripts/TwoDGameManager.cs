@@ -68,7 +68,6 @@ public class TwoDGameManager : MonoBehaviour {
     public bool ballDestroyed = false;
     public int zoneIndex;
     public float zoneTimeElapsed;
-
 //	GameObject audioManagerClone;
 //	public GameObject audioManagerPrefab;
 
@@ -80,6 +79,9 @@ public class TwoDGameManager : MonoBehaviour {
 	//uncomment these to watch the lists in realtime
 	public List<Turret> neutralTurrets, p1Turrets, p2Turrets;
 	public bool readyToActivateNextSections = true;
+    string winner;
+    public GameObject winScreenCanvas;
+    public bool testDeath = false;
 
 
     void OnApplicationQuit()
@@ -184,13 +186,13 @@ public class TwoDGameManager : MonoBehaviour {
 
         }
     }
-        public IEnumerator gameRestart ()
+        public IEnumerator gameRestart (int winnerNum)
 	{
 		yield return new WaitForSeconds (restartTime);
         resetScore();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         addedScore1 = false;
         addedScore2 = false;
+        EndGame(winnerNum);
 	}
     public GameObject GetPlayer(int playerNum){
         
@@ -414,15 +416,26 @@ public class TwoDGameManager : MonoBehaviour {
 
     }
 
+    void EndGame(int playerNumber){
+        winner = playerNames[playerNumber];
+        SceneManager.LoadScene("Win Screen");
+        GameObject winCanvas = Instantiate(winScreenCanvas);
+        foreach(Transform t in winCanvas.transform.GetChild(0)){
+            if (t.name == "Win Text")
+            {
+                t.GetComponent<Text>().text = "Godhood waS achieved thiS day. \n The Heavenly Body known aS" + winner + " will be conSigned to the firmament \n their prophet a hero.";
+                t.GetComponent<Text>().color = playerColors[playerNumber];
+            }
+        }
+    }
 	void CheckPlayerWin(){
 		//        if (player1ScoreNum >= maxScore)
-		if (!PlayerCanSpawn (1) && playerHealth2.dead){
+        if (!PlayerCanSpawn (1) && playerHealth2.dead || testDeath){
 			player1.SetActive (false);
 			player2.SetActive (false);
 			player2Canvas.SetActive (false);
 			player1Canvas.SetActive (false);
-			playerWinner.text = "blue wins";
-			StartCoroutine (gameRestart ());
+			StartCoroutine (gameRestart (0));
 		}
 		//       if (player2ScoreNum >= maxScore)
 		else if (!PlayerCanSpawn (0) && playerHealth1.dead){			
@@ -430,38 +443,37 @@ public class TwoDGameManager : MonoBehaviour {
 			player2.SetActive (false);
 			player2Canvas.SetActive (false);
 			player1Canvas.SetActive (false);
-			playerWinner.text = "red wins";
-			StartCoroutine (gameRestart ());
+			StartCoroutine (gameRestart (1));
 
 		}
 
 	}
-    void playerWin()
-    {
-//        if (player1ScoreNum >= maxScore)
-		if(!PlayerCanSpawn(1))
-		{
-            player1.SetActive(false);
-            player2.SetActive(false);
-            player2Canvas.SetActive(false);
-            player1Canvas.SetActive(false);
-            playerWinner.text = "blue wins";
-            StartCoroutine(gameRestart());
-			spawnResetTimer = 0;
-        }
-		if(!PlayerCanSpawn(0))
- //       if (player2ScoreNum >= maxScore)
-		{
-            player1.SetActive(false);
-            player2.SetActive(false);
-            player2Canvas.SetActive(false);
-            player1Canvas.SetActive(false);
-            playerWinner.text = "red wins";
-            StartCoroutine(gameRestart());
-			spawnResetTimer = 0;
+//    void playerWin()
+//    {
+////        if (player1ScoreNum >= maxScore)
+	//	if(!PlayerCanSpawn(1))
+	//	{
+ //           player1.SetActive(false);
+ //           player2.SetActive(false);
+ //           player2Canvas.SetActive(false);
+ //           player1Canvas.SetActive(false);
+ //           playerWinner.text = "blue wins";
+ //           StartCoroutine(gameRestart());
+	//		spawnResetTimer = 0;
+ //       }
+	//	if(!PlayerCanSpawn(0))
+ ////       if (player2ScoreNum >= maxScore)
+		//{
+   //         player1.SetActive(false);
+   //         player2.SetActive(false);
+   //         player2Canvas.SetActive(false);
+   //         player1Canvas.SetActive(false);
+   //         playerWinner.text = "red wins";
+   //         StartCoroutine(gameRestart());
+			//spawnResetTimer = 0;
 
-        }
-    }
+    //    }
+    //}
     void resetScore ()
     {
         player1ScoreNum = 0f;
