@@ -590,6 +590,7 @@ ModelImporter:
     7400020: Charged_Attack
     7400022: Death
     7400024: Death_Platform
+    7400026: Edge_Death_Struggle
     9500000: //RootNode
     13700000: Main_Body
     13700002: Main_Body_001

@@ -128,7 +128,7 @@ public class auraPlayerHealth : MonoBehaviour {
 
 	//}
 	void Fall(){
-		StartDying ();
+        Die();
 	}
 
 	public IEnumerator colorChange(float damageTime, float flashNum)
@@ -162,9 +162,13 @@ public class auraPlayerHealth : MonoBehaviour {
 				Invoke ("Fall", fallTimer);
 				steppedOffLedge = true;
 			}
+            anim.SetBool("Falling", true);
+
 		} else {
 			CancelInvoke ("Fall");
 			steppedOffLedge = false;
+            anim.SetBool("Falling", false);
+
 		}
 
 
