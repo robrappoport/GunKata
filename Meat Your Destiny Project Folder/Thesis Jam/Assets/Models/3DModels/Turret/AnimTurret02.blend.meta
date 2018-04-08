@@ -3,7 +3,7 @@ guid: 36eb9c206910f3e499d6f7b4866cf9fe
 timeCreated: 1520088416
 licenseType: Free
 ModelImporter:
-  serializedVersion: 21
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     100002: Obelisk_Base_001
@@ -71,10 +71,27 @@ ModelImporter:
     7400002: Turret spin
     7400004: Turret close
     9500000: //RootNode
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Holy_Material
+    second: {fileID: 2100000, guid: ba2910d4c432c6843ad0031d883d3a5a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Obelisk_Body_Material
+    second: {fileID: 2100000, guid: d7c8ed82a63e9ec47aa5461852a83e61, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Obelisk_Face_Material
+    second: {fileID: 2100000, guid: e34418f83cbc8a94c925e17fb0ed3954, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -87,6 +104,7 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -195,6 +213,8 @@ ModelImporter:
     optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88

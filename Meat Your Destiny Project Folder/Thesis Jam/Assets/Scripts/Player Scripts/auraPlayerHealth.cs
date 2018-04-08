@@ -22,7 +22,7 @@ public class auraPlayerHealth : MonoBehaviour {
 
 	public int flashNum;
     public AudioClip damageSnd;
-
+    public AudioClip deathSnd;
     public GameObject textPrefab;
 	public GameObject deathBeamPrefab;
     public Color enemyPlayerColor;
@@ -70,18 +70,20 @@ public class auraPlayerHealth : MonoBehaviour {
 	public void Die(){
 
 		dead = true;
-		Instantiate(explosionPrefab, transform.position, transform.rotation);
-		ParticleFollowScript followParts = ((GameObject)Instantiate
-			(followParticles, transform.position, 
-				Quaternion.identity)).GetComponent<ParticleFollowScript>();
-		if (gameObject.GetComponent<auraGunBehavior>().playerNum == 0)
-		{
-			followParts.owner = 1;
-		}
-		else
-		{
-			followParts.owner = 0;
-		}
+
+		//Instantiate(explosionPrefab, transform.position, transform.rotation);
+		//ParticleFollowScript followParts = ((GameObject)Instantiate
+		//	(followParticles, transform.position, 
+		//		Quaternion.identity)).GetComponent<ParticleFollowScript>();
+		//if (gameObject.GetComponent<auraGunBehavior>().playerNum == 0)
+		//{
+		//	followParts.owner = 1;
+		//}
+		//else
+		//{
+		//	followParts.owner = 0;
+		//}
+        Sound.me.Play(deathSnd, .4f, true);
         deathBeam = Instantiate(deathBeamPrefab, transform) as GameObject;
 		deathBeam.transform.SetParent(null);
 		deathBeam.transform.position = transform.position;
