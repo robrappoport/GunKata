@@ -15,6 +15,7 @@ public class TwoDGameManager : MonoBehaviour {
     const int maxPlayers = 2;
 	public auraGunBehavior[] players;
     public GameObject respawnBulletDestroyer;
+    public GameObject RespawnBeamPrefab;
     private int restartTime = 1;
 	public Text playerWinner;
     public static Image player1Score;
@@ -379,6 +380,8 @@ public class TwoDGameManager : MonoBehaviour {
     IEnumerator DelayedSpawnPlayer1 ()
     {
 		Vector3 spawnPos = GetSpawnPosition (0) + Vector3.back * turretDistanceMod;
+
+
         player1.GetComponent<auraGunBehavior>().DamagedHalo.Play();
         yield return new WaitForSeconds(respawnTime);
         
@@ -386,7 +389,15 @@ public class TwoDGameManager : MonoBehaviour {
         yield return new WaitForSeconds(.1f);
         PlayerSpawnProtect(spawnPos, 12);
         SpawnPlayer1(spawnPos);
-        
+        GameObject lifeBeam = Instantiate(RespawnBeamPrefab) as GameObject;
+        lifeBeam.transform.position = spawnPos;
+        Animator lifeBeamAnim = lifeBeam.GetComponent<Animator>();
+        lifeBeamAnim.SetFloat("Direction", -1);
+        lifeBeamAnim.Play("Default Take", -1, 1);
+        yield return new WaitForSeconds(lifeBeamAnim.runtimeAnimatorController.animationClips[0].length);
+
+       
+        Destroy(lifeBeam);
     }
     IEnumerator DelayedSpawnPlayer2()
     {
@@ -397,6 +408,15 @@ public class TwoDGameManager : MonoBehaviour {
         yield return new WaitForSeconds(.1f);
         PlayerSpawnProtect(spawnPos, 13);
         SpawnPlayer2(spawnPos);
+        GameObject lifeBeam = Instantiate(RespawnBeamPrefab) as GameObject;
+        lifeBeam.transform.position = spawnPos;
+        Animator lifeBeamAnim = lifeBeam.GetComponent<Animator>();
+        lifeBeamAnim.SetFloat("Direction", -1);
+        lifeBeamAnim.Play("Default Take", -1, 1);
+
+        yield return new WaitForSeconds(lifeBeamAnim.runtimeAnimatorController.animationClips[0].length);
+        Destroy(lifeBeam);
+
     }
 
 	void CheckPlayerWin(){
