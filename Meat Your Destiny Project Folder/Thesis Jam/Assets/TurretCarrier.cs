@@ -63,7 +63,9 @@ public class TurretCarrier : MonoBehaviour {
 		foreach (Transform t in children) {
 			if (t.GetComponent<Turret> ()) {
 				t.GetComponent<Turret> ().RegisterTurret ();
-				t.GetComponent<Turret> ().UICanvas.SetActive (true);
+				if (t.GetComponent<Turret> ().UICanvas) {
+					t.GetComponent<Turret> ().UICanvas.SetActive (true);
+				}
 			}
 		}
 
