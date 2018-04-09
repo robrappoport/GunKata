@@ -51,7 +51,10 @@ public class AuraCharacterController : PlayControl
     public float stuckTime = .1f;
     public enum ControlType { Keyboard, Controller, NONE };/// <summary>
     public float forceMultiplier;
-    /// Keyboard controls are as follows: WASD to move, YGHJ to rotate, V to shoot, left shift to project aura.
+    public AudioClip dashSound;
+
+    ///<summary>
+    /// Keyboard controls are as follows: WASD to move, arrows to rotate, space to shoot, left shift to project aura, right alt to dash
     /// </summary>
     public ControlType controlType;
 
@@ -203,24 +206,24 @@ public class AuraCharacterController : PlayControl
 			float rightyDown;
 			float righty;
 
-			if(Input.GetKey(KeyCode.J)){
+            if(Input.GetKey(KeyCode.RightArrow)){
 				rightxLeft = 1;
 			}else{
 				rightxLeft = 0;
 			}
-			if (Input.GetKey (KeyCode.G)) {
+            if (Input.GetKey (KeyCode.LeftArrow)) {
 				rightxRight = -1;
 			} else {
 				rightxRight = 0;
 			}
 			rightx = rightxLeft + rightxRight;
 
-			if(Input.GetKey(KeyCode.Y)){
+            if(Input.GetKey(KeyCode.UpArrow)){
 				rightyUp = 1;
 			}else{
 				rightyUp = 0;
 			}
-			if (Input.GetKey (KeyCode.H)) {
+            if (Input.GetKey (KeyCode.DownArrow)) {
 				rightyDown = -1;
 			} else {
 				rightyDown = 0;
@@ -236,7 +239,7 @@ public class AuraCharacterController : PlayControl
 		if (controlType == ControlType.Controller) {
 			return (myController.CommandWasPressed);
 		} else {
-			return(Input.GetKeyUp (KeyCode.F));
+            return(Input.GetKeyUp (KeyCode.Escape));
 		}
 	}
 
@@ -268,7 +271,7 @@ public class AuraCharacterController : PlayControl
 		if (controlType == ControlType.Controller) {
 			return (myController.LeftTrigger.IsPressed);
 		} else {
-			return (Input.GetKey (KeyCode.X));
+            return (Input.GetKey (KeyCode.LeftShift));
 		}
 	}
 
@@ -277,7 +280,7 @@ public class AuraCharacterController : PlayControl
 			return (myController.LeftTrigger.WasPressed);
 		} else {
 			//print ("spawning aura");
-			return (Input.GetKeyDown (KeyCode.X));
+            return (Input.GetKeyDown (KeyCode.LeftShift));
 
 		}	
 	}
@@ -285,7 +288,7 @@ public class AuraCharacterController : PlayControl
 		if (controlType == ControlType.Controller) {
             return (myController.LeftTrigger.WasReleased);
 		} else {
-			return (Input.GetKeyUp (KeyCode.X));
+            return (Input.GetKeyUp (KeyCode.LeftShift));
 		}	
 	}
 	
@@ -293,21 +296,21 @@ public class AuraCharacterController : PlayControl
 		if (controlType == ControlType.Controller) {
 			return (myController.RightTrigger.IsPressed);
 		} else {
-            return (Input.GetKey(KeyCode.V));
+            return (Input.GetKey(KeyCode.Space));
 		}
 	} 
     public bool primaryFireUp (){
         if (controlType == ControlType.Controller) {
             return (myController.RightTrigger.WasReleased);
         } else {
-            return (Input.GetKeyUp (KeyCode.V));
+            return (Input.GetKeyUp (KeyCode.Space));
         }
     } 
     public bool primaryFireDown (){
         if (controlType == ControlType.Controller) {
             return (myController.RightTrigger.WasPressed);
         } else {
-			return (Input.GetKeyDown (KeyCode.V));
+			return (Input.GetKeyDown (KeyCode.Space));
         }
     } 
 
@@ -315,7 +318,7 @@ public class AuraCharacterController : PlayControl
 		if (controlType == ControlType.Controller) {
 			return (myController.Action2.WasReleased);
 		} else {
-			return (Input.GetKeyUp (KeyCode.N));
+            return (Input.GetKeyUp (KeyCode.RightAlt));
 		}
 	}
 
@@ -323,7 +326,7 @@ public class AuraCharacterController : PlayControl
 		if (controlType == ControlType.Controller) {
 			return (myController.Action2.WasPressed);
 		} else {
-			return (Input.GetKeyDown (KeyCode.N));
+            return (Input.GetKeyDown (KeyCode.RightAlt));
 		}
 	}
 
@@ -383,12 +386,13 @@ public class AuraCharacterController : PlayControl
 
 		//		moveDirection.y = 0;
 
-		if (bButtonDown () && gunBehave.remainingStamina > dashCost && !isDashing) {
+        if (bButtonDown () && gunBehave.EnoughStamina(dashCost) && !isDashing) {
 			StartCoroutine (AuraDashDrain (dashCost));
 			gunBehave.Invoke ("ResetAuraCooldown", gunBehave.coolDownDuration);
 			gunBehave.CurrentBullets--;
 			currentDashTime = 0.0f;
 			isDashing = true;
+           // Sound.me.Play(dashSound);
 		}
 
 		if (currentDashTime < maxDashTime) {

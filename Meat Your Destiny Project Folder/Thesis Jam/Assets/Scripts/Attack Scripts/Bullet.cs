@@ -37,6 +37,7 @@ public class Bullet : MonoBehaviour {
 	public float time = 1.0f;
 	private TrailRenderer tr;
 
+    public List<Collider> colliders = new List<Collider>();
     public Collider currentCollider;
     public bool auraEntered = false;
 
@@ -139,6 +140,8 @@ public class Bullet : MonoBehaviour {
 
     void AuraCheck()
     {
+        colliders = TwoDGameManager.CleanColliderList(colliders);
+        currentCollider = AuraGenerator.GetCurrentAura(colliders);
         if (currentCollider)
         {
            
@@ -321,7 +324,7 @@ public class Bullet : MonoBehaviour {
 
         if (other.gameObject.tag == "PlayerAura")
         {
-            currentCollider = other;
+            colliders.Add(other);
             auraEntered = true;
 
             initDistance = Vector3.Distance(transform.position, other.gameObject.transform.position);

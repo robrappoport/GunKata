@@ -29,6 +29,7 @@ public class auraGunBehavior : MonoBehaviour
     public float shootTime;
     public float shootVol;
 	public float shootAnimationDelay;
+    public AudioClip cannonFireSound, inSufficientStaminaSound;
 	private bool isFiring;
     public bool autoReloadEnabled;
     private bool autoReload;
@@ -74,6 +75,8 @@ public class auraGunBehavior : MonoBehaviour
     public int auraIndex;
     private float[] auraScales = new float[6] {.5f,.8f,1f,1.2f,1.6f, 2f};
     public float auraDrainRate;
+    public AudioClip auraScaleIncreaseSound;
+
     private float displayDrainRate = 100f;
     private float staminaToDisplay;
     private int startingAuraIndex;
@@ -122,7 +125,6 @@ public class auraGunBehavior : MonoBehaviour
     //AUDIO
     private AudioSource myAudio;
     public AudioClip [] playerSounds;
-
     private TwoDGameManager gameManager;
     private AuraCharacterController myCont;
 
@@ -238,14 +240,14 @@ public class auraGunBehavior : MonoBehaviour
 				//play charge sound
 			}
 			if (myCont.primaryFireDown () == true || myCont.primaryFire () == true) {
-				if (myCont.primaryFireDown () == true && remainingStamina > shootingStaminaCost) {
+                if (myCont.primaryFireDown () == true && EnoughStamina(shootingStaminaCost)) {
 					isFiring = true;
 					shootTime = initShootTime;
 					PrimaryFire ();
 					StartCoroutine (ShootSound ());
 					StartCoroutine (DrainAuraOverTime (shootingStaminaCost, shootingStaminaDrainRate));
 				}
-				if (myCont.primaryFire () == true && remainingStamina > shootingStaminaCost) {
+                if (myCont.primaryFire () == true && EnoughStamina(shootingStaminaCost)) {
 					//Debug.Log(chargeTime);
 					//Debug.Log(loadedChargeTime);
 					//Debug.Log(chargeTime + " " + "chargetime");
@@ -374,6 +376,9 @@ public class auraGunBehavior : MonoBehaviour
             Bullet_Emitter.transform.position,
             Quaternion.Euler(new Vector3(0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
 		//fire all turrets
+        if(myTurrets.Count > 0){
+           // Sound.me.Play(cannonFireSound);
+        }
 		foreach(Turret t in myTurrets){
 			t.Fire ();
 		}
@@ -415,6 +420,16 @@ public class auraGunBehavior : MonoBehaviour
 
 	
 	}
+    public bool EnoughStamina(float cost = 0){
+        if(remainingStamina > cost){
+            return true;
+        }else{
+            if(!Sound.me.IsPlaying(inSufficientStaminaSound)){
+                // Sound.me.Play(inSufficientStaminaSound);
+            }
+            return false;
+        }
+    }
 	void AuraCharge(){
 		if (myCont.secondaryFireDown () == true) {
 			currentAuraChargeLimit = remainingStamina;
@@ -425,7 +440,7 @@ public class auraGunBehavior : MonoBehaviour
 			//calculate how much charge remains and how much is to be used
 			sprAura.SetActive (true);
 			DrainAura (Time.deltaTime * auraChargeRate);
-			if (remainingStamina > 0) {
+            if (EnoughStamina(0)) {
 				currentAuraCharge = Mathf.Clamp (currentAuraCharge + Time.deltaTime * auraChargeRate, 0, currentAuraChargeLimit);
 			}
 			if (staminaSegmentNum - currentAuraCharge < 0.02f) {
@@ -463,6 +478,9 @@ public class auraGunBehavior : MonoBehaviour
 			//lerp the outline to the target scale
 			Vector3 targetScale = auraScales [Mathf.Clamp (chargeIndex, 0, auraScales.Length - 1)] * Vector3.one;
 			sprAura.transform.localScale = Vector3.Lerp (sprAura.transform.localScale, targetScale, 0.7f);
+            if(!Sound.me.IsPlaying(auraScaleIncreaseSound, chargeIndex/(staminaSegmentNum - 1))){
+                // Sound.me.Play(auraScaleIncreaseSound, chargeIndex/(staminaSegmentNum - 1));
+            }
 		} else {
             
 			if (!coolingDown) {

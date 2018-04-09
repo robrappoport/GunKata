@@ -15,6 +15,7 @@ public class SectionScript : MonoBehaviour {
     public Material normColor;
     public Material flashColor;
     public Material deadColor;
+    public AudioClip fallingSound, rumbleSound;
 
    
 
@@ -44,6 +45,7 @@ public class SectionScript : MonoBehaviour {
     public void Drop ()
     {
         StartCoroutine(DropCo());
+     //   Sound.me.Play(rumbleSound);
         shake.ShakeMe();
     }
 
@@ -57,11 +59,11 @@ public class SectionScript : MonoBehaviour {
 
             yield return new WaitForSeconds(.5f);
 
-
             normColor = deadColor;
             floorRend.material = normColor;
 
             yield return new WaitForSeconds(.5f);
+            // Sound.me.Play(fallingSound);
 
         }
 

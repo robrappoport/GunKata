@@ -29,7 +29,28 @@ public class Sound : MonoBehaviour {
 		}
 
 	}
-	public void Play(AudioClip clip, float volume, bool randoPitch, float point = 0)
+
+    public bool IsPlaying(AudioClip clip, float pitch = 10){
+        foreach(AudioSource a in sources){
+            if (a.clip == clip){
+                
+                if(a.isPlaying){
+                    if(pitch != 10){
+                        if(a.pitch == pitch){
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+	public void Play(AudioClip clip, float volume, bool randoPitch, float point = 0, float pitch = 1)
     {
         AudioSource source = null;
         for (int i = 0; i < sourceNum; i++)
@@ -53,6 +74,7 @@ public class Sound : MonoBehaviour {
 			source.time = point;
 		}
         source.Play();
+        source.pitch = pitch;
 
     }
 
@@ -61,4 +83,8 @@ public class Sound : MonoBehaviour {
         Play(clip, 1f, false);
     }
 
+    public void Play(AudioClip clip, float pitch)
+    {
+        Play(clip, 1f, false, 0, pitch);
+    }
 }

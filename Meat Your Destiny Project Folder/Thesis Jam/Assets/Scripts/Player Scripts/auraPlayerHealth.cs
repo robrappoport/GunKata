@@ -22,7 +22,7 @@ public class auraPlayerHealth : MonoBehaviour {
 
 	public int flashNum;
     public AudioClip damageSnd;
-    public AudioClip deathSnd;
+    public AudioClip deathSnd, dyingSound;
     public GameObject textPrefab;
 	public GameObject deathBeamPrefab;
     public Color enemyPlayerColor;
@@ -61,7 +61,7 @@ public class auraPlayerHealth : MonoBehaviour {
 	}
 	void StartDying(){
 		dying = true;
-
+      //  Sound.me.Play(dyingSound);
 		anim.SetTrigger ("Die");
 		Invoke ("Die", deathTime);
 

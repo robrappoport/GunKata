@@ -23,6 +23,7 @@ public class Cannonball : MonoBehaviour {
 	Rigidbody r;
 	Renderer render;
 	public Collider currentCollider;
+    public List<Collider> colliders = new List<Collider>();
 	public EZObjectPools.EZObjectPool objectPool;
 
 
@@ -71,10 +72,11 @@ public class Cannonball : MonoBehaviour {
 //		} else {
 //			age += Time.deltaTime;
 //		}
+        AuraCheck();
+
 	}
 
 	void FixedUpdate(){
-		AuraCheck ();
 //        if ((transform.position.y) > (bulletHeight))
 //        {
 //            transform.position = new Vector3 (transform.position.x, bulletHeight, transform.position.z);
@@ -108,7 +110,7 @@ public class Cannonball : MonoBehaviour {
 
 		}
 		if (col.gameObject.tag == "PlayerAura") {
-			currentCollider = col;
+            colliders.Add(col);
 			auraEntered = true;
 		}
 
@@ -171,6 +173,8 @@ public class Cannonball : MonoBehaviour {
 //	}
 
 	void AuraCheck(){
+        colliders = TwoDGameManager.CleanColliderList(colliders);
+        currentCollider = AuraGenerator.GetCurrentAura(colliders);
         if (currentCollider)
         {
 
