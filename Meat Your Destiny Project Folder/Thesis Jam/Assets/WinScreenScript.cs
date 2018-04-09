@@ -10,12 +10,14 @@ public class WinScreenScript : MonoBehaviour
     public static PlayControl instance;
     public InputDevice myController;
 
-    public Text yesText, noText;
+    public Text yesText, noText, winText;
     public int selectedText;//0 is start, 1 is controls
     public bool controlsActive, leftStickHeld;
     // Use this for initialization
     void Start()
     {
+		instance = FindObjectOfType<PlayControl> ();
+		
         selectedText = 0;
         controlsActive = false;
         myController = InputManager.Devices[0];
@@ -24,7 +26,6 @@ public class WinScreenScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
 
         if (selectedText == 0)
         {
@@ -44,12 +45,15 @@ public class WinScreenScript : MonoBehaviour
             if (selectedText == 1)
             {
                 SceneManager.LoadScene("Start Screen");
+				noText.color = Color.blue;
             }
             else
             {
                 ///TODO: Replace when more levels are active
 //              SceneManager.LoadScene ("LevelSelectScreen");
-                SceneManager.LoadScene("Heaven");
+				yesText.color = Color.blue;
+
+				SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
         }
 

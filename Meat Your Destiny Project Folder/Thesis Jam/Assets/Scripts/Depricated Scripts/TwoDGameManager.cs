@@ -84,13 +84,16 @@ public class TwoDGameManager : MonoBehaviour {
     public bool testDeath = false;
 
 
+	private GameObject winCanvas;
+
     void OnApplicationQuit()
     {
         thisInstance = null;
     }
 	void Awake ()
 	{
-		
+		//DontDestroyOnLoad(this.gameObject);
+
         cam = Camera.main.GetComponent<CameraMultitarget>();
         StartCoroutine(TimerCo());
         if (thisInstance == null)
@@ -99,7 +102,6 @@ public class TwoDGameManager : MonoBehaviour {
         }
         else
         {
-            DontDestroyOnLoad(this.gameObject);
         }
 
         player1Score = GameObject.Find("Player1ScoreFill").GetComponent<Image>();
@@ -142,50 +144,51 @@ public class TwoDGameManager : MonoBehaviour {
 
 
     void Update()
-    {
-		spawnResetTimer += Time.deltaTime;
-        StartCoroutine(BallTimer());
-        player1Start.position = player1Spawns[index1];
-        player2Start.position = player2Spawns[index2];
-        playerScoreUpdate();
-        if (playerHealth1.dead || playerHealth2.dead)
-		{
-			CheckPlayerWin ();
-			cam.Shake(shakeWeight, shakeTime);
-			if (playerHealth1.dead && addedScore2 == false)
-            {
-                //player1Scale = player1.transform.localScale;
-                StartCoroutine(DelayedSpawnPlayer1());
-                addedScore2 = true;
-                //player2ScoreNum += 10f;
-                return;
-            }
-            if (playerHealth2.dead && addedScore1 == false)
-            {
-                //player2Scale = player2.transform.localScale;
-                StartCoroutine(DelayedSpawnPlayer2());
-                addedScore1 = true;
-                //player1ScoreNum += 10f;
-                return;
-            }
-        }
-      //  playerWin();
-        //for (int i = 0; i < keyTurrets.Count; i++)
-        //{
-        //    if(keyTurrets[i].ownerNum == 2){
-        //        readyToMakeNewOrb = false;
-        //        break;
-        //    }else{
-        //        //readyToMakeNewOrb = true;
-        //    }
-        //}
+	{
+		if (!winCanvas) {
+			spawnResetTimer += Time.deltaTime;
+			StartCoroutine (BallTimer ());
+			player1Start.position = player1Spawns [index1];
+			player2Start.position = player2Spawns [index2];
+			playerScoreUpdate ();
+			if (playerHealth1.dead || playerHealth2.dead) {
+				CheckPlayerWin ();
+				cam.Shake (shakeWeight, shakeTime);
+				if (playerHealth1.dead && addedScore2 == false) {
+					//player1Scale = player1.transform.localScale;
+					StartCoroutine (DelayedSpawnPlayer1 ());
+					addedScore2 = true;
+					//player2ScoreNum += 10f;
+					return;
+				}
+				if (playerHealth2.dead && addedScore1 == false) {
+					//player2Scale = player2.transform.localScale;
+					StartCoroutine (DelayedSpawnPlayer2 ());
+					addedScore1 = true;
+					//player1ScoreNum += 10f;
+					return;
+				}
+			}
+			//  playerWin();
+			//for (int i = 0; i < keyTurrets.Count; i++)
+			//{
+			//    if(keyTurrets[i].ownerNum == 2){
+			//        readyToMakeNewOrb = false;
+			//        break;
+			//    }else{
+			//        //readyToMakeNewOrb = true;
+			//    }
+			//}
 
-        if(readyToMakeNewOrb){
-            ball.SetActive(true);
-            //readyToMakeNewOrb = false;
+			if (readyToMakeNewOrb) {
+				ball.SetActive (true);
+				//readyToMakeNewOrb = false;
 
-        }
-    }
+			}
+		} else {
+			StopAllCoroutines ();
+		}
+	}
         public IEnumerator gameRestart (int winnerNum)
 	{
 		yield return new WaitForSeconds (restartTime);
@@ -418,15 +421,24 @@ public class TwoDGameManager : MonoBehaviour {
 
     void EndGame(int playerNumber){
         winner = playerNames[playerNumber];
-        SceneManager.LoadScene("Win Screen");
-        GameObject winCanvas = Instantiate(winScreenCanvas);
-        foreach(Transform t in winCanvas.transform.GetChild(0)){
-            if (t.name == "Win Text")
-            {
-                t.GetComponent<Text>().text = "Godhood waS achieved thiS day. \n The Heavenly Body known aS" + winner + " will be conSigned to the firmament \n their prophet a hero.";
-                t.GetComponent<Text>().color = playerColors[playerNumber];
-            }
-        }
+		if (!FindObjectOfType<WinScreenScript>()) {
+//			winCanvas = Instantiate (winScreenCanvas);
+//			DontDestroyOnLoad (winCanvas);
+			winCanvas = Instantiate (winScreenCanvas);
+			winCanvas.GetComponentInChildren<WinScreenScript>().winText.text = "Godhood waS achieved thiS day. \n The Heavenly Body known aS" + winner + " will be conSigned to the firmament \n their prophet a hero.";
+			winCanvas.GetComponentInChildren<WinScreenScript>().winText.color = playerColors [playerNumber];
+//			foreach (Transform t in FindObjectOfType<WinScreenScript>().transform) {
+//				if (t.name == "Win Text") {
+//					t.GetComponent<Text> ().text = "Godhood waS achieved thiS day. \n The Heavenly Body known aS" + winner + " will be conSigned to the firmament \n their prophet a hero.";
+//					t.GetComponent<Text> ().color = playerColors [playerNumber];
+//				}
+//			}
+			Sound.me.ToggleMuteAllSound();
+			GetComponent<AudioSource> ().mute = true;
+			testDeath = false;
+		
+		}
+
     }
 	void CheckPlayerWin(){
 		//        if (player1ScoreNum >= maxScore)

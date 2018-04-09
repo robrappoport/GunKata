@@ -9,7 +9,6 @@ public class Sound : MonoBehaviour {
     public AudioSource[] sources;
     public int sourceNum;
     bool interrupt;
-
 	// Use this for initialization
 	void Start () {
         interrupt = false;
@@ -20,6 +19,14 @@ public class Sound : MonoBehaviour {
             sources[i] = ((GameObject)Instantiate(sourcePrefab, Vector3.zero, Quaternion.identity)).GetComponent<AudioSource>();
         }
 	}
+
+	public void ToggleMuteAllSound(){
+		foreach (AudioSource a in sources) {
+			a.mute = !a.mute;
+		}
+	}
+
+
 	public void Stop(AudioClip clip){
 		foreach (AudioSource a in sources) {
 			if (a.clip == clip) {
