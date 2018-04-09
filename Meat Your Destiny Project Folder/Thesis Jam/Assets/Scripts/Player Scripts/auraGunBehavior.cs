@@ -253,9 +253,11 @@ public class auraGunBehavior : MonoBehaviour
 					if (wingMatChangeValue == 0) {
 						chargeTime += Time.deltaTime / initialChargeBuffer;
 					} else {
-						if (!laserChargeSys.isPlaying) {
-							LaserChargeSound ();
-						}
+                        if (!laserChargeSys.isPlaying)
+                        {
+                            LaserChargeSound();
+                            laserChargeSys.Play();
+                        }
 
 					
 							chargeTime += Time.deltaTime;
@@ -291,26 +293,32 @@ public class auraGunBehavior : MonoBehaviour
 			} else {
 				myCont.NotShot ();
 			}
-			if (myCont.primaryFireUp ())
-			if (wingMatChangeValue == 0) {
-				chargeTime = 0;
-			} else {
-				if (chargeTime >= 1) {
-					StartCoroutine (LaserShotSound ());
-					laserChargeSys.Stop ();
-					myCont.GetComponent<Animator> ().SetBool ("Laser Firing", true);
-					laserIsFiring = true;
-					chargeTime = 0f;
+            if (myCont.primaryFireUp())
+            {
+                if (wingMatChangeValue == 0)
+                {
+                    chargeTime = 0;
+                }
+                else
+                {
+                    if (chargeTime >= 1)
+                    {
+                        StartCoroutine(LaserShotSound());
+                        laserChargeSys.Stop();
+                        myCont.GetComponent<Animator>().SetBool("Laser Firing", true);
+                        laserIsFiring = true;
+                        chargeTime = 0f;
 
-					laserObj = Instantiate (LaserBullet, 
-						Bullet_Emitter.transform.position, 
-						gameObject.transform.rotation) 
-						as GameObject;
-					laserObj.transform.parent = gameObject.transform;
-					laserObj.GetComponent<LaserShotScript> ().on = true;
-					laserObj.GetComponent<LaserShotScript> ().owner = myCont;
-				}
-			}
+                        laserObj = Instantiate(LaserBullet,
+                            Bullet_Emitter.transform.position,
+                            gameObject.transform.rotation)
+                            as GameObject;
+                        laserObj.transform.parent = gameObject.transform;
+                        laserObj.GetComponent<LaserShotScript>().on = true;
+                        laserObj.GetComponent<LaserShotScript>().owner = myCont;
+                    }
+                }
+            }
 			if (laserIsFiring) {
 				gameObject.GetComponent<AuraCharacterController> ().turnSpeed = .5f;
 				gameObject.GetComponent<AuraCharacterController> ().prevMoveForce = .2f;
@@ -337,7 +345,7 @@ public class auraGunBehavior : MonoBehaviour
 				}
 			}
 		}
-
+            
 		
 	}
     void Reload()
@@ -432,15 +440,18 @@ public class auraGunBehavior : MonoBehaviour
 			if (currentAuraCharge != tempValue) {
 				//adjust the charge loop to account for the first and last turns
 				for (int i = 0; i <= chargeIndex; i++) {
+                    
 					Renderer[] wingArray = wings [Mathf.Clamp (i, 0, staminaSegmentNum - 1)].GetComponentsInChildren<Renderer> ();
 					foreach (Renderer r in wingArray) {
 						//r.material.c = activeWingColor;
 						if (chargeIndex != staminaSegmentNum) {
 							r.material.SetColor ("_EmissionColor", activeWingColor);
+
 						} else {
 							r.material.SetColor ("_EmissionColor", Color.white);
 							r.material.color = Color.white; 
 						}
+
 					}
 			
 				}
@@ -453,6 +464,7 @@ public class auraGunBehavior : MonoBehaviour
 			Vector3 targetScale = auraScales [Mathf.Clamp (chargeIndex, 0, auraScales.Length - 1)] * Vector3.one;
 			sprAura.transform.localScale = Vector3.Lerp (sprAura.transform.localScale, targetScale, 0.7f);
 		} else {
+            
 			if (!coolingDown) {
 				//recharge the aura over time
 				remainingStamina = Mathf.Clamp (remainingStamina + Time.deltaTime * auraRechargeRate, 0, staminaSegmentNum);
@@ -892,7 +904,6 @@ public class auraGunBehavior : MonoBehaviour
     {
 
         //THIS DOESN'T WORK RIGHT NOW
-        laserChargeSys.Play();
 		Sound.me.Play (playerSounds [3]);
 //		if (myCont.primaryFireUp ()) {
 //			myAudio.Stop ();

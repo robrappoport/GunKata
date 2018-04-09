@@ -14,10 +14,12 @@ AuraGenerator : MonoBehaviour {
     public AuraType auraType;
 	public GameObject ps;
     public bool isSuper;
-
+    ParticleSystem p;
+    ParticleSystem.MainModule auraParticles;
 	// Use this for initialization
 	void Start () {
-        
+
+
 	}
 
 	void DeformMultiple(Collider col, int totalPoints = 6, float radiusFactor = 1, int iterations = 1){
@@ -166,6 +168,12 @@ AuraGenerator : MonoBehaviour {
         //}
         auraLifeTime = auraSize * 10;
         auraCurLife = 0;
+
+        p = GetComponentInChildren<ParticleSystem>();
+        auraParticles = p.main;
+        GetComponent<Renderer>().material.color = TwoDGameManager.thisInstance.playerColors[auraPlayerNum];
+        auraParticles.startColor = TwoDGameManager.thisInstance.playerColors[auraPlayerNum];
+
 
     }
 	public static Collider GetCurrentAura(List<Collider> colliders){

@@ -46,7 +46,6 @@ public  class UIManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		CheckWin ();
-
 		UpdateScore ();	
 
 	}
@@ -187,6 +186,7 @@ public  class UIManager : MonoBehaviour {
 		victoryText.enabled = false;
 	}
 	void UpdateScore(){
+        DrawScore();
 		turretList = turretList.OrderBy (
 			x => Camera.main.WorldToScreenPoint (x.transform.position).x).ToList ();
         
@@ -195,6 +195,7 @@ public  class UIManager : MonoBehaviour {
             currentTurretNum += t.Count;
 
         }
+
         if (turretList.Count > 0) {
 			for (int i = 0; i < scoreCards.Count; i++) {
 				int j = Mathf.Clamp (i, 0, turretList.Count - 1);
@@ -220,11 +221,17 @@ public  class UIManager : MonoBehaviour {
 		}
 
 		DrawCard (turretList.Count -1);
-
 		//register each of the current turrets to it 
+
+        foreach(GameObject s in scoreCardPool){
+            if(!scoreCards.Contains(s)){
+                s.SetActive(false);
+            }
+        }
 	}
 
 	public void DrawCard(int i = 0){
+        
 		if (scoreCards.Count < turretList.Count ) {
 			GameObject scoreCard = scoreCardPool [i];
 			scoreCard.SetActive (true);

@@ -43,6 +43,7 @@ public class LaserShotScript : MonoBehaviour {
 			new GradientAlphaKey[]{ new GradientAlphaKey (alpha, 0.0f), new GradientAlphaKey (alpha, 1.0f) }
 		);
 		lineRend.colorGradient = gradient;
+        Physics.IgnoreCollision(GetComponent<Collider>(), owner.GetComponent<Collider>());
 	}
 
     private void OnDrawGizmos()
