@@ -61,7 +61,7 @@ public class Sound : MonoBehaviour {
                 break;
             }
         }
-        source.volume = volume;
+        source.volume = volume; 
         source.clip = clip;
         if (randoPitch)
         {

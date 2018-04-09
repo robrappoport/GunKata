@@ -392,7 +392,7 @@ public class AuraCharacterController : PlayControl
 			gunBehave.CurrentBullets--;
 			currentDashTime = 0.0f;
 			isDashing = true;
-           // Sound.me.Play(dashSound);
+           Sound.me.Play(dashSound);
 		}
 
 		if (currentDashTime < maxDashTime) {

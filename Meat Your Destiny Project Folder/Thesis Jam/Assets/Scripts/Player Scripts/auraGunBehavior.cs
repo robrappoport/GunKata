@@ -73,7 +73,7 @@ public class auraGunBehavior : MonoBehaviour
     public float coolDownTotal;
     public bool coolingDown = false;
     public int auraIndex;
-    private float[] auraScales = new float[6] {.5f,.8f,1f,1.2f,1.6f, 2f};
+    private float[] auraScales = new float[6] {1f,1.3f,1.6f,1.8f,2f, 2.3f};
     public float auraDrainRate;
     public AudioClip auraScaleIncreaseSound;
 
@@ -377,7 +377,7 @@ public class auraGunBehavior : MonoBehaviour
             Quaternion.Euler(new Vector3(0, Bullet_Emitter.transform.rotation.eulerAngles.y + bulletOffsetNorm, 0)));
 		//fire all turrets
         if(myTurrets.Count > 0){
-           // Sound.me.Play(cannonFireSound);
+           Sound.me.Play(cannonFireSound);
         }
 		foreach(Turret t in myTurrets){
 			t.Fire ();
@@ -425,7 +425,7 @@ public class auraGunBehavior : MonoBehaviour
             return true;
         }else{
             if(!Sound.me.IsPlaying(inSufficientStaminaSound)){
-                // Sound.me.Play(inSufficientStaminaSound);
+                //Sound.me.Play(inSufficientStaminaSound);
             }
             return false;
         }
@@ -479,7 +479,7 @@ public class auraGunBehavior : MonoBehaviour
 			Vector3 targetScale = auraScales [Mathf.Clamp (chargeIndex, 0, auraScales.Length - 1)] * Vector3.one;
 			sprAura.transform.localScale = Vector3.Lerp (sprAura.transform.localScale, targetScale, 0.7f);
             if(!Sound.me.IsPlaying(auraScaleIncreaseSound, chargeIndex/(staminaSegmentNum - 1))){
-                // Sound.me.Play(auraScaleIncreaseSound, chargeIndex/(staminaSegmentNum - 1));
+                //Sound.me.Play(auraScaleIncreaseSound, chargeIndex/(staminaSegmentNum - 1));
             }
 		} else {
             

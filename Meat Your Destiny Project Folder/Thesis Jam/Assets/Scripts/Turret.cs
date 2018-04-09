@@ -54,7 +54,7 @@ public class Turret : MonoBehaviour
 	Image progressBar;
 	Image outlineBar;
     List<Animator> emitterAnimators = new List<Animator>();
-    AudioClip captureSound;
+    public AudioClip captureSound;
 
 	//CameraMultiTargetObjective camTar;
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
@@ -196,7 +196,7 @@ public class Turret : MonoBehaviour
 		DetermineDegreeOfOwnership();
 		if (completelyOwned) {
             
-           // Sound.me.Play(captureSound);
+           Sound.me.Play(captureSound);
             StartCoroutine(TimeManipulation.SlowTimeTemporarily(0.7f, 0.1f, .2f, 0.1f));
 			CancelInvoke ();
 			//InvokeRepeating ("Fire", repeatTime - (Time.timeSinceLevelLoad % repeatTime), repeatTime);

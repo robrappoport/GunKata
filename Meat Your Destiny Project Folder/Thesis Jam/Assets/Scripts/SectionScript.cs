@@ -45,7 +45,7 @@ public class SectionScript : MonoBehaviour {
     public void Drop ()
     {
         StartCoroutine(DropCo());
-     //   Sound.me.Play(rumbleSound);
+        Sound.me.Play(rumbleSound);
         shake.ShakeMe();
     }
 
