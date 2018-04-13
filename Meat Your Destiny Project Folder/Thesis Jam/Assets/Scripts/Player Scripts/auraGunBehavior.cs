@@ -73,7 +73,7 @@ public class auraGunBehavior : MonoBehaviour
     public float coolDownTotal;
     public bool coolingDown = false;
     public int auraIndex;
-    private float[] auraScales = new float[6] {1f,1.3f,1.6f,1.8f,2f, 2.3f};
+    private float[] auraScales = new float[6] {.7f,.8f,1f,1.3f,1.6f, 1.8f};
     public float auraDrainRate;
     public AudioClip auraScaleIncreaseSound;
 
@@ -514,7 +514,7 @@ public class auraGunBehavior : MonoBehaviour
             StartCoroutine(AuraSound());
             coolingDown = true;
 			if(currentAuraCharge > 0){//only instantiate an aura if one "charge" has been used
-				AuraGenerator aura = Instantiate(AuraObj, this.gameObject.transform.position,
+                AuraGenerator aura = Instantiate(AuraObj, sprAura.transform.position,
 					Quaternion.Euler(0, 0, 0))
 					.GetComponent<AuraGenerator>();
 				aura.Init(playerNum, auraScales[Mathf.Clamp(chargeIndex, 0, auraScales.Length - 1)]);

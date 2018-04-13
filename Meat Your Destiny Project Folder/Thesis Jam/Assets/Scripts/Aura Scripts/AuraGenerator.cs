@@ -166,7 +166,7 @@ AuraGenerator : MonoBehaviour {
         //{
         //    gameObject.tag = "player2Aura";
         //}
-        auraLifeTime = auraSize * 2;
+        auraLifeTime = auraSize * 5;
         auraCurLife = 0;
 
         p = GetComponentInChildren<ParticleSystem>();
