@@ -77,6 +77,7 @@ public class TurretCarrier : MonoBehaviour {
 		foreach (Transform t in children) {
 			foreach (List<Turret> tur in TwoDGameManager.thisInstance.turrets) {
 				if (tur.Contains (t.GetComponent<Turret> ())) {
+                    t.GetComponent<Turret>().lineRenderer.enabled = false;
 					if (t.GetComponentInChildren<CameraMultiTargetObjective> ()) {
 						//TODO:Activate or deactivate this line to see how the game looks with or without removal of multitarget objectives!
 						Destroy (t.GetComponentInChildren<CameraMultiTargetObjective> ());

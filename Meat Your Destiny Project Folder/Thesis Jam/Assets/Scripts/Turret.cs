@@ -35,7 +35,7 @@ public class Turret : MonoBehaviour
 	private Vector3 targetDir;
 	private Vector3 newDir;
 	private Transform target;
-    private LineRenderer lineRenderer;
+    public LineRenderer lineRenderer;
 	public int segmentNum;
 	[Header("PARTICLE SYSTEM VARS")]
 	public TurretParticles tp;
@@ -62,7 +62,9 @@ public class Turret : MonoBehaviour
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
 	void Awake(){
         lineRenderer = GetComponent<LineRenderer>();
+
         lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.enabled = false;
 
 		anim = GetComponent<Animator> ();
 		segmentNum = letterRenderers.Length;
@@ -221,6 +223,7 @@ public class Turret : MonoBehaviour
 				neutralColor = unownedColor;
 			}
 
+            lineRenderer.enabled = true;
             StartCoroutine(DrawLineToPlayer(ownerNum));
             objectPool = GameObject.Find("Cannonball Pool " + ownerNum.ToString()).GetComponent<EZObjectPools.EZObjectPool>();
 			outlineBar.color = neutralColor;
@@ -391,30 +394,35 @@ public class Turret : MonoBehaviour
 
     IEnumerator DrawLineToPlayer(int playerNum, float drawTime = 0.5f, float recedeTime = 0.25f){
         //retract the line
-        print("drawing line");
-        float elapsedTime = 0;
-        while(elapsedTime < recedeTime){
-            
-            elapsedTime += Time.deltaTime;
-            lineRenderer.SetPosition(1, Vector3.Lerp( lineRenderer.GetPosition(1), transform.position, elapsedTime / recedeTime));
-            yield return null;
-        }
-        //draw the line;
+        if (lineRenderer)
+        {
+            float elapsedTime = 0;
+            while (elapsedTime < recedeTime)
+            {
 
-        elapsedTime = 0;
-        lineRenderer.material.color = TwoDGameManager.thisInstance.playerVibrantColors[playerNum];
-        //lineRenderer.startColor = TwoDGameManager.thisInstance.playerColors[playerNum];
-        //lineRenderer.endColor = TwoDGameManager.thisInstance.playerColors[playerNum];
-        while(elapsedTime < drawTime){
-            elapsedTime += Time.deltaTime;
-            lineRenderer.SetPosition(1, Vector3.Lerp(transform.position, TwoDGameManager.thisInstance.players[playerNum].transform.position, elapsedTime / drawTime));
-            yield return null;
-        }
+                elapsedTime += Time.deltaTime;
+                lineRenderer.SetPosition(1, Vector3.Lerp(lineRenderer.GetPosition(1), transform.position, elapsedTime / recedeTime));
+                yield return null;
+            }
+            //draw the line;
 
-        //maintain the line at position
-        while (playerNum == ownerNum){
-            lineRenderer.SetPosition(1, TwoDGameManager.thisInstance.players[playerNum].transform.position);
-            yield return null;
+            elapsedTime = 0;
+            lineRenderer.material.color = TwoDGameManager.thisInstance.playerVibrantColors[playerNum];
+            //lineRenderer.startColor = TwoDGameManager.thisInstance.playerColors[playerNum];
+            //lineRenderer.endColor = TwoDGameManager.thisInstance.playerColors[playerNum];
+            while (elapsedTime < drawTime)
+            {
+                elapsedTime += Time.deltaTime;
+                lineRenderer.SetPosition(1, Vector3.Lerp(transform.position, TwoDGameManager.thisInstance.players[playerNum].transform.position, elapsedTime / drawTime));
+                yield return null;
+            }
+
+            //maintain the line at position
+            while (playerNum == ownerNum)
+            {
+                lineRenderer.SetPosition(1, TwoDGameManager.thisInstance.players[playerNum].transform.position);
+                yield return null;
+            }
         }
 
 

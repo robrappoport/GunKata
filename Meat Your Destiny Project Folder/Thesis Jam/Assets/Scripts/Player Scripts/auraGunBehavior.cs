@@ -255,7 +255,7 @@ public class auraGunBehavior : MonoBehaviour
 					//Debug.Log(chargeTime + " " + "chargetime");
 
 					if (wingMatChangeValue == 0) {
-						chargeTime += Time.deltaTime / initialChargeBuffer;
+						//chargeTime += Time.deltaTime / initialChargeBuffer;
 					} else {
                         if (!laserChargeSys.isPlaying)
                         {
@@ -264,13 +264,13 @@ public class auraGunBehavior : MonoBehaviour
                         }
 
 					
-							chargeTime += Time.deltaTime;
+							//chargeTime += Time.deltaTime;
 
 						if (chargeTime < loadedChargeTime) {
 							DrainAura (Time.deltaTime * laserStaminaDrainRate);
 						}
 					}
-					myCont.shootSlowDown ();
+					//myCont.shootSlowDown ();
 
 					wingMatChangeValue = Mathf.FloorToInt ((chargeTime / loadedChargeTime) * 3f);
 					// DEPRECATED: wings changing color on laser charge

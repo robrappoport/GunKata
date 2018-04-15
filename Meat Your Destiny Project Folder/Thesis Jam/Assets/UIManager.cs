@@ -126,6 +126,7 @@ public  class UIManager : MonoBehaviour {
 
             yield return null;
         }
+        yield return new WaitForSeconds(.5f);
         TwoDGameManager.thisInstance.players[playerNum].flashing = false;
 
     }

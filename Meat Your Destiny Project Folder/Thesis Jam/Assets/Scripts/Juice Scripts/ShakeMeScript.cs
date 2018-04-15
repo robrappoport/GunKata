@@ -31,12 +31,12 @@ public class ShakeMeScript : MonoBehaviour {
         }
 	}
 
-    public static IEnumerator ShakeMe2D(RectTransform r, float shakeMagnitude = .25f, float shakeTime = 0.5f){
+    public static IEnumerator ShakeMe2D(RectTransform r, float shakeMagnitude = 1.5f, float shakeTime = 0.5f){
         Vector2 originalPos = r.anchoredPosition;
         float elapsedTime = 0;
         while(elapsedTime < shakeTime){
             elapsedTime += Time.deltaTime;
-            r.anchoredPosition = r.anchoredPosition + Random.insideUnitCircle * shakeMagnitude;
+            r.anchoredPosition = r.anchoredPosition + new Vector2((Random.insideUnitCircle * shakeMagnitude).x, 0);
             yield return null;
 
         }
