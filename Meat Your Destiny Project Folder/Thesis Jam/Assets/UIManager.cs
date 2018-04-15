@@ -102,6 +102,34 @@ public  class UIManager : MonoBehaviour {
 		}
 	}
 
+
+    public IEnumerator Flash(int playerNum, float flashTime = 0.25f){
+        StartCoroutine(ShakeMeScript.ShakeMe2D(playerStamFillList[playerNum].transform.parent.GetComponent<RectTransform>()));
+        float elapsedTime = 0;
+        Color startColor = playerStamFillList[playerNum].transform.parent.GetComponent<Image>().color;
+        Color circuitColor = playerStamCircuitBrightnessList[playerNum].color;
+        while (elapsedTime < flashTime/2)
+        {
+            elapsedTime += Time.deltaTime;
+
+            playerStamFillList[playerNum].transform.parent.GetComponent<Image>().color = Color.Lerp(startColor, Color.yellow, elapsedTime / (flashTime / 2));
+            playerStamCircuitBrightnessList[playerNum].color = Color.Lerp(startColor, Color.yellow, elapsedTime / (flashTime / 2));
+            yield return null;
+        }
+        elapsedTime = 0;
+        while (elapsedTime < flashTime / 2)
+        {
+            elapsedTime += Time.deltaTime;
+
+            playerStamFillList[playerNum].transform.parent.GetComponent<Image>().color = Color.Lerp(Color.yellow, startColor, elapsedTime / (flashTime / 2));
+            playerStamCircuitBrightnessList[playerNum].color = Color.Lerp(Color.yellow, startColor, elapsedTime / (flashTime / 2));
+
+            yield return null;
+        }
+        TwoDGameManager.thisInstance.players[playerNum].flashing = false;
+
+    }
+
     public void UpdatePlayerCanvas(int playerNum, float newFillAmount){
         int totalStamina = TwoDGameManager.thisInstance.players[playerNum].staminaSegmentNum;
         playerStamFillList[playerNum].fillAmount = newFillAmount / totalStamina;

@@ -83,6 +83,7 @@ public class auraGunBehavior : MonoBehaviour
     private int startingAuraIndex;
 	int chargeIndex;
     Animator wingAnim;
+    public bool flashing = false;
 
 	//Manual Turret Fire vars
 	List<Turret> myTurrets = new List<Turret>();
@@ -427,6 +428,10 @@ public class auraGunBehavior : MonoBehaviour
         }else{
             if(!Sound.me.IsPlaying(inSufficientStaminaSound)){
                 //Sound.me.Play(inSufficientStaminaSound);
+            }
+            if(!flashing){
+                flashing = true;
+                StartCoroutine(UIManager.thisInstance.Flash(playerNum));
             }
             return false;
         }

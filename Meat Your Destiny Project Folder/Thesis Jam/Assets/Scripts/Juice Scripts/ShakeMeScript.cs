@@ -30,11 +30,28 @@ public class ShakeMeScript : MonoBehaviour {
             transform.position = originalPos;
         }
 	}
-    public void ShakeMe()
-    {
-        StartCoroutine(ShakeNow());
+
+    public static IEnumerator ShakeMe2D(RectTransform r, float shakeMagnitude = .25f, float shakeTime = 0.5f){
+        Vector2 originalPos = r.anchoredPosition;
+        float elapsedTime = 0;
+        while(elapsedTime < shakeTime){
+            elapsedTime += Time.deltaTime;
+            r.anchoredPosition = r.anchoredPosition + Random.insideUnitCircle * shakeMagnitude;
+            yield return null;
+
+        }
+        elapsedTime = 0;
+        while(elapsedTime < .1f){
+            elapsedTime += Time.deltaTime;
+            r.anchoredPosition = Vector2.Lerp(r.anchoredPosition, originalPos, elapsedTime / .1f);
+            yield return null;
+        }
+
     }
 
+    public void ShakeMe(){
+        StartCoroutine(ShakeNow());
+    }
     IEnumerator ShakeNow()
     {
         Vector3 originalPos = transform.position;
