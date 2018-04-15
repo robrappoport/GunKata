@@ -581,7 +581,7 @@ public class AuraCharacterController : PlayControl
 
 	void AuraCheck(){
 		cols = TwoDGameManager.CleanColliderList (cols);
-		auraCol = AuraGenerator.GetCurrentAura (cols);
+        auraCol = AuraGenerator.GetCurrentAura(cols, GetComponent<Collider>());
 		if (auraCol) {
 			if (auraCol.bounds.Contains (transform.position)) {
 				switch (auraCol.GetComponent<AuraGenerator> ().auraType) {

@@ -56,6 +56,7 @@ public class auraGunBehavior : MonoBehaviour
     public ParticleSystem standardHalo, DamagedHalo;
 
     [Header("NEW AURA VERSION VARS")]
+    public float auraScaleFactor = 5;
     public float[] auraLevelCharge;
     public float auraLevelChargeMax;
     int heldCharges;
@@ -73,10 +74,10 @@ public class auraGunBehavior : MonoBehaviour
     public float coolDownTotal;
     public bool coolingDown = false;
     public int auraIndex;
-    private float[] auraScales = new float[6] {.7f,.8f,1f,1.3f,1.6f, 1.8f};
+    private float[] auraScales = new float[6] {.7f,.8f,1f,1.2f,1.3f, 1.5f};
     public float auraDrainRate;
     public AudioClip auraScaleIncreaseSound;
-
+    private AuraGenerator myAura;
     private float displayDrainRate = 100f;
     private float staminaToDisplay;
     private int startingAuraIndex;
@@ -430,15 +431,40 @@ public class auraGunBehavior : MonoBehaviour
             return false;
         }
     }
+
+    void DropAura(){
+        myAura.SetLifeTime(chargeIndex);
+        myAura.transform.SetParent(null);
+        myAura = null;
+
+        StartCoroutine(AuraSound());
+        sprAura.SetActive(false);
+        Invoke("ResetAuraCooldown", coolDownDuration);
+
+    }
 	void AuraCharge(){
 		if (myCont.secondaryFireDown () == true) {
 			currentAuraChargeLimit = remainingStamina;
 			CancelInvoke ("ResetAuraCooldown");
+            sprAura.SetActive(true);
+            if (EnoughStamina(0) && myAura == null)
+            {//only instantiate an aura if one "charge" has been used
+                myAura = Instantiate(AuraObj, sprAura.transform.position,
+                    Quaternion.Euler(0, 0, 0))
+                    .GetComponent<AuraGenerator>();
+                myAura.Init(playerNum, 1);
+                myAura.transform.SetParent(transform);
+                myAura.transform.localScale = auraScales[0] * Vector3.one;
+
+            }
+
+
 		}
 		if (myCont.secondaryFire () == true) {
 			
 			//calculate how much charge remains and how much is to be used
-			sprAura.SetActive (true);
+
+
 			DrainAura (Time.deltaTime * auraChargeRate);
             if (EnoughStamina(0)) {
 				currentAuraCharge = Mathf.Clamp (currentAuraCharge + Time.deltaTime * auraChargeRate, 0, currentAuraChargeLimit);
@@ -449,37 +475,53 @@ public class auraGunBehavior : MonoBehaviour
 				chargeIndex = (int)currentAuraCharge;
 			}
 
-	//		remainingAuraCharge = Mathf.Clamp (remainingAuraCharge - Time.deltaTime * auraChargeRate, 0, auraStamImgArray.Length);
-	//		currentAuraCharge = Mathf.Clamp (currentAuraCharge + Time.deltaTime * auraChargeRate, 0, currentAuraChargeLimit);
-			//change the wing materials
-			if (currentAuraCharge != tempValue) {
-				//adjust the charge loop to account for the first and last turns
-				for (int i = 0; i <= chargeIndex; i++) {
-                    
-					Renderer[] wingArray = wings [Mathf.Clamp (i, 0, staminaSegmentNum - 1)].GetComponentsInChildren<Renderer> ();
-					foreach (Renderer r in wingArray) {
-						//r.material.c = activeWingColor;
-						if (chargeIndex != staminaSegmentNum) {
-							r.material.SetColor ("_EmissionColor", activeWingColor);
-
-						} else {
-							r.material.SetColor ("_EmissionColor", Color.white);
-							r.material.color = Color.white; 
-						}
-
-					}
-			
-				}
-				tempValue = wingMatChangeValue;
-			}
-			
-
-	
-			//lerp the outline to the target scale
-			Vector3 targetScale = auraScales [Mathf.Clamp (chargeIndex, 0, auraScales.Length - 1)] * Vector3.one;
-			sprAura.transform.localScale = Vector3.Lerp (sprAura.transform.localScale, targetScale, 0.7f);
-            if(!Sound.me.IsPlaying(auraScaleIncreaseSound, chargeIndex/(staminaSegmentNum - 1))){
+            Vector3 targetScale = auraScales[Mathf.Clamp(chargeIndex, 0, auraScales.Length - 1)] * Vector3.one * auraScaleFactor;
+            //lerp the outline to the target scale
+            if (myAura)
+            {
+                if (remainingStamina > 0)
+                {
+                    myAura.transform.localScale = Vector3.Lerp(myAura.transform.localScale, targetScale, 0.7f);
+                    myAura.transform.position = sprAura.transform.position;
+                }else{
+                    DropAura();
+                }
+            }
+            if (!Sound.me.IsPlaying(auraScaleIncreaseSound, chargeIndex / (staminaSegmentNum - 1)))
+            {
                 //Sound.me.Play(auraScaleIncreaseSound, chargeIndex/(staminaSegmentNum - 1));
+
+                //		remainingAuraCharge = Mathf.Clamp (remainingAuraCharge - Time.deltaTime * auraChargeRate, 0, auraStamImgArray.Length);
+                //		currentAuraCharge = Mathf.Clamp (currentAuraCharge + Time.deltaTime * auraChargeRate, 0, currentAuraChargeLimit);
+                //change the wing materials
+                if (currentAuraCharge != tempValue)
+                {
+                    //adjust the charge loop to account for the first and last turns
+                    for (int i = 0; i <= chargeIndex; i++)
+                    {
+
+                        Renderer[] wingArray = wings[Mathf.Clamp(i, 0, staminaSegmentNum - 1)].GetComponentsInChildren<Renderer>();
+                        foreach (Renderer r in wingArray)
+                        {
+                            //r.material.c = activeWingColor;
+                            if (chargeIndex != staminaSegmentNum)
+                            {
+                                r.material.SetColor("_EmissionColor", activeWingColor);
+
+                            }
+                            else
+                            {
+                                r.material.SetColor("_EmissionColor", Color.white);
+                                r.material.color = Color.white;
+                            }
+
+                        }
+
+                    }
+                    tempValue = wingMatChangeValue;
+                }
+
+
             }
 		} else {
             
@@ -510,23 +552,19 @@ public class auraGunBehavior : MonoBehaviour
 
 		}
 
-		if (myCont.secondaryFireUp () == true) {
-            StartCoroutine(AuraSound());
-            coolingDown = true;
-			if(currentAuraCharge > 0){//only instantiate an aura if one "charge" has been used
-                AuraGenerator aura = Instantiate(AuraObj, sprAura.transform.position,
-					Quaternion.Euler(0, 0, 0))
-					.GetComponent<AuraGenerator>();
-				aura.Init(playerNum, auraScales[Mathf.Clamp(chargeIndex, 0, auraScales.Length - 1)]);
-			}
-			sprAura.transform.localScale = new Vector3(1, 1, 1);
-			sprAura.SetActive(false);
+        if (myCont.secondaryFireUp() == true)
+        {
+            if (myAura)
+            {
+                DropAura();
+            }
 			if (currentAuraCharge < 1) {
 				remainingStamina = (int)remainingStamina;
 			}
 
+            coolingDown = true;
+
 			currentAuraCharge = 0f;
-			Invoke ("ResetAuraCooldown", coolDownDuration);
 		}
 	}
 	void ResetAuraCooldown(){

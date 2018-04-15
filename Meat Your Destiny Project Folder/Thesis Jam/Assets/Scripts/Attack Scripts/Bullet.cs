@@ -141,7 +141,7 @@ public class Bullet : MonoBehaviour {
     void AuraCheck()
     {
         colliders = TwoDGameManager.CleanColliderList(colliders);
-        currentCollider = AuraGenerator.GetCurrentAura(colliders);
+        currentCollider = AuraGenerator.GetCurrentAura(colliders, GetComponent<Collider>());
         if (currentCollider)
         {
            

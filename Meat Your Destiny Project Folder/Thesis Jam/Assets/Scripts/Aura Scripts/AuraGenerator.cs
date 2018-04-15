@@ -76,6 +76,7 @@ AuraGenerator : MonoBehaviour {
 	}
 
 
+
 	// Update is called once per frame
 	void Update () {
 		if (auraCurLife >0.1f && !GetComponent<MeshDeformer> ()) {
@@ -83,13 +84,12 @@ AuraGenerator : MonoBehaviour {
 			GetComponent<MeshDeformer> ().damping = 2;
 		}
         auraCurLife = Mathf.Clamp(auraCurLife, 0, auraLifeTime);
-        auraCurLife += Time.deltaTime;
-//        Debug.Log(auraCurLife);
-        if (auraCurLife <= 0)
-        {
-            auraCurLife = 0;
-            Destroy(gameObject);
+
+        if (transform.parent == null) { 
+            auraCurLife += Time.deltaTime; 
         }
+//        Debug.Log(auraCurLife);
+
         if (auraCurLife >= auraLifeTime)
         {
             auraCurLife = auraLifeTime;
@@ -151,13 +151,17 @@ AuraGenerator : MonoBehaviour {
 	void DestroyParticles(GameObject oldPs){
 		Destroy (oldPs);
 	}
+    public void SetLifeTime(float auraSize){
+        auraLifeTime = Mathf.Clamp(auraSize, 2, 5);
+
+    }
    public void Init (int playerNum, float auraSize)
     {
         auraPlayerNum = playerNum;
         auraScaleCurrent = auraSize;
 
-        gameObject.transform.localScale = new Vector3(1, 1, 1);
-        gameObject.transform.localScale *= (auraSize * 100);
+       // gameObject.transform.localScale = new Vector3(1, 1, 1);
+        //gameObject.transform.localScale *= (auraSize * 100);
         //if (auraPlayerNum == 0)
         //{
         //    gameObject.tag = "player1Aura";
@@ -166,7 +170,7 @@ AuraGenerator : MonoBehaviour {
         //{
         //    gameObject.tag = "player2Aura";
         //}
-        auraLifeTime = auraSize * 5;
+        SetLifeTime(auraSize);
         auraCurLife = 0;
 
         p = GetComponentInChildren<ParticleSystem>();
@@ -176,22 +180,36 @@ AuraGenerator : MonoBehaviour {
 
 
     }
-	public static Collider GetCurrentAura(List<Collider> colliders){
+	public static Collider GetCurrentAura(List<Collider> colliders, Collider otherCollider){
 		//remove any missing refs from the list; aura no longer exists
 		//if there is only one left in the list, it becomes the aura by default
 		switch (colliders.Count) {
 		case 1:
-			return colliders [0];
+                if (otherCollider.bounds.Intersects(colliders[0].bounds))
+                {
+                    return colliders[0];
+                }
+                else
+                {
+                    return null;
+                }
 		case 0:
 			return null;
 		default:
 			Collider finalCol = colliders [0];
-			for (int i = 0; i < colliders.Count; i++) {
-				if (colliders [i].GetComponent<AuraGenerator> ().auraScaleCurrent >= finalCol.GetComponent<AuraGenerator>().auraScaleCurrent) {
-					finalCol = colliders [i];
-				}
-			}
-			return finalCol;
+                for (int i = 0; i < colliders.Count; i++)
+                {
+                    if (colliders[i].GetComponent<AuraGenerator>().auraScaleCurrent >= finalCol.GetComponent<AuraGenerator>().auraScaleCurrent)
+                    {
+                        finalCol = colliders[i];
+                    }
+                }
+                if (otherCollider.bounds.Intersects(finalCol.bounds))
+                {
+                    return finalCol;
+                }else{
+                    return null;
+                }
 		}
 	}
 
