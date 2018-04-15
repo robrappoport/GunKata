@@ -28,7 +28,7 @@ public class TwoDGameManager : MonoBehaviour {
     private float displayedPlayer2Score;
     public float maxScore;
     private float maxScale = 5;
-    public List<Color> playerColors = new List<Color>();
+    public List<Color> playerColors = new List<Color>(), playerVibrantColors = new List<Color>();
 
     public GameObject player1Prefab, player2Prefab;
     public GameObject player1, player2;
