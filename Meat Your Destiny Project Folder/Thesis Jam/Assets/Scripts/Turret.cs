@@ -77,7 +77,7 @@ public class Turret : MonoBehaviour
 		lightningParticle.gameObject.SetActive (false);
 		circleParticle = Instantiate (tp.circleParticles, transform) as ParticleSystem;
 		circleParticle.transform.localPosition = tp.circleParticlesLocation;
-		captureParticleMain = captureParticle.main;
+		circleMain = circleParticle.main;
 		circleParticle.gameObject.SetActive (false);
 		captureParticle = Instantiate (tp.captureParticles, transform) as ParticleSystem;
 		captureParticle.transform.localPosition = tp.captureParticlesLocation;
