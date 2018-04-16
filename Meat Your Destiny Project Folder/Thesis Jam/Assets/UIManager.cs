@@ -10,6 +10,8 @@ public  class UIManager : MonoBehaviour {
 	public Vector3 startPos;
 	public List<GameObject> scoreCards, scoreCardPool;
 	public Hashtable h;
+    public GameObject TurretCaptureBar;
+    Image p1Bar, p2Bar;
 	public GameObject scoreCardPrefab;
 	public List<Turret> turretList = new List<Turret> ();
 	public float timeSlowScale = 0.5f, timeSlowingDuration = 1, timeSlowedDuration = 1, timeReturnDuration = 1;
@@ -38,16 +40,19 @@ public  class UIManager : MonoBehaviour {
 		victoryText.enabled = false;
 		endPos = new Vector3 (startPos.x * -1, startPos.y, 0);
 		maxDist = Vector3.Distance (startPos, endPos); 
-		GenerateCardPool (30);
+		//GenerateCardPool (30);
         playerStamFillList.Capacity = TwoDGameManager.thisInstance.players.Length;
         DrawPlayerCanvas();
+        p1Bar = TurretCaptureBar.transform.GetChild(0).GetComponent<Image>();
+        p2Bar = TurretCaptureBar.transform.GetChild(1).GetComponent<Image>();
+
     }
 		
 	// Update is called once per frame
 	void Update () {
 		CheckWin ();
-		UpdateScore ();	
-
+        //UpdateScore ();	
+        UpdateScoreBar();
 	}
 
 	void GenerateCardPool (int j){
@@ -97,12 +102,17 @@ public  class UIManager : MonoBehaviour {
 			} else {
 				winChanceCoroutinesStarted = false;
 				victoryText.enabled = false;
-				GetComponent<Image> ().color = Color.gray;
+				//GetComponent<Image> ().color = Color.gray;
 			}
 		}
 	}
 
+    void UpdateScoreBar(){
+        p1Bar.fillAmount = Mathf.MoveTowards(p1Bar.fillAmount, (float)TwoDGameManager.thisInstance.turrets[0].Count/turretList.Count, Time.deltaTime/2);
+        p2Bar.fillAmount = Mathf.MoveTowards(p2Bar.fillAmount, (float)TwoDGameManager.thisInstance.turrets[1].Count / turretList.Count, Time.deltaTime/2);
 
+        
+    }
     public IEnumerator Flash(int playerNum, float flashTime = 0.25f){
         StartCoroutine(ShakeMeScript.ShakeMe2D(playerStamFillList[playerNum].transform.parent.GetComponent<RectTransform>()));
         float elapsedTime = 0;
@@ -213,9 +223,10 @@ public  class UIManager : MonoBehaviour {
 	//	victorTextRectTransform.localScale = startingSize;
 		victoryText.fontSize = startingFont;
 		victoryText.enabled = false;
+
 	}
 	void UpdateScore(){
-        DrawScore();
+        //DrawScore();
 		turretList = turretList.OrderBy (
 			x => Camera.main.WorldToScreenPoint (x.transform.position).x).ToList ();
         
@@ -260,8 +271,9 @@ public  class UIManager : MonoBehaviour {
 	}
 
 	public void DrawCard(int i = 0){
-        
-		if (scoreCards.Count < turretList.Count ) {
+
+        if(1 < 0){
+		//if (scoreCards.Count < turretList.Count ) {
 			GameObject scoreCard = scoreCardPool [i];
 			scoreCard.SetActive (true);
 			//scoreCardPool.Remove (scoreCard);

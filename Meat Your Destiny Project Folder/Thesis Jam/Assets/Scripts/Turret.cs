@@ -420,7 +420,12 @@ public class Turret : MonoBehaviour
             //maintain the line at position
             while (playerNum == ownerNum)
             {
-                lineRenderer.SetPosition(1, TwoDGameManager.thisInstance.players[playerNum].transform.position);
+                if (TwoDGameManager.thisInstance.GetPlayer(playerNum).activeInHierarchy) 
+                {
+                    lineRenderer.SetPosition(1, Vector3.Lerp(transform.position, TwoDGameManager.thisInstance.players[playerNum].transform.position, elapsedTime / drawTime));
+                }else{
+                    lineRenderer.SetPosition(1, transform.position);
+                }
                 yield return null;
             }
         }

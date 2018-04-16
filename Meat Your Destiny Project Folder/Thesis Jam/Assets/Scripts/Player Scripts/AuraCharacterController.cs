@@ -52,6 +52,7 @@ public class AuraCharacterController : PlayControl
     public enum ControlType { Keyboard, Controller, NONE };/// <summary>
     public float forceMultiplier;
     public AudioClip dashSound;
+    public bool inCutscene;
 
     ///<summary>
     /// Keyboard controls are as follows: WASD to move, arrows to rotate, space to shoot, left shift to project aura, right alt to dash
@@ -127,7 +128,9 @@ public class AuraCharacterController : PlayControl
     {
 		if (hitStunnedTimer <= 0 && !health.dying)
         {
-            MoveCharacter();
+            if (!inCutscene) { 
+                MoveCharacter(); 
+            }
         }
         else
         {
@@ -148,9 +151,12 @@ public class AuraCharacterController : PlayControl
     }
     private void Update()
     {
-		AuraCheck ();
-		anim.SetFloat("Velocity X", transform.InverseTransformDirection(OnMove()).x);
-		anim.SetFloat("Velocity Z", transform.InverseTransformDirection(OnMove()).z);
+        if (!inCutscene)
+        {
+            AuraCheck();
+            anim.SetFloat("Velocity X", transform.InverseTransformDirection(OnMove()).x);
+            anim.SetFloat("Velocity Z", transform.InverseTransformDirection(OnMove()).z);
+        }
     }
 
 

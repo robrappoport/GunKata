@@ -135,6 +135,10 @@ public class TwoDGameManager : MonoBehaviour {
 
 	}
 
+    public void TogglePlayerControl(){
+        players[0].GetComponent<AuraCharacterController>().inCutscene = !players[0].GetComponent<AuraCharacterController>().inCutscene;
+        players[1].GetComponent<AuraCharacterController>().inCutscene = !players[1].GetComponent<AuraCharacterController>().inCutscene;
+    }
     private void Start()
     {
         player1Scale = player1.transform.localScale;
@@ -390,8 +394,8 @@ public class TwoDGameManager : MonoBehaviour {
         yield return new WaitForSeconds(Mathf.Clamp(maxRespawnTime - respawnBalanceBuffer * turrets[1].Count, minRespawnTime, maxRespawnTime));
 
         PlayerSpawnProtect(spawnPos, 12);
-        SpawnPlayer1(spawnPos);
         GameObject lifeBeam = Instantiate(RespawnBeamPrefab) as GameObject;
+        lifeBeam.GetComponentInChildren<Renderer>().material.color = playerColors[0];
         lifeBeam.transform.position = spawnPos;
         Animator lifeBeamAnim = lifeBeam.GetComponent<Animator>();
         lifeBeamAnim.SetFloat("Direction", -1);
@@ -400,6 +404,8 @@ public class TwoDGameManager : MonoBehaviour {
 
        
         Destroy(lifeBeam);
+        SpawnPlayer1(spawnPos);
+
     }
     IEnumerator DelayedSpawnPlayer2()
     {
@@ -407,8 +413,9 @@ public class TwoDGameManager : MonoBehaviour {
         player2.GetComponent<auraGunBehavior>().DamagedHalo.Play();
         yield return new WaitForSeconds(Mathf.Clamp(maxRespawnTime - respawnBalanceBuffer * turrets[0].Count, minRespawnTime, maxRespawnTime));     
         PlayerSpawnProtect(spawnPos, 13);
-        SpawnPlayer2(spawnPos);
         GameObject lifeBeam = Instantiate(RespawnBeamPrefab) as GameObject;
+        lifeBeam.GetComponentInChildren<Renderer>().material.color = playerColors[1];
+
         lifeBeam.transform.position = spawnPos;
         Animator lifeBeamAnim = lifeBeam.GetComponent<Animator>();
         lifeBeamAnim.SetFloat("Direction", -1);
@@ -416,6 +423,8 @@ public class TwoDGameManager : MonoBehaviour {
 
         yield return new WaitForSeconds(lifeBeamAnim.runtimeAnimatorController.animationClips[0].length);
         Destroy(lifeBeam);
+        SpawnPlayer2(spawnPos);
+
 
     }
 

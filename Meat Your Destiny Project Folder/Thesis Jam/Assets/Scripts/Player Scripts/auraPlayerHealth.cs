@@ -85,6 +85,8 @@ public class auraPlayerHealth : MonoBehaviour {
 		//}
         Sound.me.Play(deathSnd, .4f, true);
         deathBeam = Instantiate(deathBeamPrefab, transform) as GameObject;
+        deathBeam.GetComponentInChildren<Renderer>().material.color = TwoDGameManager.thisInstance.playerColors[GetComponent<auraGunBehavior>().playerNum];
+
 		deathBeam.transform.SetParent(null);
 		deathBeam.transform.position = transform.position;
 		deathBeam.transform.localScale = Vector3.one;

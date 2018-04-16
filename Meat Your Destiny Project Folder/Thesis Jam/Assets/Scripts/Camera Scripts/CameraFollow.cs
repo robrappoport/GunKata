@@ -3,54 +3,80 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour {
+    public Vector3 player1pos, player2pos, finalPos;
+    public float rotationSpeed = 1, introductionTime = 3, cameraTransitionTime = 1;
+    private Vector3 targetDir, newDir;
+    Transform currentTarget;
+    public Transform stageTransform;
 
-	public TwoDCharacterController myCont;
-	public float CameraMoveSpeed = 120.0f;
-	public GameObject CameraFollowObj;
-	Vector3 FollowPOS;
-	public float clampAngle = 80.0f;
-	public float inputSensitivity = 150.0f;
-	public GameObject CameraObj;
-	public GameObject PlayerObj;
-	public float smoothX;
-	public float smoothY;
-	private float rotY = 0.0f;
-	private float rotX = 0.0f;
-	// Use this for initialization
-	void Start () {
-		Vector3 rot = transform.localRotation.eulerAngles;
-		rotY = rot.y;
-		rotX = rot.x;
-	}
-
-	// Update is called once per frame
-	void Update () {
-		//Here we set up the rotation of the sticks
-
-//		float inputX = myCont.CameraMove ().x;
-//		float inputZ = myCont.CameraMove ().z;
-
-//		rotY += inputX * inputSensitivity * Time.deltaTime;
-//		rotX += inputZ * inputSensitivity * Time.deltaTime;
-
-//		rotX = Mathf.Clamp (rotX, -clampAngle, clampAngle);
-//
-//		Quaternion localRotation = Quaternion.Euler (rotX, rotY, 0.0f);
-//		transform.rotation = localRotation;
+	private void Awake()
+	{
+        GetComponent<CameraMultitarget>().enabled = false;
 
 	}
-
-	void LateUpdate (){
-		CameraUpdater ();
+	private void Start()
+	{
+        StartCoroutine(IntroSequence(introductionTime, cameraTransitionTime));
 	}
+    void LateUpdate()
+    {
+        RotateTowards(currentTarget, rotationSpeed);
+    }
 
-	void CameraUpdater (){
-		//set target to follow
-		Transform target = CameraFollowObj.transform;
+    IEnumerator IntroSequence(float introTime, float transitionTime){
+        TwoDGameManager.thisInstance.TogglePlayerControl();
+        float elapsedTime = 0;
+        //go from start view to stage view
+        currentTarget = stageTransform;
+        while(elapsedTime<transitionTime){
+            elapsedTime += Time.deltaTime;
+            transform.position = Vector3.Lerp(transform.position, finalPos, elapsedTime / transitionTime);
+            yield return null;
+        }
+        yield return new WaitForSeconds(introTime);
+        //go from stage view to p1 view
+        elapsedTime = 0;
+        currentTarget = TwoDGameManager.thisInstance.players[0].transform;
+        while(elapsedTime<transitionTime){
+            elapsedTime += Time.deltaTime;
+            transform.position = Vector3.Lerp(transform.position, player1pos, elapsedTime / transitionTime);
+            yield return null;
+        }
+        yield return new WaitForSeconds(introTime);
+        //go from p1 view to p2 view
+        elapsedTime = 0;
+        currentTarget = TwoDGameManager.thisInstance.players[1].transform;
 
-		//move towards the game object that is the target
-		float step = CameraMoveSpeed * Time.deltaTime;
-		transform.position = Vector3.MoveTowards (transform.position, target.position, step);
+        while(elapsedTime < transitionTime){
+            elapsedTime += Time.deltaTime;
+            transform.position = Vector3.Lerp(transform.position, player2pos, elapsedTime / transitionTime);
+            yield return null;
+        }
+        yield return new WaitForSeconds(introTime);
+        //go from p2 view to stage view again
 
-	}
+        elapsedTime = 0;
+        currentTarget = stageTransform;
+
+        while(elapsedTime < transitionTime){
+            elapsedTime += Time.deltaTime;
+            transform.position = Vector3.Lerp(transform.position, finalPos, elapsedTime / transitionTime);
+            yield return null;
+        }
+        //activate the multitarget 
+        GetComponent<CameraMultitarget>().enabled = true;
+        currentTarget = null;
+        TwoDGameManager.thisInstance.TogglePlayerControl();
+    }
+
+    void RotateTowards(Transform target, float speed){
+        if (target)
+        {
+            targetDir = targetDir - transform.position;
+            float step = speed * Time.deltaTime;
+            newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0F);
+            //Debug.DrawRay(transform.position, newDir, Color.red, 50f);
+            transform.rotation = Quaternion.LookRotation(newDir);
+        }
+    }
 }
