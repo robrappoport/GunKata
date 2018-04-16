@@ -108,8 +108,14 @@ public  class UIManager : MonoBehaviour {
 	}
 
     void UpdateScoreBar(){
-        p1Bar.fillAmount = Mathf.MoveTowards(p1Bar.fillAmount, (float)TwoDGameManager.thisInstance.turrets[0].Count/turretList.Count, Time.deltaTime/2);
-        p2Bar.fillAmount = Mathf.MoveTowards(p2Bar.fillAmount, (float)TwoDGameManager.thisInstance.turrets[1].Count / turretList.Count, Time.deltaTime/2);
+		currentTurretNum = 0;
+		foreach(List<Turret> t in TwoDGameManager.thisInstance.turrets){
+			currentTurretNum += t.Count;
+
+		}
+
+		p1Bar.fillAmount = Mathf.MoveTowards(p1Bar.fillAmount, (float)TwoDGameManager.thisInstance.turrets[0].Count/currentTurretNum, Time.deltaTime/2);
+		p2Bar.fillAmount = Mathf.MoveTowards(p2Bar.fillAmount, (float)TwoDGameManager.thisInstance.turrets[1].Count / currentTurretNum, Time.deltaTime/2);
 
         
     }

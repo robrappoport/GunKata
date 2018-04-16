@@ -42,7 +42,7 @@ public class Turret : MonoBehaviour
 	public ParticleSystem lightningParticle, circleParticle, captureParticle;
 	List<Collider> cols = new List<Collider> ();
 	Collider auraCollider;
-
+	ParticleSystem.MainModule lightningMain, circleMain, captureParticleMain;
 	Animator anim;
 	[Header("CHARGE PROGRESS VARS")]
 	public Renderer[] letterRenderers = new Renderer[5];
@@ -72,12 +72,16 @@ public class Turret : MonoBehaviour
 
 		lightningParticle = Instantiate (tp.chargeParticles, transform) as ParticleSystem;
 		lightningParticle.transform.localPosition = tp.chargeParticlesLocation;
+		lightningMain = lightningParticle.main;
+
 		lightningParticle.gameObject.SetActive (false);
 		circleParticle = Instantiate (tp.circleParticles, transform) as ParticleSystem;
 		circleParticle.transform.localPosition = tp.circleParticlesLocation;
+		captureParticleMain = captureParticle.main;
 		circleParticle.gameObject.SetActive (false);
 		captureParticle = Instantiate (tp.captureParticles, transform) as ParticleSystem;
 		captureParticle.transform.localPosition = tp.captureParticlesLocation;
+		captureParticleMain = captureParticle.main;
 		captureParticle.gameObject.SetActive (false);
 
 		//set emitters
@@ -150,6 +154,8 @@ public class Turret : MonoBehaviour
             UIPos = UICanvas.transform.position;
 
         }
+		objectPool = GameObject.Find("Cannonball Pool " + ownerNum.ToString()).GetComponent<EZObjectPools.EZObjectPool>();
+
 	}
 
 
@@ -197,10 +203,37 @@ public class Turret : MonoBehaviour
 		AdjustCannonColor ();
 
 		DetermineDegreeOfOwnership();
+		OnCapture ();
+	
+
+
+		if (auraCollider && charging && MismatchedOwners()) {
+			AdjustOwnership (auraCollider.GetComponent<AuraGenerator> ().auraPlayerNum);
+			lightningParticle.gameObject.SetActive (true);
+			circleParticle.gameObject.SetActive (true);
+			if (owner == Owner.Player1) {
+				lightningMain.startColor = playerColors [0];
+				circleMain.startColor = playerColors [0];
+			} else {
+				lightningMain.startColor= playerColors [1];
+				circleMain.startColor = playerColors [1];
+			}
+		} else {
+			lightningParticle.gameObject.SetActive (false);
+			circleParticle.gameObject.SetActive (false);
+		}
+
+		//	CleanCannonballList ();
+
+	}
+
+
+
+	void OnCapture(){
 		if (completelyOwned) {
-            
-           Sound.me.Play(captureSound);
-            StartCoroutine(TimeManipulation.SlowTimeTemporarily(0.7f, 0.1f, .2f, 0.1f));
+
+			Sound.me.Play(captureSound);
+			StartCoroutine(TimeManipulation.SlowTimeTemporarily(0.7f, 0.1f, .2f, 0.1f));
 			CancelInvoke ();
 			//InvokeRepeating ("Fire", repeatTime - (Time.timeSinceLevelLoad % repeatTime), repeatTime);
 			//contestable = false;
@@ -223,52 +256,26 @@ public class Turret : MonoBehaviour
 				neutralColor = unownedColor;
 			}
 
-            lineRenderer.enabled = true;
-            StartCoroutine(DrawLineToPlayer(ownerNum));
-            objectPool = GameObject.Find("Cannonball Pool " + ownerNum.ToString()).GetComponent<EZObjectPools.EZObjectPool>();
+			lineRenderer.enabled = true;
+			StartCoroutine(DrawLineToPlayer(ownerNum));
 			outlineBar.color = neutralColor;
 			litSegments = 0;
 			charge = 0;
 			AdjustListMembership ();
 			captureParticle.gameObject.SetActive (true);
-			var captureParticleMain = captureParticle.main;
 			captureParticleMain.startColor = playerColors [ownerNum];
 			captureParticle.Play ();
-            foreach (Transform t in EmitterRotator) {
-                foreach(Transform c in t.GetChild(0).transform){
-                    if (c.name == "Emitter_Rotate")
-                    {
-                        c.GetComponent<Renderer>().materials[1].color = neutralColor;
-                    }
-                }
-            }
-				
-		} 
-
-
-		if (auraCollider && charging && MismatchedOwners()) {
-			AdjustOwnership (auraCollider.GetComponent<AuraGenerator> ().auraPlayerNum);
-			var lightningMain = lightningParticle.main;
-			var circleMain = circleParticle.main;
-			lightningParticle.gameObject.SetActive (true);
-			circleParticle.gameObject.SetActive (true);
-			if (owner == Owner.Player1) {
-				lightningMain.startColor = playerColors [0];
-				circleMain.startColor = playerColors [0];
-			} else {
-				lightningMain.startColor= playerColors [1];
-				circleMain.startColor = playerColors [1];
+			foreach (Transform t in EmitterRotator) {
+				foreach(Transform c in t.GetChild(0).transform){
+					if (c.name == "Emitter_Rotate")
+					{
+						c.GetComponent<Renderer>().materials[1].color = neutralColor;
+					}
+				}
 			}
-		} else {
-			lightningParticle.gameObject.SetActive (false);
-			circleParticle.gameObject.SetActive (false);
-		}
 
-		//	CleanCannonballList ();
-
+		} 
 	}
-
-
 	public void RegisterTurret(){
 		if (!TwoDGameManager.thisInstance.turrets [ownerNum].Contains (this)) {
 			TwoDGameManager.thisInstance.turrets [ownerNum].Add (this);

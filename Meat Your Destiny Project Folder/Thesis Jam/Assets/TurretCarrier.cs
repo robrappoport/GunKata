@@ -129,7 +129,7 @@ public class TurretCarrier : MonoBehaviour {
 			yield return null;
 		}
         foreach(Transform t in children){
-            UIManager.thisInstance.scoreCards[UIManager.thisInstance.turretList.IndexOf(t.GetComponent<Turret>())].SetActive(false);
+           // UIManager.thisInstance.scoreCards[UIManager.thisInstance.turretList.IndexOf(t.GetComponent<Turret>())].SetActive(false);
 
             UIManager.thisInstance.turretList.Remove(t.GetComponent<Turret>());
         }
