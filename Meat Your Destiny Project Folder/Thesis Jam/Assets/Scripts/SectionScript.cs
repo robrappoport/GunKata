@@ -6,7 +6,6 @@ public class SectionScript : MonoBehaviour {
 	public TurretCarrier turretCarrier;
 	public List<Turret> sectionTurret = new List<Turret>();
     public GameObject floor;
-    public ShakeMeScript shake;
     private float dropSpeed;
     private Renderer floorRend;
     public float dropTotal;
@@ -46,7 +45,7 @@ public class SectionScript : MonoBehaviour {
     {
         StartCoroutine(DropCo());
         Sound.me.Play(rumbleSound);
-        shake.ShakeMe();
+		StartCoroutine (ShakeMeScript.Shake (transform, 2, 3, true, false, true));
     }
 
     public IEnumerator DropCo ()

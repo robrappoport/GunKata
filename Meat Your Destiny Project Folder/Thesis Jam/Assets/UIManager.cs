@@ -120,7 +120,7 @@ public  class UIManager : MonoBehaviour {
         
     }
     public IEnumerator Flash(int playerNum, float flashTime = 0.25f){
-        StartCoroutine(ShakeMeScript.ShakeMe2D(playerStamFillList[playerNum].transform.parent.GetComponent<RectTransform>()));
+        StartCoroutine(ShakeMeScript.ShakeUI(playerStamFillList[playerNum].transform.parent.GetComponent<RectTransform>()));
         float elapsedTime = 0;
         Color startColor = playerStamFillList[playerNum].transform.parent.GetComponent<Image>().color;
         Color circuitColor = playerStamCircuitBrightnessList[playerNum].color;
