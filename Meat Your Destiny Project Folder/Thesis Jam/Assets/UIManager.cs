@@ -85,7 +85,7 @@ public  class UIManager : MonoBehaviour {
 				
 					//victoryText.enabled = true;
 
-					GetComponent<Image> ().color = Color.yellow;
+					//GetComponent<Image> ().color = Color.yellow;
 					switch (winningPlayer) {
 					case 0:
                             victoryText.color = new Color (174, 255, 246, 255);

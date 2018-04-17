@@ -23,7 +23,6 @@ public class CameraFollow : MonoBehaviour {
     void LateUpdate()
     {
         RotateTowards(currentTarget, rotationSpeed);
-        Debug.Log(currentTarget);
     }
 
     IEnumerator IntroSequence(float introTime, float transitionTime){
