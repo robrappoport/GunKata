@@ -93,7 +93,7 @@ public class TwoDGameManager : MonoBehaviour {
 	void Awake ()
 	{
 		//DontDestroyOnLoad(this.gameObject);
-
+		Application.targetFrameRate = 60;
         cam = Camera.main.GetComponent<CameraMultitarget>();
         StartCoroutine(TimerCo());
         if (thisInstance == null)
