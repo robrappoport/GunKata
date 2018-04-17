@@ -425,8 +425,13 @@ namespace FMODUnity
                 case BuildTarget.XboxOne:
                     return FMODPlatform.XboxOne;
                 #if UNITY_5_2 || UNITY_5_3_OR_NEWER
+<<<<<<< .merge_file_a08464
                // case BuildTarget.WiiU:
                  //   return FMODPlatform.WiiU;
+=======
+                case BuildTarget.WiiU:
+                    return FMODPlatform.WiiU;
+>>>>>>> .merge_file_a04704
                 #endif
                 case BuildTarget.WSAPlayer:
                 #if UNITY_2017_1_OR_NEWER
