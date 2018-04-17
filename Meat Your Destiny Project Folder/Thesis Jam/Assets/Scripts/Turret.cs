@@ -57,10 +57,13 @@ public class Turret : MonoBehaviour
     List<Animator> emitterAnimators = new List<Animator>();
     public AudioClip captureSound;
 
+	Collider myCollider;
+
 	//CameraMultiTargetObjective camTar;
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
 	void Awake(){
+		
         lineRenderer = GetComponent<LineRenderer>();
 
         lineRenderer.SetPosition(0, transform.position);
@@ -110,7 +113,7 @@ public class Turret : MonoBehaviour
 
 
 	void Start(){
-
+		myCollider = GetComponent<Collider> ();
 		if(key){
 			TwoDGameManager.thisInstance.keyTurrets.Add(this);
 			uncontestableTime = keyUncontestableTime;
@@ -330,7 +333,7 @@ public class Turret : MonoBehaviour
 
 	void AuraCheck (){
 		cols = TwoDGameManager.CleanColliderList (cols);
-        auraCollider = AuraGenerator.GetCurrentAura (cols, GetComponent<Collider>());
+		auraCollider = AuraGenerator.GetCurrentAura (cols, myCollider);
 		if (contestable) {
 
 			if (auraCollider)
