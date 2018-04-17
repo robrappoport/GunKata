@@ -8,25 +8,29 @@ public class CameraFollow : MonoBehaviour {
     private Vector3 targetDir, newDir;
     Transform currentTarget;
     public Transform stageTransform;
+    public Transform cityTransform;
 
 	private void Awake()
 	{
-        GetComponent<CameraMultitarget>().enabled = false;
+        GetComponentInChildren<CameraMultitarget>().enabled = false;
 
 	}
 	private void Start()
 	{
+        //currentTarget = cityTransform;
         StartCoroutine(IntroSequence(introductionTime, cameraTransitionTime));
 	}
     void LateUpdate()
     {
         RotateTowards(currentTarget, rotationSpeed);
+        Debug.Log(currentTarget);
     }
 
     IEnumerator IntroSequence(float introTime, float transitionTime){
         TwoDGameManager.thisInstance.TogglePlayerControl();
         float elapsedTime = 0;
         //go from start view to stage view
+        yield return new WaitForSeconds(5f);
         currentTarget = stageTransform;
         while(elapsedTime<transitionTime){
             elapsedTime += Time.deltaTime;
@@ -64,7 +68,7 @@ public class CameraFollow : MonoBehaviour {
             yield return null;
         }
         //activate the multitarget 
-        GetComponent<CameraMultitarget>().enabled = true;
+        GetComponentInChildren<CameraMultitarget>().enabled = true;
         currentTarget = null;
         TwoDGameManager.thisInstance.TogglePlayerControl();
     }
@@ -75,7 +79,7 @@ public class CameraFollow : MonoBehaviour {
             targetDir = targetDir - transform.position;
             float step = speed * Time.deltaTime;
             newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0F);
-            //Debug.DrawRay(transform.position, newDir, Color.red, 50f);
+            Debug.DrawRay(transform.position, newDir, Color.red, 50000f);
             transform.rotation = Quaternion.LookRotation(newDir);
         }
     }
