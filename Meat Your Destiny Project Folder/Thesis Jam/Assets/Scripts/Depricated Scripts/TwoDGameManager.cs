@@ -152,8 +152,10 @@ public class TwoDGameManager : MonoBehaviour {
 		if (!winCanvas) {
 			spawnResetTimer += Time.deltaTime;
 			StartCoroutine (BallTimer ());
-			player1Start.position = player1Spawns [index1];
-			player2Start.position = player2Spawns [index2];
+			if (player1Start && player2Start) {
+				player1Start.position = player1Spawns [index1];
+				player2Start.position = player2Spawns [index2];
+			}
 			playerScoreUpdate ();
 			if (playerHealth1.dead || playerHealth2.dead) {
 				CheckPlayerWin ();
@@ -292,7 +294,8 @@ public class TwoDGameManager : MonoBehaviour {
 			Destroy (player1);
 		}
         //player1.transform.localScale = player1Scale;
-		if (spawnResetTimer > spawnResetTimeLimit) {
+		if (spawnResetTimer < spawnResetTimeLimit) {
+			print ("spawning");
 			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
 
 			player1 = Instantiate (player1Prefab, player2Start.position = spawnPos, Quaternion.identity) as GameObject;
@@ -303,16 +306,16 @@ public class TwoDGameManager : MonoBehaviour {
 		players[0] = player1.GetComponent<auraGunBehavior>();
 		GetComponent<bulletManagerManager>().bMan1 = player1.GetComponent<BulletManager>();
         //Debug.Log("player 1's stamina is" + player1.GetComponent<auraGunBehavior>().curStamina);
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[0] = player1Canvas.transform.Find("AuraLvl1/AuraBar1").GetComponent<Image>();
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[0].fillAmount = 1;
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[1] = player1Canvas.transform.Find("AuraLvl2/AuraBar2").GetComponent<Image>();
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[1].fillAmount = 1;
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[2] = player1Canvas.transform.Find("AuraLvl3/AuraBar3").GetComponent<Image>();
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[2].fillAmount = 1;
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[3] = player1Canvas.transform.Find("AuraLvl4/AuraBar4").GetComponent<Image>();
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[3].fillAmount = 1;
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[4] = player1Canvas.transform.Find("AuraLvl5/AuraBar5").GetComponent<Image>();
-        player1.GetComponent<auraGunBehavior>().auraStamImgArray[4].fillAmount = 1;
+//        player1.GetComponent<auraGunBehavior>().auraStamImgArray[0] = player1Canvas.transform.Find("AuraLvl1/AuraBar1").GetComponent<Image>();
+//        player1.GetComponent<auraGunBehavior>().auraStamImgArray[0].fillAmount = 1;
+//        player1.GetComponent<auraGunBehavior>().auraStamImgArray[1] = player1Canvas.transform.Find("AuraLvl2/AuraBar2").GetComponent<Image>();
+//        player1.GetComponent<auraGunBehavior>().auraStamImgArray[1].fillAmount = 1;
+//        player1.GetComponent<auraGunBehavior>().auraStamImgArray[2] = player1Canvas.transform.Find("AuraLvl3/AuraBar3").GetComponent<Image>();
+//        player1.GetComponent<auraGunBehavior>().auraStamImgArray[2].fillAmount = 1;
+//        player1.GetComponent<auraGunBehavior>().auraStamImgArray[3] = player1Canvas.transform.Find("AuraLvl4/AuraBar4").GetComponent<Image>();
+//        player1.GetComponent<auraGunBehavior>().auraStamImgArray[3].fillAmount = 1;
+//        player1.GetComponent<auraGunBehavior>().auraStamImgArray[4] = player1Canvas.transform.Find("AuraLvl5/AuraBar5").GetComponent<Image>();
+//        player1.GetComponent<auraGunBehavior>().auraStamImgArray[4].fillAmount = 1;
         player1.GetComponent<auraGunBehavior>().DamagedHalo.Play();
         //player1Tracker.Player = player1.transform;
      
@@ -329,7 +332,7 @@ public class TwoDGameManager : MonoBehaviour {
 		}
 			
         //Debug.Log("Spawning player 2");
-		if (spawnResetTimer > spawnResetTimeLimit) {
+		if (spawnResetTimer < spawnResetTimeLimit) {
 			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
 			player2 = Instantiate (player2Prefab, player2Start.position = spawnPos, Quaternion.identity) as GameObject;
 		} else {
@@ -343,16 +346,16 @@ public class TwoDGameManager : MonoBehaviour {
         //Debug.Log("player 2's stamina is"+ player2.GetComponent<auraGunBehavior>().curStamina);
 
 		//aura charge stuff
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[0] = player2Canvas.transform.Find("AuraLvl1/AuraBar1").GetComponent<Image>();
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[0].fillAmount = 1;
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[1] = player2Canvas.transform.Find("AuraLvl2/AuraBar2").GetComponent<Image>();
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[1].fillAmount = 1;
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[2] = player2Canvas.transform.Find("AuraLvl3/AuraBar3").GetComponent<Image>();
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[2].fillAmount = 1;
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[3] = player2Canvas.transform.Find("AuraLvl4/AuraBar4").GetComponent<Image>();
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[3].fillAmount = 1;
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[4] = player2Canvas.transform.Find("AuraLvl5/AuraBar5").GetComponent<Image>();
-        player2.GetComponent<auraGunBehavior>().auraStamImgArray[4].fillAmount = 1;
+//        player2.GetComponent<auraGunBehavior>().auraStamImgArray[0] = player2Canvas.transform.Find("AuraLvl1/AuraBar1").GetComponent<Image>();
+//        player2.GetComponent<auraGunBehavior>().auraStamImgArray[0].fillAmount = 1;
+//        player2.GetComponent<auraGunBehavior>().auraStamImgArray[1] = player2Canvas.transform.Find("AuraLvl2/AuraBar2").GetComponent<Image>();
+//        player2.GetComponent<auraGunBehavior>().auraStamImgArray[1].fillAmount = 1;
+//        player2.GetComponent<auraGunBehavior>().auraStamImgArray[2] = player2Canvas.transform.Find("AuraLvl3/AuraBar3").GetComponent<Image>();
+//        player2.GetComponent<auraGunBehavior>().auraStamImgArray[2].fillAmount = 1;
+//        player2.GetComponent<auraGunBehavior>().auraStamImgArray[3] = player2Canvas.transform.Find("AuraLvl4/AuraBar4").GetComponent<Image>();
+//        player2.GetComponent<auraGunBehavior>().auraStamImgArray[3].fillAmount = 1;
+//        player2.GetComponent<auraGunBehavior>().auraStamImgArray[4] = player2Canvas.transform.Find("AuraLvl5/AuraBar5").GetComponent<Image>();
+//        player2.GetComponent<auraGunBehavior>().auraStamImgArray[4].fillAmount = 1;
         
         //player2Tracker.Player = player2.transform;
         
@@ -454,16 +457,16 @@ public class TwoDGameManager : MonoBehaviour {
         if (!PlayerCanSpawn (1) && playerHealth2.dead || testDeath){
 			player1.SetActive (false);
 			player2.SetActive (false);
-			player2Canvas.SetActive (false);
-			player1Canvas.SetActive (false);
+		//	player2Canvas.SetActive (false);
+		//	player1Canvas.SetActive (false);
 			StartCoroutine (gameRestart (0));
 		}
 		//       if (player2ScoreNum >= maxScore)
 		else if (!PlayerCanSpawn (0) && playerHealth1.dead){			
 			player1.SetActive (false);
 			player2.SetActive (false);
-			player2Canvas.SetActive (false);
-			player1Canvas.SetActive (false);
+		//	player2Canvas.SetActive (false);
+		//	player1Canvas.SetActive (false);
 			StartCoroutine (gameRestart (1));
 
 		}

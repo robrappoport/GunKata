@@ -27,6 +27,10 @@ public class SectionScript : MonoBehaviour {
 				sectionTurret.Add (t.GetComponent<Turret> ());
 			}
 		}
+
+		if (!floor) {
+			floor = GetComponentInChildren<Renderer> ().gameObject;
+		}
         dropSpeed = 15f;
         floorRend = floor.GetComponent<Renderer>();
         normColor = flashColor;
