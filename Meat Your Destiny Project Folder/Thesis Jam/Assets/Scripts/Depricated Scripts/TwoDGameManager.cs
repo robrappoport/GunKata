@@ -152,10 +152,10 @@ public class TwoDGameManager : MonoBehaviour {
 		if (!winCanvas) {
 			spawnResetTimer += Time.deltaTime;
 			StartCoroutine (BallTimer ());
-			if (player1Start && player2Start) {
-				player1Start.position = player1Spawns [index1];
-				player2Start.position = player2Spawns [index2];
-			}
+
+			player1Start.position = player1Spawns [index1];
+			player2Start.position = player2Spawns [index2];
+
 			playerScoreUpdate ();
 			if (playerHealth1.dead || playerHealth2.dead) {
 				CheckPlayerWin ();
@@ -294,11 +294,10 @@ public class TwoDGameManager : MonoBehaviour {
 			Destroy (player1);
 		}
         //player1.transform.localScale = player1Scale;
-		if (spawnResetTimer < spawnResetTimeLimit) {
-			print ("spawning");
+		if (spawnResetTimer > spawnResetTimeLimit) {
 			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
 
-			player1 = Instantiate (player1Prefab, player2Start.position = spawnPos, Quaternion.identity) as GameObject;
+			player1 = Instantiate (player1Prefab, player1Start.position = spawnPos, Quaternion.identity) as GameObject;
 		} else {
 			player1 = Instantiate(player1Prefab, new Vector3 (player1Spawns[index1].x, player1Spawns[index1].y + 5, player1Spawns[index1].z), Quaternion.identity) as GameObject;
 		}
@@ -332,7 +331,7 @@ public class TwoDGameManager : MonoBehaviour {
 		}
 			
         //Debug.Log("Spawning player 2");
-		if (spawnResetTimer < spawnResetTimeLimit) {
+		if (spawnResetTimer > spawnResetTimeLimit) {
 			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
 			player2 = Instantiate (player2Prefab, player2Start.position = spawnPos, Quaternion.identity) as GameObject;
 		} else {

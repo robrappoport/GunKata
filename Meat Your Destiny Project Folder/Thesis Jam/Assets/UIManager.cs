@@ -374,7 +374,7 @@ public  class UIManager : MonoBehaviour {
         bool canLerp = true;
         while (canLerp)
         {
-            Debug.Log("hello my baby");
+            //Debug.Log("hello my baby");
             Vector2 captureBarPivot = TurretCaptureBack.GetComponent<RectTransform>().pivot;
             float newYPos = Mathf.Lerp(captureBarPivot.y, 0f, Time.deltaTime * 5f);
             captureBarPivot = new Vector2(captureBarPivot.x, newYPos);
