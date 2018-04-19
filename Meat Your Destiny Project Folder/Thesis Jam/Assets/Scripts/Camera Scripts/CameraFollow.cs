@@ -17,7 +17,7 @@ public class CameraFollow : MonoBehaviour {
 	}
 	private void Start()
 	{
-        //currentTarget = cityTransform;
+        currentTarget = cityTransform;
         StartCoroutine(IntroSequence(introductionTime, cameraTransitionTime));
 	}
     void LateUpdate()
@@ -39,7 +39,7 @@ public class CameraFollow : MonoBehaviour {
         yield return new WaitForSeconds(introTime);
         //go from stage view to p1 view
         elapsedTime = 0;
-        currentTarget = TwoDGameManager.thisInstance.players[0].transform;
+        currentTarget = TwoDGameManager.thisInstance.players[0].transform.GetChild(5);
         while(elapsedTime<transitionTime){
             elapsedTime += Time.deltaTime;
             transform.position = Vector3.Lerp(transform.position, player1pos, elapsedTime / transitionTime);
@@ -48,7 +48,7 @@ public class CameraFollow : MonoBehaviour {
         yield return new WaitForSeconds(introTime);
         //go from p1 view to p2 view
         elapsedTime = 0;
-        currentTarget = TwoDGameManager.thisInstance.players[1].transform;
+        currentTarget = TwoDGameManager.thisInstance.players[1].transform.GetChild(5);
 
         while(elapsedTime < transitionTime){
             elapsedTime += Time.deltaTime;
@@ -79,7 +79,7 @@ public class CameraFollow : MonoBehaviour {
             float step = speed * Time.deltaTime;
             newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0F);
             Debug.DrawRay(transform.position, newDir, Color.red, 50000f);
-            transform.rotation = Quaternion.LookRotation(newDir);
+            transform.LookAt(target);
         }
     }
 }
