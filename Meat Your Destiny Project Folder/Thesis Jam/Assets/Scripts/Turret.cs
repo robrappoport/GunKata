@@ -10,7 +10,7 @@ public class Turret : MonoBehaviour
 	//	public Renderer topRenderer, middleRenderer, bottomRenderer;
 
 	public Color p1Color, p2Color, neutralColor, currentColor, uncontestableColor, unownedColor;
-	public GameObject CannonballPrefab;
+	//public GameObject CannonballPrefab;
 	public int litSegments = 0, ownerNum = 2, timesOwned = 0, maxTimesCanBeOwned, chargeIncrementSign = 1;
 	public float startTime, repeatTime, immuneTime, uncontestableTime, keyUncontestableTime, spinSpeed;
 	public List<Renderer> SegmentsList;
@@ -157,7 +157,7 @@ public class Turret : MonoBehaviour
             UIPos = UICanvas.transform.position;
 
         }
-		objectPool = GameObject.Find("Cannonball Pool " + ownerNum.ToString()).GetComponent<EZObjectPools.EZObjectPool>();
+		
 
 	}
 
@@ -233,8 +233,8 @@ public class Turret : MonoBehaviour
 
 
 	void OnCapture(){
+        objectPool = GameObject.Find("Cannonball Pool " + ownerNum.ToString()).GetComponent<EZObjectPools.EZObjectPool>();
 		if (completelyOwned) {
-
 			Sound.me.Play(captureSound);
 			StartCoroutine(TimeManipulation.SlowTimeTemporarily(0.7f, 0.1f, .2f, 0.1f));
 			CancelInvoke ();

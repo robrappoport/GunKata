@@ -28,7 +28,7 @@ public class CameraFollow : MonoBehaviour {
         TwoDGameManager.thisInstance.TogglePlayerControl();
         float elapsedTime = 0;
         //go from start view to stage view
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(2f);
         currentTarget = stageTransform;
         while(elapsedTime<transitionTime){
             elapsedTime += Time.deltaTime;
