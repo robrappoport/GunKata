@@ -11,6 +11,7 @@ public  class UIManager : MonoBehaviour {
 	public List<GameObject> scoreCards, scoreCardPool;
 	public Hashtable h;
     public GameObject TurretCaptureBar;
+    public GameObject TurretCaptureBack;
     Image p1Bar, p2Bar;
 	public GameObject scoreCardPrefab;
 	public List<Turret> turretList = new List<Turret> ();
@@ -26,6 +27,7 @@ public  class UIManager : MonoBehaviour {
     [Header("Player UI Element Vars")]
     private List<Image> playerStamFillList = new List<Image>(), playerStamCircuitBrightnessList = new List<Image>();
     public GameObject playerStamPrefab;
+    public GameObject instantiatedPlayerStam;
     public GameObject tickMarkPrefab;
     public float UIPlayer1X, UIExtremeX,UIY, tickMarkLeftX, tickMarkY;
     private List<List<Image>> PlayerTickMarListList = new List<List<Image>>();
@@ -45,6 +47,7 @@ public  class UIManager : MonoBehaviour {
         DrawPlayerCanvas();
         p1Bar = TurretCaptureBar.transform.GetChild(0).GetComponent<Image>();
         p2Bar = TurretCaptureBar.transform.GetChild(1).GetComponent<Image>();
+
 
 
     }
@@ -338,12 +341,12 @@ public  class UIManager : MonoBehaviour {
 
         for (int i = 0; i < playerStamFillList.Capacity; i++)
         {
-            GameObject stamBar = Instantiate(playerStamPrefab, transform) as GameObject;
-            playerStamFillList.Add(stamBar.transform.Find("PlayerStamMeterFill").GetComponent<Image>());
+            instantiatedPlayerStam = Instantiate(playerStamPrefab, transform) as GameObject;
+            playerStamFillList.Add(instantiatedPlayerStam.transform.Find("PlayerStamMeterFill").GetComponent<Image>());
             playerStamFillList[i].color = TwoDGameManager.thisInstance.playerColors[i];
-            playerStamCircuitBrightnessList.Add(stamBar.transform.Find("PlayerStamCircuits").GetComponent<Image>());
+            playerStamCircuitBrightnessList.Add(instantiatedPlayerStam.transform.Find("PlayerStamCircuits").GetComponent<Image>());
 
-            stamBar.GetComponent<RectTransform>().anchoredPosition = new Vector2(barXPositions[i], UIY);
+            instantiatedPlayerStam.GetComponent<RectTransform>().anchoredPosition = new Vector2(barXPositions[i], UIY);
             if(playerStamFillList.Capacity != 3){
                 if((float)i/playerStamFillList.Capacity >=0.5f){
                     //playerStamList[i].GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 180);
@@ -353,7 +356,7 @@ public  class UIManager : MonoBehaviour {
 
             for (int j = 1; j < TwoDGameManager.thisInstance.players[i].staminaSegmentNum ; j++)
             {
-                GameObject tickMark = Instantiate(tickMarkPrefab, stamBar.transform) as GameObject;
+                GameObject tickMark = Instantiate(tickMarkPrefab, instantiatedPlayerStam.transform) as GameObject;
                 PlayerTickMarListList[i].Add(tickMark.GetComponent<Image>());
                 tickMark.GetComponent<RectTransform>().anchoredPosition = new Vector2(
                     tickMarkLeftX + (float)j/TwoDGameManager.thisInstance.players[i].staminaSegmentNum * Mathf.Abs(tickMarkLeftX * 2), tickMarkY);
@@ -365,8 +368,22 @@ public  class UIManager : MonoBehaviour {
 
     }
 
-    public void PlayerCanvasAlpha()
+    public IEnumerator PlayerCanvasAlpha()
     {
-        List <GameObject> UIList = new List<GameObject>();   
+        Debug.Log("hello my honey");
+        bool canLerp = true;
+        while (canLerp)
+        {
+            Debug.Log("hello my baby");
+            Vector2 captureBarPivot = TurretCaptureBack.GetComponent<RectTransform>().pivot;
+            float newYPos = Mathf.Lerp(captureBarPivot.y, 0f, Time.deltaTime * 5f);
+            captureBarPivot = new Vector2(captureBarPivot.x, newYPos);
+            TurretCaptureBack.GetComponent<RectTransform>().pivot = captureBarPivot;
+            if (Mathf.Abs(newYPos)<= .01f)
+            {
+                canLerp = false;
+            }
+            yield return 0;
+        }
     }
 }

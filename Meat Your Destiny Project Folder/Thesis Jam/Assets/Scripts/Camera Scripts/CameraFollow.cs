@@ -59,7 +59,7 @@ public class CameraFollow : MonoBehaviour {
 
         elapsedTime = 0;
         currentTarget = stageTransform;
-
+        StartCoroutine(UIManager.thisInstance.PlayerCanvasAlpha());
         while(elapsedTime < transitionTime){
             elapsedTime += Time.deltaTime;
             transform.position = Vector3.Lerp(transform.position, finalPos, elapsedTime / transitionTime);
