@@ -15,7 +15,8 @@ public class CameraFollow : MonoBehaviour {
 
 	}
 	private void Start()
-	{
+	{		
+		
         currentTarget = cityTransform;
         StartCoroutine(IntroSequence(introductionTime, cameraTransitionTime));
 	}
@@ -25,6 +26,7 @@ public class CameraFollow : MonoBehaviour {
     }
 
     IEnumerator IntroSequence(float introTime, float transitionTime){
+
         TwoDGameManager.thisInstance.TogglePlayerControl();
         float elapsedTime = 0;
         //go from start view to stage view
@@ -59,7 +61,7 @@ public class CameraFollow : MonoBehaviour {
 
         elapsedTime = 0;
         currentTarget = stageTransform;
-        StartCoroutine(UIManager.thisInstance.PlayerCanvasAlpha());
+		StartCoroutine(UIManager.thisInstance.PlayerCanvasFadeIn(true));
         while(elapsedTime < transitionTime){
             elapsedTime += Time.deltaTime;
             transform.position = Vector3.Lerp(transform.position, finalPos, elapsedTime / transitionTime);

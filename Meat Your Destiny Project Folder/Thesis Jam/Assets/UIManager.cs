@@ -23,6 +23,7 @@ public  class UIManager : MonoBehaviour {
 	float maxDist;
 	Text victoryText;
 	bool winChanceCoroutinesStarted = false;
+	bool fading = false;
 
     [Header("Player UI Element Vars")]
     private List<Image> playerStamFillList = new List<Image>(), playerStamCircuitBrightnessList = new List<Image>();
@@ -47,16 +48,18 @@ public  class UIManager : MonoBehaviour {
         DrawPlayerCanvas();
         p1Bar = TurretCaptureBar.transform.GetChild(0).GetComponent<Image>();
         p2Bar = TurretCaptureBar.transform.GetChild(1).GetComponent<Image>();
-
+		StartCoroutine(UIFadeIn (false));
 
 
     }
 		
 	// Update is called once per frame
 	void Update () {
-		CheckWin ();
-        //UpdateScore ();	
-        UpdateScoreBar();
+		if (!fading) {
+			CheckWin ();
+			//UpdateScore ();	
+			UpdateScoreBar ();
+		}
 	}
 
 
@@ -153,21 +156,21 @@ public  class UIManager : MonoBehaviour {
     }
 
     public void UpdatePlayerCanvas(int playerNum, float newFillAmount){
-        int totalStamina = TwoDGameManager.thisInstance.players[playerNum].staminaSegmentNum;
-        playerStamFillList[playerNum].fillAmount = newFillAmount / totalStamina;
+		if (!fading) {
+			int totalStamina = TwoDGameManager.thisInstance.players [playerNum].staminaSegmentNum;
+			playerStamFillList [playerNum].fillAmount = newFillAmount / totalStamina;
 
-        //draw all bright marks
-        for (int i = 0; i < Mathf.Clamp((int)newFillAmount, 0, PlayerTickMarListList[playerNum].Count); i++)
-        {
-            PlayerTickMarListList[playerNum][i].color = TwoDGameManager.thisInstance.playerColors[playerNum];
-        }
+			//draw all bright marks
+			for (int i = 0; i < Mathf.Clamp ((int)newFillAmount, 0, PlayerTickMarListList [playerNum].Count); i++) {
+				PlayerTickMarListList [playerNum] [i].color = TwoDGameManager.thisInstance.playerColors [playerNum];
+		
+			}
 
-        for (int i = Mathf.Clamp((int)newFillAmount,0, PlayerTickMarListList[playerNum].Count) ; i < PlayerTickMarListList[playerNum].Count; i++)
-            
-        {
-            PlayerTickMarListList[playerNum][i].color = Color.black;
-        }
-        playerStamCircuitBrightnessList[playerNum].color = Color.Lerp(Color.black, Color.white, newFillAmount);
+			for (int i = Mathf.Clamp ((int)newFillAmount, 0, PlayerTickMarListList [playerNum].Count); i < PlayerTickMarListList [playerNum].Count; i++) {
+				PlayerTickMarListList [playerNum] [i].color = Color.black;
+			}
+			playerStamCircuitBrightnessList [playerNum].color = Color.Lerp (Color.black, Color.white, newFillAmount);
+		}
     }
 
 	IEnumerator TimeSlowCamZoom (float zoomDistance = 900, float zoomInDuration = 0.2f, float zoomOutDuration= 0.2f){
@@ -367,23 +370,66 @@ public  class UIManager : MonoBehaviour {
 
 
     }
-
-    public IEnumerator PlayerCanvasAlpha()
+	/// <summary>
+	/// Used for fading the UI in
+	/// </summary>
+	/// <param name="fadingIn">If set to <c>true</c>, it will fade in. If set to <c>false</c>, set the alpha to 0 (transparent)</param>
+	public IEnumerator UIFadeIn(bool fadingIn)
     {
-        Debug.Log("hello my honey");
-        bool canLerp = true;
-        while (canLerp)
-        {
-            //Debug.Log("hello my baby");
-            Vector2 captureBarPivot = TurretCaptureBack.GetComponent<RectTransform>().pivot;
-            float newYPos = Mathf.Lerp(captureBarPivot.y, 0f, Time.deltaTime * 5f);
-            captureBarPivot = new Vector2(captureBarPivot.x, newYPos);
-            TurretCaptureBack.GetComponent<RectTransform>().pivot = captureBarPivot;
-            if (Mathf.Abs(newYPos)<= .01f)
-            {
-                canLerp = false;
-            }
-            yield return 0;
-        }
-    }
+		fading = true;
+		float elapsedTime = 0;
+		float limit = 1;
+		Color tmp;
+		//get all image components in the children of this object
+		List<Image> alphaList = new List<Image> ();
+		foreach (Image i in GetComponentsInChildren<Image>()) {
+			alphaList.Add (i);
+
+		}
+		if (!fadingIn) {
+			//set all their alphas to 0 if not fading in
+
+			foreach (Image i in alphaList) {
+				tmp = i.color;
+				tmp.a = 0;
+				i.color = tmp;
+			}
+		}
+
+		if (fadingIn) {
+			//increment their alphas by the duration if fading in
+			StopCoroutine (UIFadeIn (false));
+			while (elapsedTime < limit) {
+				elapsedTime += Time.deltaTime;
+				foreach (Image i in alphaList) {
+					tmp = i.color;
+					tmp.a = elapsedTime / limit;
+					i.color = tmp;
+				}
+				yield return null;
+
+			}
+			fading = false;
+		}
+		//set all 
+		//over the course of the time limit, increment the alpha of all 
+	
+//
+//        Debug.Log("hello my honey");
+//        bool canLerp = true;
+//        while (canLerp)
+//        {
+//            //Debug.Log("hello my baby");
+//            Vector2 captureBarPivot = TurretCaptureBack.GetComponent<RectTransform>().pivot;
+//            float newYPos = Mathf.Lerp(captureBarPivot.y, 0f, Time.deltaTime * 5f);
+//            captureBarPivot = new Vector2(captureBarPivot.x, newYPos);
+//            TurretCaptureBack.GetComponent<RectTransform>().pivot = captureBarPivot;
+//            if (Mathf.Abs(newYPos)<= .01f)
+//            {
+//                canLerp = false;
+//            }
+//            yield return 0;
+//        }
+	}
+
 }
