@@ -411,25 +411,7 @@ public  class UIManager : MonoBehaviour {
 			}
 			fading = false;
 		}
-		//set all 
-		//over the course of the time limit, increment the alpha of all 
-	
-//
-//        Debug.Log("hello my honey");
-//        bool canLerp = true;
-//        while (canLerp)
-//        {
-//            //Debug.Log("hello my baby");
-//            Vector2 captureBarPivot = TurretCaptureBack.GetComponent<RectTransform>().pivot;
-//            float newYPos = Mathf.Lerp(captureBarPivot.y, 0f, Time.deltaTime * 5f);
-//            captureBarPivot = new Vector2(captureBarPivot.x, newYPos);
-//            TurretCaptureBack.GetComponent<RectTransform>().pivot = captureBarPivot;
-//            if (Mathf.Abs(newYPos)<= .01f)
-//            {
-//                canLerp = false;
-//            }
-//            yield return 0;
-//        }
+		
 	}
 
 	public IEnumerator SlideTurretBar(){
@@ -437,7 +419,6 @@ public  class UIManager : MonoBehaviour {
 		
 		bool canLerp = true;
 		while (canLerp) {
-			//Debug.Log("hello my baby");
 			Vector2 captureBarPivot = TurretCaptureBack.GetComponent<RectTransform> ().pivot;
 			float newYPos = Mathf.Lerp (captureBarPivot.y, 0f, Time.deltaTime * 5f);
 			captureBarPivot = new Vector2 (captureBarPivot.x, newYPos);

@@ -61,12 +61,12 @@ public class CameraFollow : MonoBehaviour {
 
         elapsedTime = 0;
         currentTarget = stageTransform;
-<<<<<<< Updated upstream
+
 		StartCoroutine(UIManager.thisInstance.UIFadeIn(true));
 		StartCoroutine (UIManager.thisInstance.SlideTurretBar());
-=======
+
         StartCoroutine(UIManager.thisInstance.UIFadeIn(true));
->>>>>>> Stashed changes
+
         while(elapsedTime < transitionTime){
             elapsedTime += Time.deltaTime;
             transform.position = Vector3.Lerp(transform.position, finalPos, elapsedTime / transitionTime);
