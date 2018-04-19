@@ -432,4 +432,21 @@ public  class UIManager : MonoBehaviour {
 //        }
 	}
 
+	public IEnumerator SlideTurretBar(){
+
+		
+		bool canLerp = true;
+		while (canLerp) {
+			//Debug.Log("hello my baby");
+			Vector2 captureBarPivot = TurretCaptureBack.GetComponent<RectTransform> ().pivot;
+			float newYPos = Mathf.Lerp (captureBarPivot.y, 0f, Time.deltaTime * 5f);
+			captureBarPivot = new Vector2 (captureBarPivot.x, newYPos);
+			TurretCaptureBack.GetComponent<RectTransform> ().pivot = captureBarPivot;
+			if (Mathf.Abs (newYPos) <= .01f) {
+				canLerp = false;
+			}
+			yield return 0;
+		}
+	}
+
 }
