@@ -83,6 +83,7 @@ public class AuraCharacterController : PlayControl
     }
     void Start()
     {
+        InputManager.Enabled = false;
 		moveForce = prevMoveForce;
 
         anim = GetComponent<Animator>();
@@ -126,11 +127,19 @@ public class AuraCharacterController : PlayControl
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (!inCutscene)
+        {
+            if (InputManager.Enabled == false)
+            {
+                InputManager.Enabled = true;
+            }
+        }
+       
 		if (hitStunnedTimer <= 0 && !health.dying)
         {
-            if (!inCutscene) { 
+            
                 MoveCharacter(); 
-            }
+
         }
         else
         {

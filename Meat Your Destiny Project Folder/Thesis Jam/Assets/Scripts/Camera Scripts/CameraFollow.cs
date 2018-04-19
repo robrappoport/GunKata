@@ -9,7 +9,6 @@ public class CameraFollow : MonoBehaviour {
     Transform currentTarget;
     public Transform stageTransform;
     public Transform cityTransform;
-
 	private void Awake()
 	{
         GetComponentInChildren<CameraMultitarget>().enabled = false;

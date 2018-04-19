@@ -74,7 +74,7 @@ public class auraGunBehavior : MonoBehaviour
     public float coolDownTotal;
     public bool coolingDown = false;
     public int auraIndex;
-    private float[] auraScales = new float[6] {.7f,.8f,1f,1.2f,1.3f, 1.5f};
+    private float[] auraScales = new float[6] {1f,1f,1f,1f,1f, 1f};
     public float auraDrainRate;
     public AudioClip auraScaleIncreaseSound;
     private AuraGenerator myAura;

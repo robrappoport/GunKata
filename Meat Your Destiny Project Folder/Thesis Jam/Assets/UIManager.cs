@@ -46,6 +46,7 @@ public  class UIManager : MonoBehaviour {
         p1Bar = TurretCaptureBar.transform.GetChild(0).GetComponent<Image>();
         p2Bar = TurretCaptureBar.transform.GetChild(1).GetComponent<Image>();
 
+
     }
 		
 	// Update is called once per frame
@@ -54,6 +55,7 @@ public  class UIManager : MonoBehaviour {
         //UpdateScore ();	
         UpdateScoreBar();
 	}
+
 
 	void GenerateCardPool (int j){
 		for (int i = 0; i < j; i++) {
@@ -361,5 +363,10 @@ public  class UIManager : MonoBehaviour {
 
 
 
+    }
+
+    public void PlayerCanvasAlpha()
+    {
+        List <GameObject> UIList = new List<GameObject>();   
     }
 }

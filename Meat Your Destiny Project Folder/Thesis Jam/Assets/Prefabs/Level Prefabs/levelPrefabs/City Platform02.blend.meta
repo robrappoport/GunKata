@@ -1,79 +1,62 @@
 fileFormatVersion: 2
-guid: c41cff0ef97714d6a800fb2fbb3e9a52
-timeCreated: 1518729560
+guid: 4446ba56832824d68a818cc46731e190
+timeCreated: 1524166851
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: Asteroid_1
-    100002: Asteroid_1_001
-    100004: Asteroid_1_002
-    100006: Asteroid_2
-    100008: Asteroid_2_001
-    100010: Asteroid_2_002
-    100012: Asteroid_3
-    100014: Asteroid_3_001
-    100016: Asteroid_3_002
-    100018: Platform_1
-    100020: Platform_2
-    100022: Platform_3
-    100024: //RootNode
-    400000: Asteroid_1
-    400002: Asteroid_1_001
-    400004: Asteroid_1_002
-    400006: Asteroid_2
-    400008: Asteroid_2_001
-    400010: Asteroid_2_002
-    400012: Asteroid_3
-    400014: Asteroid_3_001
-    400016: Asteroid_3_002
-    400018: Platform_1
-    400020: Platform_2
-    400022: Platform_3
-    400024: //RootNode
-    2100000: Meteor_Material
-    2100002: Material_006
-    2100004: Material_001
-    2100006: Material
+    100000: //RootNode
+    100002: Outer_Wall
+    100004: Stage_1
+    100006: Stage_2
+    100008: Stage_3
+    100010: Statue_1
+    100012: Statue_2
+    100014: Statue_3
+    100016: Statue_4
+    400000: //RootNode
+    400002: Outer_Wall
+    400004: Stage_1
+    400006: Stage_2
+    400008: Stage_3
+    400010: Statue_1
+    400012: Statue_2
+    400014: Statue_3
+    400016: Statue_4
+    2100000: Material_006
+    2100002: Material_009
+    2100004: Material_008
+    2100006: Material_007
     2100008: Material_002
     2100010: Material_005
-    2100012: Material_003
-    2300000: Asteroid_1
-    2300002: Asteroid_1_001
-    2300004: Asteroid_1_002
-    2300006: Asteroid_2
-    2300008: Asteroid_2_001
-    2300010: Asteroid_2_002
-    2300012: Asteroid_3
-    2300014: Asteroid_3_001
-    2300016: Asteroid_3_002
-    2300018: Platform_1
-    2300020: Platform_2
-    2300022: Platform_3
-    3300000: Asteroid_1
-    3300002: Asteroid_1_001
-    3300004: Asteroid_1_002
-    3300006: Asteroid_2
-    3300008: Asteroid_2_001
-    3300010: Asteroid_2_002
-    3300012: Asteroid_3
-    3300014: Asteroid_3_001
-    3300016: Asteroid_3_002
-    3300018: Platform_1
-    3300020: Platform_2
-    3300022: Platform_3
-    4300000: Asteroid_2_002
-    4300002: Asteroid_1_002
-    4300004: Asteroid_3_002
-    4300006: Asteroid_2_001
-    4300008: Asteroid_1_001
-    4300010: Asteroid_3_001
-    4300012: Platform_3
-    4300014: Platform_1
-    4300016: Platform_2
-    4300018: Asteroid_3
-    4300020: Asteroid_1
-    4300022: Asteroid_2
+    2100012: Material_004
+    2100014: Material_001
+    2100016: Holy_Material
+    2100018: Material_003
+    2300000: Outer_Wall
+    2300002: Stage_1
+    2300004: Stage_2
+    2300006: Stage_3
+    2300008: Statue_1
+    2300010: Statue_2
+    2300012: Statue_3
+    2300014: Statue_4
+    3300000: Outer_Wall
+    3300002: Stage_1
+    3300004: Stage_2
+    3300006: Stage_3
+    3300008: Statue_1
+    3300010: Statue_2
+    3300012: Statue_3
+    3300014: Statue_4
+    4300000: Statue_1
+    4300002: Statue_3
+    4300004: Statue_4
+    4300006: Outer_Wall
+    4300008: Stage_1
+    4300010: Stage_3
+    4300012: Stage_2
+    4300014: Statue_2
     7400000: Default Take
     9500000: //RootNode
   externalObjects: {}
@@ -125,7 +108,7 @@ ModelImporter:
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
-    useFileScale: 0
+    useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
