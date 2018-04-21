@@ -86,6 +86,7 @@ public class TwoDGameManager : MonoBehaviour {
 
 	private GameObject winCanvas;
 
+    public EndCutsceneScript endGameCutScene;
     void OnApplicationQuit()
     {
         thisInstance = null;
@@ -160,14 +161,14 @@ public class TwoDGameManager : MonoBehaviour {
 			if (playerHealth1.dead || playerHealth2.dead) {
 				CheckPlayerWin ();
 				cam.Shake (shakeWeight, shakeTime);
-				if (playerHealth1.dead && addedScore2 == false) {
+                if (playerHealth1.dead && addedScore2 == false && PlayerCanSpawn(0)) {
 					//player1Scale = player1.transform.localScale;
 					StartCoroutine (DelayedSpawnPlayer1 ());
 					addedScore2 = true;
 					//player2ScoreNum += 10f;
 					return;
 				}
-				if (playerHealth2.dead && addedScore1 == false) {
+                if (playerHealth2.dead && addedScore1 == false && PlayerCanSpawn(1)) {
 					//player2Scale = player2.transform.localScale;
 					StartCoroutine (DelayedSpawnPlayer2 ());
 					addedScore1 = true;
@@ -195,12 +196,14 @@ public class TwoDGameManager : MonoBehaviour {
 			StopAllCoroutines ();
 		}
 	}
-        public IEnumerator gameRestart (int winnerNum)
+    public IEnumerator GameRestart (int winnerNum)
 	{
 		yield return new WaitForSeconds (restartTime);
         resetScore();
         addedScore1 = false;
         addedScore2 = false;
+        endGameCutScene.DetermineWinner(winnerNum);
+        yield return new WaitForSeconds(20f);
         EndGame(winnerNum);
 	}
     public GameObject GetPlayer(int playerNum){
@@ -454,19 +457,19 @@ public class TwoDGameManager : MonoBehaviour {
 	void CheckPlayerWin(){
 		//        if (player1ScoreNum >= maxScore)
         if (!PlayerCanSpawn (1) && playerHealth2.dead || testDeath){
-			player1.SetActive (false);
+			//player1.SetActive (false);
 			player2.SetActive (false);
 		//	player2Canvas.SetActive (false);
 		//	player1Canvas.SetActive (false);
-			StartCoroutine (gameRestart (0));
+			StartCoroutine (GameRestart (0));
 		}
 		//       if (player2ScoreNum >= maxScore)
 		else if (!PlayerCanSpawn (0) && playerHealth1.dead){			
 			player1.SetActive (false);
-			player2.SetActive (false);
+			//player2.SetActive (false);
 		//	player2Canvas.SetActive (false);
 		//	player1Canvas.SetActive (false);
-			StartCoroutine (gameRestart (1));
+			StartCoroutine (GameRestart (1));
 
 		}
 
