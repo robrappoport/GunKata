@@ -203,8 +203,8 @@ public class TwoDGameManager : MonoBehaviour {
         addedScore1 = false;
         addedScore2 = false;
         endGameCutScene.DetermineWinner(winnerNum);
-        yield return new WaitForSeconds(20f);
-        EndGame(winnerNum);
+        //yield return new WaitForSeconds(20f);
+        //EndGame(winnerNum);
 	}
     public GameObject GetPlayer(int playerNum){
         
@@ -433,7 +433,7 @@ public class TwoDGameManager : MonoBehaviour {
 
     }
 
-    void EndGame(int playerNumber){
+    public void EndGame(int playerNumber){
         winner = playerNames[playerNumber];
 		if (!FindObjectOfType<WinScreenScript>()) {
 //			winCanvas = Instantiate (winScreenCanvas);
@@ -457,14 +457,16 @@ public class TwoDGameManager : MonoBehaviour {
 	void CheckPlayerWin(){
 		//        if (player1ScoreNum >= maxScore)
         if (!PlayerCanSpawn (1) && playerHealth2.dead || testDeath){
-			//player1.SetActive (false);
+            //player1.SetActive (false);
+            player1.GetComponent<auraPlayerHealth>().gameIsOver = true;
 			player2.SetActive (false);
 		//	player2Canvas.SetActive (false);
 		//	player1Canvas.SetActive (false);
 			StartCoroutine (GameRestart (0));
 		}
 		//       if (player2ScoreNum >= maxScore)
-		else if (!PlayerCanSpawn (0) && playerHealth1.dead){			
+		else if (!PlayerCanSpawn (0) && playerHealth1.dead){
+            player2.GetComponent<auraPlayerHealth>().gameIsOver = true;
 			player1.SetActive (false);
 			//player2.SetActive (false);
 		//	player2Canvas.SetActive (false);

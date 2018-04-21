@@ -4,17 +4,32 @@ using UnityEngine;
 
 public class EndCutsceneScript : MonoBehaviour {
     public Transform winner;
-    public float movementSpeed;
-
+    private int winnerNum;
+    public float timeToEnd;
+    private float timeElapsed = 0;
+    public float fadeTime;
 
 	private void Start()
 	{
-		
+        
 	}
 
 	private void Update()
 	{
-		
+        if (winner != null)
+        {
+            if (Vector3.Distance(winner.transform.position, Camera.main.transform.position) >= 2f)
+            {
+                timeElapsed += Time.deltaTime;
+                Debug.Log(timeElapsed + "time elapsed");
+                winner.transform.position = Vector3.Lerp(winner.transform.position, Camera.main.transform.position, Easing.QuadEaseIn(timeElapsed / timeToEnd));
+            }
+            else
+            {
+                StartCoroutine(FadeToBlack());
+            }
+        }
+       
 	}
 	public void DetermineWinner(int winNum)
     {
@@ -22,22 +37,23 @@ public class EndCutsceneScript : MonoBehaviour {
         GetComponentInChildren<CameraMultitarget>().enabled = false;
         TwoDGameManager.thisInstance.TogglePlayerControl();
         winner = TwoDGameManager.thisInstance.GetPlayer(winNum).transform;
+        winnerNum = winNum;
         StartCoroutine(CameraFlyBy());
     }
 
     public IEnumerator CameraFlyBy()
     {
         //Debug.Log("checking");
-        Camera.main.transform.LookAt(winner);
-        while (Vector3.Distance(winner.transform.position, Camera.main.transform.position) >= 2f)
-        {
-            winner.transform.position = Vector3.Lerp(winner.transform.position, Camera.main.transform.position, Easing.QuadEaseIn(movementSpeed * Time.deltaTime));
-        }
-            //fade to black
-            yield return new WaitForSeconds(2f);
-            Debug.Log("restart now");
+        Camera.main.transform.LookAt(winner.transform.GetChild(5));
+        winner.LookAt(Camera.main.transform, Vector3.up);
 
-       
+        yield return null;
+    }
 
+    public IEnumerator FadeToBlack()
+    {
+        
+        yield return new WaitForSeconds(fadeTime);
+        TwoDGameManager.thisInstance.EndGame(winnerNum);
     }
 }

@@ -30,7 +30,7 @@ public class auraPlayerHealth : MonoBehaviour {
 	public bool dying = false, dead= false;
 	public float deathTime = 5;
 	Animator anim;
-
+    public bool gameIsOver = false;
 	GameObject deathBeam;
 	// Use this for initialization
 	void Start () {
@@ -160,7 +160,7 @@ public class auraPlayerHealth : MonoBehaviour {
 
 		if (!Physics.Raycast (transform.position, groundCheck, groundCheckHeight)) {
 			//Debug.Log("hello?");
-			if (!steppedOffLedge) {
+			if (!steppedOffLedge && !gameIsOver) {
 				Invoke ("Fall", fallTimer);
 				steppedOffLedge = true;
 			}
