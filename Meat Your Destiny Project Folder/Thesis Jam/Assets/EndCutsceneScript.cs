@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EndCutsceneScript : MonoBehaviour {
     public Transform winner;
@@ -8,6 +9,8 @@ public class EndCutsceneScript : MonoBehaviour {
     public float timeToEnd;
     private float timeElapsed = 0;
     public float fadeTime;
+    public Image fadeImg;
+    private bool fading;
 
 	private void Start()
 	{
@@ -18,15 +21,22 @@ public class EndCutsceneScript : MonoBehaviour {
 	{
         if (winner != null)
         {
-            if (Vector3.Distance(winner.transform.position, Camera.main.transform.position) >= 2f)
+            if (Vector3.Distance(winner.transform.position, Camera.main.transform.position) >= 20f)
             {
                 timeElapsed += Time.deltaTime;
                 Debug.Log(timeElapsed + "time elapsed");
                 winner.transform.position = Vector3.Lerp(winner.transform.position, Camera.main.transform.position, Easing.QuadEaseIn(timeElapsed / timeToEnd));
+
             }
             else
             {
-                StartCoroutine(FadeToBlack());
+                if (!fading)
+                {
+                    fading = true;
+                    Debug.Log("fading now");
+                    StartCoroutine(FadeToBlack());
+                }
+
             }
         }
        
@@ -52,8 +62,15 @@ public class EndCutsceneScript : MonoBehaviour {
 
     public IEnumerator FadeToBlack()
     {
-        
-        yield return new WaitForSeconds(fadeTime);
+        float fadeTimeElapsed = 0f;
+        float alpha = fadeImg.color.a;
+        while (fadeTimeElapsed < fadeTime)
+        {
+            Debug.Log("we're in the while");
+            fadeTimeElapsed += Time.deltaTime;
+            fadeImg.color = new Color(1, 1, 1, Mathf.Lerp(alpha, 1f, fadeTimeElapsed / fadeTime));
+            yield return null;
+        }
         TwoDGameManager.thisInstance.EndGame(winnerNum);
     }
 }
