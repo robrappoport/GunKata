@@ -99,7 +99,7 @@ public class TwoDGameManager : MonoBehaviour {
         StartCoroutine(TimerCo());
         if (thisInstance == null)
         {
-            thisInstance = GameObject.Find("gameManager").GetComponent<TwoDGameManager>();
+			thisInstance = GameObject.Find(name).GetComponent<TwoDGameManager>();
         }
         else
         {
@@ -154,8 +154,8 @@ public class TwoDGameManager : MonoBehaviour {
 			spawnResetTimer += Time.deltaTime;
 			StartCoroutine (BallTimer ());
 
-			player1Start.position = player1Spawns [index1];
-			player2Start.position = player2Spawns [index2];
+			//player1Start.position = player1Spawns [index1];
+			//fplayer2Start.position = player2Spawns [index2];
 
 			playerScoreUpdate ();
 			if (playerHealth1.dead || playerHealth2.dead) {

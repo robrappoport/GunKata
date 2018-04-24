@@ -66,9 +66,10 @@ public class Turret : MonoBehaviour
 		
         lineRenderer = GetComponent<LineRenderer>();
 
-        lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.enabled = false;
-
+		if (lineRenderer) {
+			lineRenderer.SetPosition (0, transform.position);
+			lineRenderer.enabled = false;
+		}
 		anim = GetComponent<Animator> ();
 		segmentNum = letterRenderers.Length;
 
@@ -259,7 +260,9 @@ public class Turret : MonoBehaviour
 				neutralColor = unownedColor;
 			}
 
-			lineRenderer.enabled = true;
+			if (lineRenderer) {
+				lineRenderer.enabled = true;
+			}
 			StartCoroutine(DrawLineToPlayer(ownerNum));
 			outlineBar.color = neutralColor;
 			litSegments = 0;

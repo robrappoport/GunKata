@@ -24,7 +24,6 @@ public class EndCutsceneScript : MonoBehaviour {
             if (Vector3.Distance(winner.transform.position, Camera.main.transform.position) >= 20f)
             {
                 timeElapsed += Time.deltaTime;
-                Debug.Log(timeElapsed + "time elapsed");
                 winner.transform.position = Vector3.Lerp(winner.transform.position, Camera.main.transform.position, Easing.QuadEaseIn(timeElapsed / timeToEnd));
 
             }
