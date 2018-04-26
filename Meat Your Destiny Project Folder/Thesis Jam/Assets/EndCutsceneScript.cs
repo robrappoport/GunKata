@@ -32,7 +32,7 @@ public class EndCutsceneScript : MonoBehaviour {
                 if (!fading)
                 {
                     fading = true;
-                    Debug.Log("fading now");
+                    //Debug.Log("fading now");
                     StartCoroutine(FadeToBlack());
                 }
 
@@ -65,7 +65,7 @@ public class EndCutsceneScript : MonoBehaviour {
         float alpha = fadeImg.color.a;
         while (fadeTimeElapsed < fadeTime)
         {
-            Debug.Log("we're in the while");
+            //Debug.Log("we're in the while");
             fadeTimeElapsed += Time.deltaTime;
             fadeImg.color = new Color(1, 1, 1, Mathf.Lerp(alpha, 1f, fadeTimeElapsed / fadeTime));
             yield return null;

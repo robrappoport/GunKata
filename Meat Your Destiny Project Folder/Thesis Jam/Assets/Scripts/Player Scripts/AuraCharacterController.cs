@@ -329,17 +329,17 @@ public class AuraCharacterController : PlayControl
         }
     } 
 
-	public bool bButtonUp (){
+    public bool aButtonUp (){
 		if (controlType == ControlType.Controller) {
-			return (myController.Action2.WasReleased);
+			return (myController.Action1.WasReleased);
 		} else {
             return (Input.GetKeyUp (KeyCode.RightAlt));
 		}
 	}
 
-	public bool bButtonDown (){
+    public bool aButtonDown (){
 		if (controlType == ControlType.Controller) {
-			return (myController.Action2.WasPressed);
+			return (myController.Action1.WasPressed);
 		} else {
             return (Input.GetKeyDown (KeyCode.RightAlt));
 		}
@@ -401,7 +401,7 @@ public class AuraCharacterController : PlayControl
 
 		//		moveDirection.y = 0;
 
-        if (bButtonDown () && gunBehave.EnoughStamina(dashCost) && !isDashing) {
+        if (aButtonDown () && gunBehave.EnoughStamina(dashCost) && !isDashing) {
 			StartCoroutine (AuraDashDrain (dashCost));
 			gunBehave.Invoke ("ResetAuraCooldown", gunBehave.coolDownDuration);
 			gunBehave.CurrentBullets--;
