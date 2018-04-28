@@ -387,7 +387,7 @@ public class auraGunBehavior : MonoBehaviour
     
       
     }
-	IEnumerator DrainAuraOverTime(float cost = 1, float drainRate = 1){
+	public IEnumerator DrainAuraOverTime(float cost = 1, float drainRate = 1){
 		float totalDrainAmount = 0;
 		while (totalDrainAmount < cost) {
 			DrainAura (Time.deltaTime * drainRate);
@@ -422,6 +422,25 @@ public class auraGunBehavior : MonoBehaviour
 
 	
 	}
+
+    public void RefillStamina(float increment){
+        int filledPipCount = Mathf.Clamp((int)remainingStamina, 0, staminaSegmentNum - 1);
+        remainingStamina = Mathf.Clamp(remainingStamina + increment, 0, staminaSegmentNum);
+        int newPipCount = Mathf.Clamp((int)remainingStamina , 0, staminaSegmentNum - 1);
+        if (newPipCount > filledPipCount){
+            StartCoroutine(UIManager.thisInstance.FlashPip(playerNum, newPipCount -1));
+        }
+
+    }
+
+    public IEnumerator RefillAuraOverTime(float increment, float fillRate = 1){
+        float totalFillAmount = 0;
+        while(totalFillAmount < increment){
+            RefillStamina(fillRate * Time.deltaTime);
+            totalFillAmount += fillRate * Time.deltaTime;
+            yield return null;
+        }
+    }
     public bool EnoughStamina(float cost = 0){
         if(remainingStamina > cost){
             return true;
@@ -448,30 +467,40 @@ public class auraGunBehavior : MonoBehaviour
 
     }
 	void AuraCharge(){
-		if (myCont.secondaryFireDown () == true) {
-			currentAuraChargeLimit = remainingStamina;
-			CancelInvoke ("ResetAuraCooldown");
-            sprAura.SetActive(true);
-            if (EnoughStamina(0) && myAura == null)
-            {//only instantiate an aura if one "charge" has been used
-                myAura = Instantiate(AuraObj, sprAura.transform.position,
-                    Quaternion.Euler(0, 0, 0))
-                    .GetComponent<AuraGenerator>();
-                myAura.Init(playerNum, 1);
-                myAura.transform.SetParent(transform);
-                myAura.transform.localScale = auraScales[0] * Vector3.one;
+        if (myCont.secondaryFireDown() == true)
+        {
+            if (EnoughStamina(.99f))
+            {
+                currentAuraChargeLimit = remainingStamina;
+                sprAura.SetActive(true);
+                if (myAura == null)
+                {
+                    //only instantiate an aura if one "charge" has been used
+                    CancelInvoke("ResetAuraCooldown");
 
+                    myAura = Instantiate(AuraObj, sprAura.transform.position,
+                        Quaternion.Euler(0, 0, 0))
+                        .GetComponent<AuraGenerator>();
+                    myAura.Init(playerNum, 1);
+                    myAura.transform.SetParent(transform);
+                    myAura.transform.localScale = auraScales[0] * Vector3.one;
+
+                }
+            }else{
+                Invoke("ResetAuraCooldown", coolDownDuration);
             }
 
 
-		}
-		if (myCont.secondaryFire () == true) {
+
+        }
+        if (myCont.secondaryFire () == true && myAura) {
+            
 			
 			//calculate how much charge remains and how much is to be used
 
 
 			DrainAura (Time.deltaTime * auraChargeRate);
-            if (EnoughStamina(0)) {
+            if (EnoughStamina(Time.deltaTime * auraChargeRate)) {
 				currentAuraCharge = Mathf.Clamp (currentAuraCharge + Time.deltaTime * auraChargeRate, 0, currentAuraChargeLimit);
 			}
 			if (staminaSegmentNum - currentAuraCharge < 0.02f) {
@@ -505,7 +534,8 @@ public class auraGunBehavior : MonoBehaviour
                     for (int i = 0; i <= chargeIndex; i++)
                     {
 
-                        Renderer[] wingArray = wings[Mathf.Clamp(i, 0, staminaSegmentNum - 1)].GetComponentsInChildren<Renderer>();
+
+                        Renderer[] wingArray = wings[Mathf.Clamp(i, 0, wings.Length - 1)].GetComponentsInChildren<Renderer>();
                         foreach (Renderer r in wingArray)
                         {
                             //r.material.c = activeWingColor;
@@ -532,7 +562,7 @@ public class auraGunBehavior : MonoBehaviour
             
 			if (!coolingDown) {
 				//recharge the aura over time
-				remainingStamina = Mathf.Clamp (remainingStamina + Time.deltaTime * auraRechargeRate, 0, staminaSegmentNum);
+                RefillStamina(Time.deltaTime * auraRechargeRate);
 			}
 			//restore the wings to their neutral color or make them "dead" depending on remaining charge
 
@@ -562,14 +592,16 @@ public class auraGunBehavior : MonoBehaviour
             if (myAura)
             {
                 DropAura();
+                if (currentAuraCharge < 1)
+                {
+                    remainingStamina = (int)remainingStamina;
+                }
+                coolingDown = true;
+
+                currentAuraCharge = 0f;
+
             }
-			if (currentAuraCharge < 1) {
-				remainingStamina = (int)remainingStamina;
-			}
 
-            coolingDown = true;
-
-			currentAuraCharge = 0f;
 		}
 	}
 	void ResetAuraCooldown(){

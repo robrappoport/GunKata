@@ -10,6 +10,7 @@ public class ParticleFollowScript : MonoBehaviour {
     public float turn = 20f;
     public Transform target;
     public int owner;
+    public float individualParticleStaminaValue;
     private bool respawning;
     ParticleSystem.MainModule particleSystemMainModule;
     private float [] particleRandCount;
@@ -20,15 +21,16 @@ public class ParticleFollowScript : MonoBehaviour {
         psys = GetComponent<ParticleSystem>();
         particleSystemMainModule = psys.main;
 
-
     }
 
     // Update is called once per frame
-    void LateUpdate () {
+    void LateUpdate()
+    {
 
         if (target == null)
         {
-            if (respawning == false){
+            if (respawning == false)
+            {
                 respawning = true;
                 StartCoroutine(PlayerSeek());
             }
@@ -46,32 +48,41 @@ public class ParticleFollowScript : MonoBehaviour {
         float forceDeltaTime = force * Time.deltaTime;
 
         Vector3 targetTransformedPosition;
-        //this is to make sure it works regardless of what sim space the particles use
-        switch (particleSystemMainModule.simulationSpace)
-        {
-            case ParticleSystemSimulationSpace.Local:
-                {
-                    targetTransformedPosition = transform.InverseTransformPoint(target.position);
-                    break;
-                }
-            case ParticleSystemSimulationSpace.Custom:
-                {
-                    targetTransformedPosition = particleSystemMainModule.customSimulationSpace.InverseTransformPoint(target.position);
-                    break;
-                }
-            case ParticleSystemSimulationSpace.World:
-                {
-                    targetTransformedPosition = target.position;
-                    break;
-                }
-            default:
-                {
-                    throw new System.NotSupportedException(
+        RectTransformUtility.ScreenPointToWorldPointInRectangle(UIManager.thisInstance.playerStamFillList[owner].rectTransform,
+                                                                UIManager.thisInstance.playerStamFillList[owner].rectTransform.position,
+                                                                Camera.main,
+                                                                out targetTransformedPosition);
+        
+            
 
-                        string.Format("Unsupported simulation space '{0}'.",
-                        System.Enum.GetName(typeof(ParticleSystemSimulationSpace), particleSystemMainModule.simulationSpace)));
-                }
-        }
+            //UIManager.thisInstance.playerStamFillList[owner].rectTransform.rect.center);
+                                                                           
+        //this is to make sure it works regardless of what sim space the particles use
+        //switch (particleSystemMainModule.simulationSpace)
+        //{
+        //    case ParticleSystemSimulationSpace.Local:
+        //        {
+        //            targetTransformedPosition = transform.InverseTransformPoint(target.position);
+        //            break;
+        //        }
+        //    case ParticleSystemSimulationSpace.Custom:
+        //        {
+        //            targetTransformedPosition = particleSystemMainModule.customSimulationSpace.InverseTransformPoint(target.position);
+        //            break;
+        //        }
+        //    case ParticleSystemSimulationSpace.World:
+        //        {
+        //            targetTransformedPosition = target.position;
+        //            break;
+        //        }
+        //    default:
+        //        {
+        //            throw new System.NotSupportedException(
+
+        //                string.Format("Unsupported simulation space '{0}'.",
+        //                System.Enum.GetName(typeof(ParticleSystemSimulationSpace), particleSystemMainModule.simulationSpace)));
+        //        }
+        //}
 
         int particleCount = psys.particleCount;
 
@@ -93,14 +104,7 @@ public class ParticleFollowScript : MonoBehaviour {
             m_Particles[i].velocity = Vector3.ClampMagnitude(m_Particles[i].velocity, 500f);
             if (dist<15f) { //player absorbed particle
                 m_Particles[i].remainingLifetime = 0;
-                if (owner == 0)
-                {
-                    TwoDGameManager.player1ScoreNum += .15f;
-                }
-                else if (owner == 1)
-                {
-                    TwoDGameManager.player2ScoreNum += .15f;
-                }
+                StartCoroutine(TwoDGameManager.thisInstance.players[owner].RefillAuraOverTime(individualParticleStaminaValue));
             }
    
         }
@@ -114,7 +118,7 @@ public class ParticleFollowScript : MonoBehaviour {
 
     IEnumerator PlayerSeek ()
     {
-        yield return new WaitForSeconds (1.5f);
+        yield return new WaitForSeconds (.1f);
 		if (TwoDGameManager.thisInstance.GetPlayer (owner)) {
 			target = TwoDGameManager.thisInstance.GetPlayer (owner).transform;
 		}
@@ -135,7 +139,7 @@ public class ParticleFollowScript : MonoBehaviour {
 
         for (int i = 0; i < particleRandCount.Length; i++)
         {
-            particleRandCount[i] = Random.Range(.1f, 2);
+            particleRandCount[i] = Random.Range(.01f, 1f);
         }
         randTimer = 0f;
 

@@ -26,7 +26,7 @@ public  class UIManager : MonoBehaviour {
 	bool fading = false;
 
     [Header("Player UI Element Vars")]
-    private List<Image> playerStamFillList = new List<Image>(), playerStamCircuitBrightnessList = new List<Image>();
+    public List<Image> playerStamFillList = new List<Image>(), playerStamCircuitBrightnessList = new List<Image>();
     public GameObject playerStamPrefab;
     public GameObject instantiatedPlayerStam;
     public GameObject tickMarkPrefab;
@@ -127,6 +127,28 @@ public  class UIManager : MonoBehaviour {
 
         
     }
+    public IEnumerator FlashPip(int playerNum, int pipNum, float flashTime = 0.2f){
+        pipNum = Mathf.Clamp(pipNum, 0, PlayerTickMarListList[playerNum].Count -1);
+        float elapsedTime = 0;
+        //lerp the color to yellow
+        while (elapsedTime < flashTime){
+            
+            elapsedTime += Time.deltaTime;
+            PlayerTickMarListList[playerNum][pipNum].color = Color.Lerp(TwoDGameManager.thisInstance.playerColors[playerNum], Color.yellow, elapsedTime / flashTime);
+            yield return null;
+
+        }
+        elapsedTime = 0;
+        while (elapsedTime < flashTime)
+        {
+
+            elapsedTime += Time.deltaTime;
+            PlayerTickMarListList[playerNum][pipNum].color = Color.Lerp(Color.yellow, TwoDGameManager.thisInstance.playerColors[playerNum], elapsedTime / flashTime);
+            yield return null;
+
+        }
+        
+    }
     public IEnumerator Flash(int playerNum, float flashTime = 0.25f){
         StartCoroutine(ShakeMeScript.ShakeUI(playerStamFillList[playerNum].transform.parent.GetComponent<RectTransform>()));
         float elapsedTime = 0;
@@ -160,8 +182,8 @@ public  class UIManager : MonoBehaviour {
 			int totalStamina = TwoDGameManager.thisInstance.players [playerNum].staminaSegmentNum;
 			playerStamFillList [playerNum].fillAmount = newFillAmount / totalStamina;
 
-			//draw all bright marks
-			for (int i = 0; i < Mathf.Clamp ((int)newFillAmount, 0, PlayerTickMarListList [playerNum].Count); i++) {
+			//draw all bright marks except the last, which will be handled by the pipflash
+			for (int i = 0; i < Mathf.Clamp ((int)newFillAmount - 1, 0, PlayerTickMarListList [playerNum].Count); i++) {
 				PlayerTickMarListList [playerNum] [i].color = TwoDGameManager.thisInstance.playerColors [playerNum];
 		
 			}

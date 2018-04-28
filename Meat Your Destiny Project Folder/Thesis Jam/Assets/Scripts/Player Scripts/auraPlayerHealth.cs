@@ -72,17 +72,18 @@ public class auraPlayerHealth : MonoBehaviour {
 		dead = true;
 
 		//Instantiate(explosionPrefab, transform.position, transform.rotation);
-		//ParticleFollowScript followParts = ((GameObject)Instantiate
-		//	(followParticles, transform.position, 
-		//		Quaternion.identity)).GetComponent<ParticleFollowScript>();
-		//if (gameObject.GetComponent<auraGunBehavior>().playerNum == 0)
-		//{
-		//	followParts.owner = 1;
-		//}
-		//else
-		//{
-		//	followParts.owner = 0;
-		//}
+		ParticleFollowScript followParts = ((GameObject)Instantiate
+			(followParticles, transform.position, 
+				Quaternion.identity)).GetComponent<ParticleFollowScript>();
+        print("instantiating particles");
+      		if (gameObject.GetComponent<auraGunBehavior>().playerNum == 0)
+		{
+			followParts.owner = 1;
+		}
+		else
+		{
+			followParts.owner = 0;
+		}
         Sound.me.Play(deathSnd, .4f, true);
         deathBeam = Instantiate(deathBeamPrefab, transform) as GameObject;
         deathBeam.GetComponentInChildren<Renderer>().material.color = TwoDGameManager.thisInstance.playerColors[GetComponent<auraGunBehavior>().playerNum];
