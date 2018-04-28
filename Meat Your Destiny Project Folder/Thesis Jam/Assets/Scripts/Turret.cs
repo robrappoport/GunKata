@@ -156,9 +156,15 @@ public class Turret : MonoBehaviour
             outlineBar = UICanvas.transform.Find("TurretFillBack").GetComponent<Image>();
             UIRot = UICanvas.transform.rotation;
             UIPos = UICanvas.transform.position;
+            foreach (Image i in UICanvas.GetComponentsInChildren<Image>())
+            {
+                Color temp = new Color(i.color.r, i.color.g, i.color.b, 0);
+                i.color = temp;
+            }
+
 
         }
-		
+
 
 	}
 
@@ -320,6 +326,37 @@ public class Turret : MonoBehaviour
             }
         }
 	}
+
+
+    public IEnumerator FadeInUI(float t = 1)
+    {
+
+       
+        if (UICanvas)
+        {
+            t = Mathf.Clamp(t, 0.00001f, Mathf.Infinity);
+            bool allIn = false;
+            float step = 0;
+
+            while (!allIn)
+            {
+                allIn = true;
+                foreach (Image i in UICanvas.GetComponentsInChildren<Image>())
+                {
+                    step += Time.deltaTime;
+                    Color temp = new Color(i.color.r, i.color.g, i.color.b, step / t);
+                    i.color = temp;
+
+                    if (i.color.a < 1)
+                    {
+                        allIn = false;
+                    }
+                }
+                yield return null;
+            }
+
+        }
+    }
 
 	void AdjustListMembership(){
 		foreach(List<Turret> l in TwoDGameManager.thisInstance.turrets){//scan all turret lists and remove itself from the one containing this turret

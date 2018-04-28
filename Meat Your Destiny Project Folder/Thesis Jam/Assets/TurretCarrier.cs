@@ -8,7 +8,7 @@ public class TurretCarrier : MonoBehaviour {
 	[Tooltip("Speed at which the turrets leave the arena")]
 	public float removalSpeed = 1;
 	public float finalDistance;
-	[Tooltip("Time it should take for the turret to rise to the top")]
+	[Tooltip("Speed of turret as it rises")]
 	public float risingTime = 2;
 	[Tooltip("Object to define as center")]
 	public Transform center;
@@ -25,10 +25,9 @@ public class TurretCarrier : MonoBehaviour {
 		foreach (Turret t in ts) {
 			if (t.gameObject != gameObject) {//checks if not self
 				children.Add (t.transform);
-				t.gameObject.SetActive (false);
+				//t.gameObject.SetActive (false);
 			}
 		}
-		//transform.position = transform.position + Vector3.down * 100;
 
 //		//get centroid
 //		float x =0, z = 0;
@@ -43,6 +42,12 @@ public class TurretCarrier : MonoBehaviour {
 		//StartCoroutine (SendToEdge());
 	}
 
+	private void Start()
+	{
+        transform.position = transform.position + Vector3.down * 100;
+
+	}
+
 	public IEnumerator ActivateTurrets(){
 		//activate the turrets
 		foreach (Transform t in children) {
@@ -53,8 +58,8 @@ public class TurretCarrier : MonoBehaviour {
 		}
 		//send them up
 		float elapsedTime = 0;
-		while (Vector3.Distance (transform.position, finalPos) > 0) {
-			transform.position = Vector3.MoveTowards (transform.position, finalPos, elapsedTime / risingTime);
+        while (Vector3.Distance(transform.position, finalPos) > 0) {
+            transform.position = Vector3.MoveTowards(transform.position, finalPos, risingTime);
 			elapsedTime += Time.deltaTime;
 			yield return null;
 		}
@@ -72,6 +77,19 @@ public class TurretCarrier : MonoBehaviour {
 
 
 	}
+
+    public void FadeInAllTurretUIElements(){
+        foreach (Transform t in children)
+        {
+            if (t.GetComponent<Turret>())
+            {
+                StartCoroutine(t.GetComponent<Turret>().FadeInUI());
+
+            }
+        }
+
+
+    }
 
 	public void RemoveTurretFocus(){
 		foreach (Transform t in children) {

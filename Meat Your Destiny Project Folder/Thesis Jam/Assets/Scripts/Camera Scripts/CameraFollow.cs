@@ -31,13 +31,17 @@ public class CameraFollow : MonoBehaviour {
         float elapsedTime = 0;
         //go from start view to stage view
         yield return new WaitForSeconds(3f);
+
         currentTarget = stageTransform;
         while(elapsedTime<transitionTime){
             elapsedTime += Time.deltaTime;
             transform.position = Vector3.Lerp(transform.position, finalPos, elapsedTime / transitionTime);
             yield return null;
         }
+        StartCoroutine(TwoDGameManager.thisInstance.ActivateSections());
+
         yield return new WaitForSeconds(introTime);
+
         //go from stage view to p1 view
         elapsedTime = 0;
         currentTarget = TwoDGameManager.thisInstance.players[0].transform.GetChild(5);
@@ -72,6 +76,11 @@ public class CameraFollow : MonoBehaviour {
             transform.position = Vector3.Lerp(transform.position, finalPos, elapsedTime / transitionTime);
             yield return null;
         }
+        foreach (TurretCarrier tc in FindObjectsOfType<TurretCarrier>())
+        {
+            tc.FadeInAllTurretUIElements();
+        }
+
         //activate the multitarget 
         GetComponentInChildren<CameraMultitarget>().enabled = true;
         currentTarget = null;

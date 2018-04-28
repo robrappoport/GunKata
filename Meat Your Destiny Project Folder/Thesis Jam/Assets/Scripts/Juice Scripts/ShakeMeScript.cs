@@ -48,7 +48,8 @@ public static class ShakeMeScript : object {
 	/// <param name="y">If set to <c>true</c>, shake in the y direction.</param>
 	/// <param name="z">If set to <c>true</c>, shake in the z direction.</param>
 	public static IEnumerator Shake(Transform t, float shakeMagnitude = 2f, float shakeTime = 0.5f, bool shakeX = true, bool shakeY = false, bool shakeZ = true){
-		Vector3 originalPos = t.position;
+	    
+        Vector3 originalPos = t.position;
 		float elapsedTime = 0, x = 0, y = 0, z = 0;
 		Vector3 rand;
 		while (elapsedTime < shakeTime) {
@@ -71,7 +72,7 @@ public static class ShakeMeScript : object {
 		elapsedTime = 0;
 		while (elapsedTime < .1f) {
 			elapsedTime += Time.deltaTime;
-			t.position = Vector2.Lerp (t.position, originalPos, elapsedTime / .1f);
+			t.position = Vector3.Lerp (t.position, originalPos, elapsedTime / .1f);
 			yield return null;
 		}
 	}

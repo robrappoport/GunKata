@@ -144,7 +144,7 @@ public class TwoDGameManager : MonoBehaviour {
     {
         player1Scale = player1.transform.localScale;
         player2Scale = player2.transform.localScale;
-		StartCoroutine(ActivateSections ());
+		//StartCoroutine(ActivateSections ());
     }
 
 
@@ -555,7 +555,7 @@ public class TwoDGameManager : MonoBehaviour {
         }
     }
 
-	IEnumerator ActivateSections(){
+	public IEnumerator ActivateSections(){
         //while (!readyToActivateNextSections) {
         //	yield return null;
         //}

@@ -63,8 +63,8 @@ public class auraPlayerHealth : MonoBehaviour {
 		dying = true;
       //  Sound.me.Play(dyingSound);
 		anim.SetTrigger ("Die");
-		Invoke ("Die", deathTime);
-
+        Invoke ("Die", deathTime);
+        Invoke("Shake", 0);
 
 	}
 	public void Die(){
@@ -75,7 +75,6 @@ public class auraPlayerHealth : MonoBehaviour {
 		ParticleFollowScript followParts = ((GameObject)Instantiate
 			(followParticles, transform.position, 
 				Quaternion.identity)).GetComponent<ParticleFollowScript>();
-        print("instantiating particles");
       		if (gameObject.GetComponent<auraGunBehavior>().playerNum == 0)
 		{
 			followParts.owner = 1;
@@ -91,10 +90,16 @@ public class auraPlayerHealth : MonoBehaviour {
 		deathBeam.transform.SetParent(null);
 		deathBeam.transform.position = transform.position;
 		deathBeam.transform.localScale = Vector3.one;
-		gameObject.SetActive(false);
+
+   		gameObject.SetActive(false);
         Destroy(deathBeam, 1f);
 
 	}
+
+    void Shake(){
+        StartCoroutine(ShakeMeScript.Shake(Camera.main.transform.root, 4f, 1.2f, true, true, true));
+
+    }
 
 	public void takeDamage (float amount)
 	{

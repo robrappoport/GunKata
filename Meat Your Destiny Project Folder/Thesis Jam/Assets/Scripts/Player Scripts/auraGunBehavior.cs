@@ -246,6 +246,7 @@ public class auraGunBehavior : MonoBehaviour
 					isFiring = true;
 					shootTime = initShootTime;
 					PrimaryFire ();
+
 					StartCoroutine (ShootSound ());
 					StartCoroutine (DrainAuraOverTime (shootingStaminaCost, shootingStaminaDrainRate));
 				}
@@ -384,6 +385,7 @@ public class auraGunBehavior : MonoBehaviour
 		foreach(Turret t in myTurrets){
 			t.Fire ();
 		}
+        StartCoroutine(ShakeMeScript.Shake(Camera.main.transform.root, 0.5f, 0.2f, true, true, true));
     
       
     }
