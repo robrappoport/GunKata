@@ -15,13 +15,14 @@ public class SectionScript : MonoBehaviour {
     public Material flashColor;
     public Material deadColor;
     public AudioClip fallingSound, rumbleSound;
-
+    ParticleSystem particle;
    
 
     // Use this for initialization
 
     void Start()
     {
+        
 		if (turretCarrier) {
 			foreach (Transform t in turretCarrier.children) {
 				sectionTurret.Add (t.GetComponent<Turret> ());
@@ -31,8 +32,11 @@ public class SectionScript : MonoBehaviour {
 		if (!floor) {
 			floor = GetComponentInChildren<Renderer> ().gameObject;
 		}
+        particle = floor.GetComponent<ParticleSystem>();
+       
         dropSpeed = 15f;
         floorRend = floor.GetComponent<Renderer>();
+        normColor = flashColor;
         floorRend.material = normColor;
 
     }
@@ -78,11 +82,16 @@ public class SectionScript : MonoBehaviour {
 			turretCarrier.StartCoroutine (turretCarrier.SendToEdge ());
 		}
 		TwoDGameManager.thisInstance.readyToActivateNextSections = true;
+        if(particle){
+            particle.Play();
+        }
         while (floor.transform.position.y > dropTotal)
         {
             floor.transform.position = new Vector3(floor.transform.position.x, 
                                                    floor.transform.position.y - (dropSpeed * Time.deltaTime),
                                                    floor.transform.position.z);
+
+
             yield return null;
         }
     }
