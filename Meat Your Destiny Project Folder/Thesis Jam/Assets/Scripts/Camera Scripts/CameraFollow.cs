@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour {
-    public Vector3 player1pos, player2pos, finalPos;
+    public Vector3 player1pos, player2pos, finalPos, initPos;
     public float rotationSpeed = 1, introductionTime = 3, cameraTransitionTime = 1;
     private Vector3 targetDir, newDir;
     Transform currentTarget;
@@ -11,6 +11,8 @@ public class CameraFollow : MonoBehaviour {
     public Transform cityTransform;
 	private void Awake()
 	{
+        transform.position = initPos;
+
         GetComponentInChildren<CameraMultitarget>().enabled = false;
 
 	}
@@ -18,6 +20,7 @@ public class CameraFollow : MonoBehaviour {
 	{		
 		
         currentTarget = cityTransform;
+
         StartCoroutine(IntroSequence(introductionTime, cameraTransitionTime));
 	}
     void LateUpdate()
@@ -98,7 +101,4 @@ public class CameraFollow : MonoBehaviour {
         }
     }
 
-    public void LookAtWinner(){
-        
-    }
 }

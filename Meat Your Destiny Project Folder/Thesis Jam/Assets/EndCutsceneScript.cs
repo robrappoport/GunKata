@@ -42,7 +42,7 @@ public class EndCutsceneScript : MonoBehaviour {
             {
                 if (!fading)
                 {
-                    Debug.Log("hello?");
+                    //Debug.Log("hello?");
                     fading = true;
                     StartCoroutine(FadeToBlack());
 
@@ -66,7 +66,6 @@ public class EndCutsceneScript : MonoBehaviour {
         GetComponentInChildren<CameraMultitarget>().enabled = false;
         winner = TwoDGameManager.thisInstance.GetPlayer(winNum).transform;
         winnerNum = winNum;
-        myAnim.applyRootMotion = false;
 
         Camera.main.transform.ResetPosition();
         Camera.main.transform.ResetRotation();
@@ -78,6 +77,7 @@ public class EndCutsceneScript : MonoBehaviour {
 
     public IEnumerator CameraFlyBy(float lerpTime)
     {
+        myAnim.applyRootMotion = false;
         float elapsedTime = 0;
         while(elapsedTime<lerpTime){
             transform.position = Vector3.Lerp(transform.position, finalPosition, Easing.QuadEaseOut(elapsedTime/lerpTime));
