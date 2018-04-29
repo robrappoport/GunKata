@@ -437,12 +437,15 @@ public class Turret : MonoBehaviour
         AdjustOwnership(ownerNum);
         StopAllCoroutines();
         StartCoroutine(RetractLine());
+     
         ParticleFollowScript followParts = (Instantiate
-                                            (tp.victoryParticles, transform.position,
-                Quaternion.identity)).GetComponent<ParticleFollowScript>();
-        followParts.owner = ownerNum;
-        followParts.minDist = 1;
-        followParts.winParticles = true;
+                                                (tp.victoryParticles[ownerNum], transform.position,
+                                                 Quaternion.identity)).GetComponent<ParticleFollowScript>();
+            followParts.owner = ownerNum;
+            followParts.minDist = 1;
+            followParts.winParticles = true; 
+        
+       
     }
 	bool MismatchedOwners(){
 		if (ownerNum == 0 && owner != Owner.Player1) {
