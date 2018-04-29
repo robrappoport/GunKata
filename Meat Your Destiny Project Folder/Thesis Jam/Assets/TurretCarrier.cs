@@ -9,7 +9,7 @@ public class TurretCarrier : MonoBehaviour {
 	public float removalSpeed = 1;
 	public float finalDistance;
 	[Tooltip("Speed of turret as it rises")]
-	public float risingTime = 2;
+    public float risingSpeed = 2;
 	[Tooltip("Object to define as center")]
 	public Transform center;
 	[Tooltip("Children of the carrier (turret transforms)")]
@@ -17,7 +17,7 @@ public class TurretCarrier : MonoBehaviour {
 	Vector3 finalPos; //arrange before runtime
 
 	void Awake () {
-		risingTime = Mathf.Clamp (risingTime, 0.00001f, Mathf.Infinity);
+		risingSpeed = Mathf.Clamp (risingSpeed, 0.00001f, Mathf.Infinity);
 		finalPos = transform.position;
 		children = new List<Transform> ();
 		//generate a list of all transforms, then deactivate each one
@@ -59,7 +59,7 @@ public class TurretCarrier : MonoBehaviour {
 		//send them up
 		float elapsedTime = 0;
         while (Vector3.Distance(transform.position, finalPos) > 0) {
-            transform.position = Vector3.MoveTowards(transform.position, finalPos, risingTime);
+            transform.position = Vector3.MoveTowards(transform.position, finalPos, risingSpeed);
 			elapsedTime += Time.deltaTime;
 			yield return null;
 		}

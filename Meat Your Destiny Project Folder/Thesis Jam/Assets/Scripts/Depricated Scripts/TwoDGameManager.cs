@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class TwoDGameManager : MonoBehaviour {
     public static TwoDGameManager thisInstance;
-    public ZoneScript[] zones;
+    public List<ZoneScript> zones;
     public float maxRespawnTime = 1, respawnBalanceBuffer, minRespawnTime;
 	public auraPlayerHealth playerHealth1;
 	public auraPlayerHealth playerHealth2;
@@ -49,7 +49,6 @@ public class TwoDGameManager : MonoBehaviour {
     //public UITracker player1Tracker;
     //public UITracker player2Tracker;
 
-    public GameObject player1Canvas, player2Canvas;
 
     public GameObject textPrefab;
     public CameraMultitarget cam;
@@ -99,7 +98,6 @@ public class TwoDGameManager : MonoBehaviour {
 		//DontDestroyOnLoad(this.gameObject);
 		//Application.targetFrameRate = 60;
         cam = Camera.main.GetComponent<CameraMultitarget>();
-        StartCoroutine(TimerCo());
         if (thisInstance == null)
         {
 			thisInstance = GameObject.Find(name).GetComponent<TwoDGameManager>();
@@ -149,7 +147,18 @@ public class TwoDGameManager : MonoBehaviour {
         player2Scale = player2.transform.localScale;
         //StartCoroutine(ActivateSections ());
         allTurrets = FindObjectsOfType<Turret>().ToList();
-     
+        zones = new List<ZoneScript>();
+        GameObject level = FindObjectOfType<ZoneScript>().transform.root.gameObject;
+        for (int i = 0; i < level.transform.childCount; i++)
+        {
+            if (level.transform.GetChild(i).GetComponent<ZoneScript>())
+            {
+                zones.Add(level.transform.GetChild(i).GetComponent<ZoneScript>());
+            }
+        }
+        StartCoroutine(TimerCo());
+
+
     }
 
 
@@ -313,7 +322,7 @@ public class TwoDGameManager : MonoBehaviour {
 		if (spawnResetTimer > spawnResetTimeLimit) {
 			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
 
-			player1 = Instantiate (player1Prefab, player1Start.position = spawnPos, Quaternion.identity) as GameObject;
+			player1 = Instantiate (player1Prefab, spawnPos, Quaternion.identity) as GameObject;
 		} else {
 			player1 = Instantiate(player1Prefab, new Vector3 (player1Spawns[index1].x, player1Spawns[index1].y + 5, player1Spawns[index1].z), Quaternion.identity) as GameObject;
 		}
@@ -349,9 +358,10 @@ public class TwoDGameManager : MonoBehaviour {
         //Debug.Log("Spawning player 2");
 		if (spawnResetTimer > spawnResetTimeLimit) {
 			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
-			player2 = Instantiate (player2Prefab, player2Start.position = spawnPos, Quaternion.identity) as GameObject;
+
+			player2 = Instantiate (player2Prefab, spawnPos, Quaternion.identity) as GameObject;
 		} else {
-			player2 = Instantiate (player2Prefab, player2Start.position = new Vector3 (player2Spawns [index2].x, player2Spawns [index2].y + 5, player2Spawns [index2].z), Quaternion.identity) as GameObject;
+			player2 = Instantiate (player2Prefab, new Vector3 (player2Spawns [index2].x, player2Spawns [index2].y + 5, player2Spawns [index2].z), Quaternion.identity) as GameObject;
 		}
 
         //player2.transform.localScale = player2Scale;
@@ -544,7 +554,7 @@ public class TwoDGameManager : MonoBehaviour {
     }
     public IEnumerator TimerCo ()
     {
-        for (int i = 0; i < zones.Length; i++)
+        for (int i = 0; i < zones.Count; i++)
         {
            zoneTimeElapsed = zones[i].zoneTime;
             zoneIndex = i;

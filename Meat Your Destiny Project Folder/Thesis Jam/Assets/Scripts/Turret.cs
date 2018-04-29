@@ -443,16 +443,16 @@ public class Turret : MonoBehaviour
 
 
     public void Win(int winnerNum){
+        StopAllCoroutines();
+        print("winning");
         contestable = true;
         charge = segmentNum;
         litSegments = (int)charge;
         owner = possibleOwners[winnerNum];
         ownerNum = winnerNum;
-
         neutralColor = playerColors[winnerNum];
         currentColor = neutralColor;
         AdjustOwnership(winnerNum);
-        StopAllCoroutines();
         StartCoroutine(RetractLine());
      
         ParticleFollowScript followParts = (Instantiate
@@ -480,6 +480,7 @@ public class Turret : MonoBehaviour
             float elapsedTime = 0;
             while (elapsedTime < recedeTime)
             {
+                print("line is retracting");
 
                 elapsedTime += Time.deltaTime;
                 lineRenderer.SetPosition(1, Vector3.Lerp(lineRenderer.GetPosition(1), transform.position, elapsedTime / recedeTime));
@@ -493,6 +494,7 @@ public class Turret : MonoBehaviour
             //lineRenderer.endColor = TwoDGameManager.thisInstance.playerColors[playerNum];
             while (elapsedTime < drawTime)
             {
+                print("line is drawing");
                 elapsedTime += Time.deltaTime;
                 lineRenderer.SetPosition(1, Vector3.Lerp(transform.position, TwoDGameManager.thisInstance.players[playerNum].transform.position, elapsedTime / drawTime));
                 yield return null;
@@ -501,13 +503,21 @@ public class Turret : MonoBehaviour
             //maintain the line at position
             while (playerNum == ownerNum)
             {
-                if (TwoDGameManager.thisInstance.GetPlayer(playerNum).activeInHierarchy) 
+                if (contestable)
                 {
-                    lineRenderer.SetPosition(1, Vector3.Lerp(transform.position, TwoDGameManager.thisInstance.players[playerNum].transform.position, elapsedTime / drawTime));
+                    print("line is being maintained");
+                    if (TwoDGameManager.thisInstance.GetPlayer(playerNum).activeInHierarchy)
+                    {
+                        lineRenderer.SetPosition(1, Vector3.Lerp(transform.position, TwoDGameManager.thisInstance.players[playerNum].transform.position, elapsedTime / drawTime));
+                    }
+                    else
+                    {
+                        lineRenderer.SetPosition(1, transform.position);
+                    }
+                    yield return null;
                 }else{
-                    lineRenderer.SetPosition(1, transform.position);
+                    yield break;
                 }
-                yield return null;
             }
         }
     }
@@ -519,12 +529,12 @@ public class Turret : MonoBehaviour
         {
             if (lineRenderer)
             {
-                print("retracting");
                 lineRenderer.SetPosition(1, Vector3.Lerp(lineRenderer.GetPosition(1), transform.position, elapsedTime / drawTime));
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
         }
+
     }
 	void OnTriggerExit(Collider col){
 		if (col.gameObject.GetComponent<AuraGenerator> ()) {
