@@ -13,7 +13,7 @@ public class EndCutsceneScript : MonoBehaviour {
     private bool fading;
     public bool watchingPlayerRise = false;
     private Animator myAnim;
-
+    public AudioClip takeOffSound;
     public Vector3 finalPosition;
     Transform center;
 
@@ -32,6 +32,9 @@ public class EndCutsceneScript : MonoBehaviour {
         {
             if (timeElapsed < timeToEnd)
             {
+                if(!Sound.me.IsPlaying(takeOffSound)){
+                    Sound.me.Play(takeOffSound);
+                }
                 timeElapsed += Time.deltaTime;
                 winner.transform.Translate(Vector3.up * (Time.deltaTime * 500f), Space.World);
             }

@@ -117,13 +117,13 @@ public  class UIManager : MonoBehaviour {
 
     void UpdateScoreBar(){
 		currentTurretNum = 0;
-		foreach(List<Turret> t in TwoDGameManager.thisInstance.turrets){
+		foreach(List<Turret> t in TwoDGameManager.thisInstance.activeTurrets){
 			currentTurretNum += t.Count;
 
 		}
 
-		p1Bar.fillAmount = Mathf.MoveTowards(p1Bar.fillAmount, (float)TwoDGameManager.thisInstance.turrets[0].Count/currentTurretNum, Time.deltaTime/2);
-		p2Bar.fillAmount = Mathf.MoveTowards(p2Bar.fillAmount, (float)TwoDGameManager.thisInstance.turrets[1].Count / currentTurretNum, Time.deltaTime/2);
+		p1Bar.fillAmount = Mathf.MoveTowards(p1Bar.fillAmount, (float)TwoDGameManager.thisInstance.activeTurrets[0].Count/currentTurretNum, Time.deltaTime/2);
+		p2Bar.fillAmount = Mathf.MoveTowards(p2Bar.fillAmount, (float)TwoDGameManager.thisInstance.activeTurrets[1].Count / currentTurretNum, Time.deltaTime/2);
 
         
     }
@@ -203,9 +203,9 @@ public  class UIManager : MonoBehaviour {
 		float startingMinZoom = cam.minDistanceToTarget;
 		while (elapsedTime < zoomInDuration) {
 			elapsedTime += Time.deltaTime;
-			cam.maxDistanceToTarget = Mathf.Lerp (startingMaxZoom, zoomDistance, elapsedTime / zoomInDuration);
+            cam.maxDistanceToTarget = Mathf.Lerp (startingMaxZoom, zoomDistance, Easing.ExpoEaseIn(elapsedTime / zoomInDuration));
 			if (cam.minDistanceToTarget >= cam.maxDistanceToTarget) {
-				cam.minDistanceToTarget = Mathf.Lerp (startingMinZoom, zoomDistance, elapsedTime / zoomInDuration);
+                cam.minDistanceToTarget = Mathf.Lerp (startingMinZoom, zoomDistance, Easing.ExpoEaseIn(elapsedTime / zoomInDuration));
 
 			}
 			yield return null;
@@ -267,7 +267,7 @@ public  class UIManager : MonoBehaviour {
 			x => Camera.main.WorldToScreenPoint (x.transform.position).x).ToList ();
         
         currentTurretNum = 0;
-        foreach(List<Turret> t in TwoDGameManager.thisInstance.turrets){
+        foreach(List<Turret> t in TwoDGameManager.thisInstance.activeTurrets){
             currentTurretNum += t.Count;
 
         }

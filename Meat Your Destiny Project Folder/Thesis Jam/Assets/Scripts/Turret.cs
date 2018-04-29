@@ -20,6 +20,7 @@ public class Turret : MonoBehaviour
 
 	public enum Owner { Player1, Player2, NONE };
 	public Owner owner = Owner.NONE;
+    List<Owner> possibleOwners = new List<Owner>();
 
 	//GameObject Cannon;
 	public bool completelyOwned = false, contestable = true;
@@ -56,7 +57,7 @@ public class Turret : MonoBehaviour
 	Image progressBar;
 	Image outlineBar;
     List<Animator> emitterAnimators = new List<Animator>();
-    public AudioClip captureSound;
+    public AudioClip captureSound, turretChargeSound;
 
 	Collider myCollider;
 
@@ -64,7 +65,9 @@ public class Turret : MonoBehaviour
 	//ownerNum will be received from the playerNum variable from AuraCharacterController script, where 2 acts as "none"
 	//I know, I know, 0 makes you think "none" more than 2, but that's how the players are determined and I don't wanna fuck with that.
 	void Awake(){
-		
+        possibleOwners.Add(Owner.Player1);
+        possibleOwners.Add(Owner.Player2);
+        possibleOwners.Add(Owner.NONE);
         lineRenderer = GetComponent<LineRenderer>();
 
 		if (lineRenderer) {
@@ -185,6 +188,14 @@ public class Turret : MonoBehaviour
 
 		if (charging && contestable) {
 			charge = Mathf.Clamp (charge + chargeIncrementSign * Time.deltaTime * chargeSpeed, 0, letterRenderers.Length);
+
+            if (charge != 0)
+            {
+                if (!Sound.me.IsPlaying(turretChargeSound, 10, name + "Charge Sound"))
+                {
+                    Sound.me.Play(turretChargeSound, myName: name + "Charge Sound");
+                }
+            }
 		}
 		if (isSpinning)
 		{
@@ -244,7 +255,7 @@ public class Turret : MonoBehaviour
         objectPool = GameObject.Find("Cannonball Pool " + ownerNum.ToString()).GetComponent<EZObjectPools.EZObjectPool>();
 		if (completelyOwned) {
 			Sound.me.Play(captureSound);
-			StartCoroutine(TimeManipulation.SlowTimeTemporarily(0.7f, 0.1f, .2f, 0.1f));
+			//StartCoroutine(TimeManipulation.SlowTimeTemporarily(0.7f, 0.1f, .2f, 0.1f));
 			CancelInvoke ();
 			//InvokeRepeating ("Fire", repeatTime - (Time.timeSinceLevelLoad % repeatTime), repeatTime);
 			//contestable = false;
@@ -290,8 +301,8 @@ public class Turret : MonoBehaviour
 		} 
 	}
 	public void RegisterTurret(){
-		if (!TwoDGameManager.thisInstance.turrets [ownerNum].Contains (this)) {
-			TwoDGameManager.thisInstance.turrets [ownerNum].Add (this);
+		if (!TwoDGameManager.thisInstance.activeTurrets [ownerNum].Contains (this)) {
+			TwoDGameManager.thisInstance.activeTurrets [ownerNum].Add (this);
 		}
 		if(!UIManager.thisInstance.turretList.Contains(this)){
 			UIManager.thisInstance.turretList.Add (this);
@@ -360,13 +371,13 @@ public class Turret : MonoBehaviour
     }
 
 	void AdjustListMembership(){
-		foreach(List<Turret> l in TwoDGameManager.thisInstance.turrets){//scan all turret lists and remove itself from the one containing this turret
+		foreach(List<Turret> l in TwoDGameManager.thisInstance.activeTurrets){//scan all turret lists and remove itself from the one containing this turret
 			if(l.Contains(this)){
 				l.Remove(this);
 			}
 		}
 		//add itself to its new owner's list
-		TwoDGameManager.thisInstance.turrets[ownerNum].Add(this);
+		TwoDGameManager.thisInstance.activeTurrets[ownerNum].Add(this);
 
 
 	}
@@ -387,6 +398,7 @@ public class Turret : MonoBehaviour
 						//ownerNum = col.gameObject.GetComponentInChildren<AuraGenerator> ().auraPlayerNum;
 						if (litSegments < letterRenderers.Length)
 						{
+
 							charging = true;
 
 						}
@@ -430,31 +442,33 @@ public class Turret : MonoBehaviour
 	}
 
 
-    public void Win(int ownerNum){
-        contestable = false;
-        neutralColor = playerColors[ownerNum];
+    public void Win(int winnerNum){
+        contestable = true;
+        charge = segmentNum;
+        litSegments = (int)charge;
+        owner = possibleOwners[winnerNum];
+        ownerNum = winnerNum;
+
+        neutralColor = playerColors[winnerNum];
         currentColor = neutralColor;
-        AdjustOwnership(ownerNum);
+        AdjustOwnership(winnerNum);
         StopAllCoroutines();
         StartCoroutine(RetractLine());
      
         ParticleFollowScript followParts = (Instantiate
-                                                (tp.victoryParticles[ownerNum], transform.position,
+                                                (tp.victoryParticles[winnerNum], transform.position,
                                                  Quaternion.identity)).GetComponent<ParticleFollowScript>();
-            followParts.owner = ownerNum;
+            followParts.owner = winnerNum;
             followParts.minDist = 1;
             followParts.winParticles = true; 
-        
+        contestable = false;
+
        
     }
 	bool MismatchedOwners(){
-		if (ownerNum == 0 && owner != Owner.Player1) {
+        if (ownerNum != possibleOwners.IndexOf(owner)) {
 			return true;
-		} else if (ownerNum == 1 && owner != Owner.Player2) {
-			return true;
-		} else if (ownerNum == 2 && owner != Owner.NONE) {
-			return true;
-		}else{
+		} else{
 			return false;
 		}
 	}

@@ -93,7 +93,7 @@ public class TurretCarrier : MonoBehaviour {
 
 	public void RemoveTurretFocus(){
 		foreach (Transform t in children) {
-			foreach (List<Turret> tur in TwoDGameManager.thisInstance.turrets) {
+			foreach (List<Turret> tur in TwoDGameManager.thisInstance.activeTurrets) {
 				if (tur.Contains (t.GetComponent<Turret> ())) {
                     t.GetComponent<Turret>().lineRenderer.enabled = false;
 					if (t.GetComponentInChildren<CameraMultiTargetObjective> ()) {
@@ -110,7 +110,7 @@ public class TurretCarrier : MonoBehaviour {
 		RemoveTurretFocus ();
 		//remove self from game manager's list of turrets
 		foreach(Transform t in children){
-			foreach (List<Turret> tur in TwoDGameManager.thisInstance.turrets) {
+			foreach (List<Turret> tur in TwoDGameManager.thisInstance.activeTurrets) {
 				if(tur.Contains(t.GetComponent<Turret>())){
 					t.GetComponent<Turret> ().StartCoroutine (t.GetComponent<Turret> ().FadeUIBar (.1f));
 					//t.GetComponent<Turret>().UICanvas.SetActive(false);

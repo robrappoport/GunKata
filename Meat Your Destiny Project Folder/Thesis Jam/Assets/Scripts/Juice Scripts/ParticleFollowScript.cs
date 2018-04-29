@@ -97,22 +97,26 @@ public class ParticleFollowScript : MonoBehaviour {
         randTimer += Time.deltaTime;
         for (int i = 0; i < particleCount; i++)
         {
-            if (particleRandCount[i] > randTimer)
+            if (particleRandCount[i] != null)
             {
-                continue;
-            }
-            Vector3 directionToTarget = Vector3.Normalize(targetTransformedPosition - m_Particles[i].position);
-            Vector3 seekForce = directionToTarget;
-            float dist = Vector3.Distance(targetTransformedPosition, m_Particles[i].position);
-            //var targetRot = Quaternion.LookRotation(target.position - m_Particles[i].position);
+                if (particleRandCount[i] > randTimer)
+                {
+                    continue;
+                }
+                Vector3 directionToTarget = Vector3.Normalize(targetTransformedPosition - m_Particles[i].position);
+                Vector3 seekForce = directionToTarget;
+                float dist = Vector3.Distance(targetTransformedPosition, m_Particles[i].position);
+                //var targetRot = Quaternion.LookRotation(target.position - m_Particles[i].position);
 
-            //this is where you add the forces
-            //m_Particles[i].rotation = targetRot;
-            m_Particles[i].velocity += seekForce * 600f;
-            m_Particles[i].velocity = Vector3.ClampMagnitude(m_Particles[i].velocity, 500f);
-            if (dist<minDist) { //player absorbed particle
-                m_Particles[i].remainingLifetime = 0;
-                StartCoroutine(TwoDGameManager.thisInstance.players[owner].RefillAuraOverTime(individualParticleStaminaValue));
+                //this is where you add the forces
+                //m_Particles[i].rotation = targetRot;
+                m_Particles[i].velocity += seekForce * 600f;
+                m_Particles[i].velocity = Vector3.ClampMagnitude(m_Particles[i].velocity, 500f);
+                if (dist < minDist)
+                { //player absorbed particle
+                    m_Particles[i].remainingLifetime = 0;
+                    StartCoroutine(TwoDGameManager.thisInstance.players[owner].RefillAuraOverTime(individualParticleStaminaValue));
+                }
             }
    
         }

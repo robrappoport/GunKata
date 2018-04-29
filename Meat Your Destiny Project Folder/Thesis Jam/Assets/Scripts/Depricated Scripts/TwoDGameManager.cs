@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using InControl;
 using UnityEngine.SceneManagement;
@@ -68,11 +69,12 @@ public class TwoDGameManager : MonoBehaviour {
     public bool ballDestroyed = false;
     public int zoneIndex;
     public float zoneTimeElapsed;
-//	GameObject audioManagerClone;
-//	public GameObject audioManagerPrefab;
+    //	GameObject audioManagerClone;
+    //	public GameObject audioManagerPrefab;
 
-	[Header("Turret Spawn Vars")]
-	public List<List<Turret>>turrets;
+    [Header("Turret Spawn Vars")]
+    public List<Turret> allTurrets = new List<Turret>(); 
+	public List<List<Turret>>activeTurrets;
 	public float turretDistanceMod = 3;
 	public float spawnResetTimeLimit = 1;
 	float spawnResetTimer;
@@ -87,6 +89,7 @@ public class TwoDGameManager : MonoBehaviour {
 	private GameObject winCanvas;
 
     public EndCutsceneScript endGameCutScene;
+    public AudioClip winningSound;
     void OnApplicationQuit()
     {
         thisInstance = null;
@@ -112,13 +115,13 @@ public class TwoDGameManager : MonoBehaviour {
         //		if (!GameObject.Find ("AudioManager(Clone)")) {
         //			audioManagerClone = Instantiate (audioManagerPrefab);
         //		}
-		turrets = new List<List<Turret>> (players.Length + 1);
-		for (int i = 0; i < turrets.Capacity; i++) {
-			turrets.Add (new List<Turret> ());
+		activeTurrets = new List<List<Turret>> (players.Length + 1);
+		for (int i = 0; i < activeTurrets.Capacity; i++) {
+			activeTurrets.Add (new List<Turret> ());
 		}
-		neutralTurrets = turrets [2];
-		p2Turrets = turrets [1];
-		p1Turrets = turrets [0];
+		neutralTurrets = activeTurrets [2];
+		p2Turrets = activeTurrets [1];
+		p1Turrets = activeTurrets [0];
 
 
         /////////GAME INSTANTIATION OCCURS HERE/////////
@@ -144,7 +147,9 @@ public class TwoDGameManager : MonoBehaviour {
     {
         player1Scale = player1.transform.localScale;
         player2Scale = player2.transform.localScale;
-		//StartCoroutine(ActivateSections ());
+        //StartCoroutine(ActivateSections ());
+        allTurrets = FindObjectsOfType<Turret>().ToList();
+     
     }
 
 
@@ -205,13 +210,11 @@ public class TwoDGameManager : MonoBehaviour {
         addedScore2 = false;
         TogglePlayerControl();
 
+        players[winnerNum].transform.Find("ringarrow").gameObject.SetActive(false);
         endGameCutScene.DetermineWinner(winnerNum);
-        foreach (List<Turret> l in turrets)
-        {
-            foreach (Turret t in l)
-            {
-                t.Win(winnerNum);
-            }
+        Sound.me.Play(winningSound);
+        foreach(Turret t in allTurrets){
+            t.Win(winnerNum);
         }
         //yield return new WaitForSeconds(20f);
         //EndGame(winnerNum);
@@ -254,8 +257,8 @@ public class TwoDGameManager : MonoBehaviour {
             keyTurrets.Remove(t);
 
 			//remove turrets from score calculations
-			for (int i = 0; i < turrets.Count; i++) {
-				turrets [i].Remove (t);
+			for (int i = 0; i < activeTurrets.Count; i++) {
+				activeTurrets [i].Remove (t);
 			}
         }
         foreach(Turret t in keyTurrets){
@@ -382,10 +385,10 @@ public class TwoDGameManager : MonoBehaviour {
 		Vector3 spawnPos = Vector3.zero;
 		if (PlayerCanSpawn (playerNum)) {
 
-			if (TwoDGameManager.thisInstance.turrets [playerNum].Count > 0) {//check if there are any turrets available in the player's spawn; otherwise, spawn from an unowned turret
-                spawnPos = TwoDGameManager.thisInstance.turrets [playerNum] [Random.Range (0, TwoDGameManager.thisInstance.turrets [playerNum].Count - 1)].transform.position;
+			if (TwoDGameManager.thisInstance.activeTurrets [playerNum].Count > 0) {//check if there are any turrets available in the player's spawn; otherwise, spawn from an unowned turret
+                spawnPos = TwoDGameManager.thisInstance.activeTurrets [playerNum] [Random.Range (0, TwoDGameManager.thisInstance.activeTurrets [playerNum].Count - 1)].transform.position;
 			} else {
-				spawnPos = TwoDGameManager.thisInstance.turrets [neutralNum] [Random.Range (0, TwoDGameManager.thisInstance.turrets [2].Count - 1)].transform.position;
+				spawnPos = TwoDGameManager.thisInstance.activeTurrets [neutralNum] [Random.Range (0, TwoDGameManager.thisInstance.activeTurrets [2].Count - 1)].transform.position;
 			}
 
 			spawnPos = new Vector3 (spawnPos.x, 168.8f, spawnPos.z);
@@ -394,7 +397,7 @@ public class TwoDGameManager : MonoBehaviour {
 
 	}
 	bool PlayerCanSpawn(int playerNum, int unownedNum = 2){
-		if (turrets [playerNum].Count < 1 && turrets [unownedNum].Count < 1) {//check if both the player's list and the neutral list are empty
+		if (activeTurrets [playerNum].Count < 1 && activeTurrets [unownedNum].Count < 1) {//check if both the player's list and the neutral list are empty
 			return false;
 		} else {
 			return true;
@@ -406,7 +409,7 @@ public class TwoDGameManager : MonoBehaviour {
 
 
         player1.GetComponent<auraGunBehavior>().DamagedHalo.Play();
-        yield return new WaitForSeconds(Mathf.Clamp(maxRespawnTime - respawnBalanceBuffer * turrets[1].Count, minRespawnTime, maxRespawnTime));
+        yield return new WaitForSeconds(Mathf.Clamp(maxRespawnTime - respawnBalanceBuffer * activeTurrets[1].Count, minRespawnTime, maxRespawnTime));
 
         PlayerSpawnProtect(spawnPos, 12);
         GameObject lifeBeam = Instantiate(RespawnBeamPrefab) as GameObject;
@@ -426,7 +429,7 @@ public class TwoDGameManager : MonoBehaviour {
     {
 		Vector3 spawnPos = GetSpawnPosition (1) + Vector3.back * turretDistanceMod;
         player2.GetComponent<auraGunBehavior>().DamagedHalo.Play();
-        yield return new WaitForSeconds(Mathf.Clamp(maxRespawnTime - respawnBalanceBuffer * turrets[0].Count, minRespawnTime, maxRespawnTime));     
+        yield return new WaitForSeconds(Mathf.Clamp(maxRespawnTime - respawnBalanceBuffer * activeTurrets[0].Count, minRespawnTime, maxRespawnTime));     
         PlayerSpawnProtect(spawnPos, 13);
         GameObject lifeBeam = Instantiate(RespawnBeamPrefab) as GameObject;
         lifeBeam.GetComponentInChildren<Renderer>().material.color = playerColors[1];

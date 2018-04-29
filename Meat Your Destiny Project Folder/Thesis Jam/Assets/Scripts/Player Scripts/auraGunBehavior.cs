@@ -29,7 +29,7 @@ public class auraGunBehavior : MonoBehaviour
     public float shootTime;
     public float shootVol;
 	public float shootAnimationDelay;
-    public AudioClip cannonFireSound, inSufficientStaminaSound;
+    public AudioClip cannonFireSound, inSufficientStaminaSound, auraCreationSound, auraChargeSound, pipFillSound;
 	private bool isFiring;
     public bool autoReloadEnabled;
     private bool autoReload;
@@ -165,7 +165,7 @@ public class auraGunBehavior : MonoBehaviour
             auraLevelCharge[i] = auraLevelChargeMax;
         }
 		health = GetComponent<auraPlayerHealth> ();
-		myTurrets = TwoDGameManager.thisInstance.turrets [playerNum];
+		myTurrets = TwoDGameManager.thisInstance.activeTurrets [playerNum];
 		shootingStaminaCost = (float)staminaSegmentNum / MaxBullets;   
         foreach(Animator a in GetComponentsInChildren<Animator>()){
             if(a.name == "Wings"){
@@ -431,6 +431,7 @@ public class auraGunBehavior : MonoBehaviour
         int newPipCount = Mathf.Clamp((int)remainingStamina , 0, staminaSegmentNum - 1);
         if (newPipCount > filledPipCount){
             StartCoroutine(UIManager.thisInstance.FlashPip(playerNum, newPipCount -1));
+            Sound.me.Play(pipFillSound);
         }
 
     }
@@ -447,8 +448,10 @@ public class auraGunBehavior : MonoBehaviour
         if(remainingStamina > cost){
             return true;
         }else{
-            if(!Sound.me.IsPlaying(inSufficientStaminaSound)){
-                //Sound.me.Play(inSufficientStaminaSound);
+            if(!Sound.me.IsPlaying(inSufficientStaminaSound, myName:name + "InsufficientStaminaSound")){
+                Sound.me.Play(inSufficientStaminaSound, myName:name + "InsufficientStaminaSound");
+            }else{
+                print("insufficient stamina sound playing");
             }
             if(!flashing){
                 flashing = true;
@@ -473,6 +476,7 @@ public class auraGunBehavior : MonoBehaviour
         {
             if (EnoughStamina(.99f))
             {
+                Sound.me.Play(auraCreationSound);
                 currentAuraChargeLimit = remainingStamina;
                 sprAura.SetActive(true);
                 if (myAura == null)
@@ -504,6 +508,15 @@ public class auraGunBehavior : MonoBehaviour
 			DrainAura (Time.deltaTime * auraChargeRate);
             if (EnoughStamina(Time.deltaTime * auraChargeRate)) {
 				currentAuraCharge = Mathf.Clamp (currentAuraCharge + Time.deltaTime * auraChargeRate, 0, currentAuraChargeLimit);
+                if (!Sound.me.IsPlaying(auraChargeSound, myName: name + "auraChargeSound"))
+                {
+                    Sound.me.Play(auraChargeSound, myName: name + "auraChargeSound");
+                }
+                else
+                {
+                    print("auraChargeSound playing");
+                }
+
 			}
 			if (staminaSegmentNum - currentAuraCharge < 0.02f) {
 				chargeIndex = staminaSegmentNum;
