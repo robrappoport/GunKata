@@ -8,6 +8,7 @@ public class ParticleFollowScript : MonoBehaviour {
     //public float m_drift = 0.0001f;
     public float force = 50f;
     public float turn = 20f;
+    public float minDist = 15;
     public Transform target;
     public int owner;
     public float individualParticleStaminaValue;
@@ -15,6 +16,8 @@ public class ParticleFollowScript : MonoBehaviour {
     ParticleSystem.MainModule particleSystemMainModule;
     private float [] particleRandCount;
     private float randTimer;
+    public bool winParticles = false;
+
 	// Use this for initialization
 	void Start () {
         respawning = false;
@@ -48,41 +51,46 @@ public class ParticleFollowScript : MonoBehaviour {
         float forceDeltaTime = force * Time.deltaTime;
 
         Vector3 targetTransformedPosition;
-        RectTransformUtility.ScreenPointToWorldPointInRectangle(UIManager.thisInstance.playerStamFillList[owner].rectTransform,
-                                                                UIManager.thisInstance.playerStamFillList[owner].rectTransform.position,
-                                                                Camera.main,
-                                                                out targetTransformedPosition);
-        
-            
+        if (!winParticles)
+        {
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(UIManager.thisInstance.playerStamFillList[owner].rectTransform,
+                                                                    UIManager.thisInstance.playerStamFillList[owner].rectTransform.position,
+                                                                    Camera.main,
+                                                                    out targetTransformedPosition);
+
+        }
+        else{
+            //this is to make sure it works regardless of what sim space the particles use
+        switch (particleSystemMainModule.simulationSpace)
+            {
+                case ParticleSystemSimulationSpace.Local:
+                    {
+                        targetTransformedPosition = transform.InverseTransformPoint(target.position);
+                        break;
+                    }
+                case ParticleSystemSimulationSpace.Custom:
+                    {
+                        targetTransformedPosition = particleSystemMainModule.customSimulationSpace.InverseTransformPoint(target.position);
+                        break;
+                    }
+                case ParticleSystemSimulationSpace.World:
+                    {
+                        targetTransformedPosition = target.position;
+                        break;
+                    }
+                default:
+                    {
+                        throw new System.NotSupportedException(
+
+                            string.Format("Unsupported simulation space '{0}'.",
+                            System.Enum.GetName(typeof(ParticleSystemSimulationSpace), particleSystemMainModule.simulationSpace)));
+                    }
+            }
+        }
+
 
             //UIManager.thisInstance.playerStamFillList[owner].rectTransform.rect.center);
                                                                            
-        //this is to make sure it works regardless of what sim space the particles use
-        //switch (particleSystemMainModule.simulationSpace)
-        //{
-        //    case ParticleSystemSimulationSpace.Local:
-        //        {
-        //            targetTransformedPosition = transform.InverseTransformPoint(target.position);
-        //            break;
-        //        }
-        //    case ParticleSystemSimulationSpace.Custom:
-        //        {
-        //            targetTransformedPosition = particleSystemMainModule.customSimulationSpace.InverseTransformPoint(target.position);
-        //            break;
-        //        }
-        //    case ParticleSystemSimulationSpace.World:
-        //        {
-        //            targetTransformedPosition = target.position;
-        //            break;
-        //        }
-        //    default:
-        //        {
-        //            throw new System.NotSupportedException(
-
-        //                string.Format("Unsupported simulation space '{0}'.",
-        //                System.Enum.GetName(typeof(ParticleSystemSimulationSpace), particleSystemMainModule.simulationSpace)));
-        //        }
-        //}
 
         int particleCount = psys.particleCount;
 
@@ -102,13 +110,13 @@ public class ParticleFollowScript : MonoBehaviour {
             //m_Particles[i].rotation = targetRot;
             m_Particles[i].velocity += seekForce * 600f;
             m_Particles[i].velocity = Vector3.ClampMagnitude(m_Particles[i].velocity, 500f);
-            if (dist<15f) { //player absorbed particle
+            if (dist<minDist) { //player absorbed particle
                 m_Particles[i].remainingLifetime = 0;
                 StartCoroutine(TwoDGameManager.thisInstance.players[owner].RefillAuraOverTime(individualParticleStaminaValue));
             }
    
         }
-        if (particleCount <= 0)
+        if (particleCount <= 0 && !winParticles)
         {
             Destroy(gameObject);
         }

@@ -198,6 +198,7 @@ public class TwoDGameManager : MonoBehaviour {
 	}
     public IEnumerator GameRestart (int winnerNum)
 	{
+        
 		yield return new WaitForSeconds (restartTime);
         resetScore();
         addedScore1 = false;
@@ -205,6 +206,13 @@ public class TwoDGameManager : MonoBehaviour {
         TogglePlayerControl();
 
         endGameCutScene.DetermineWinner(winnerNum);
+        foreach (List<Turret> l in turrets)
+        {
+            foreach (Turret t in l)
+            {
+                t.Win(winnerNum);
+            }
+        }
         //yield return new WaitForSeconds(20f);
         //EndGame(winnerNum);
 	}
@@ -449,6 +457,7 @@ public class TwoDGameManager : MonoBehaviour {
 //					t.GetComponent<Text> ().color = playerColors [playerNumber];
 //				}
 //			}
+
 			Sound.me.ToggleMuteAllSound();
 			GetComponent<AudioSource> ().mute = true;
 			testDeath = false;

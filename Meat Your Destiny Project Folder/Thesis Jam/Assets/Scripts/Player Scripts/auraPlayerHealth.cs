@@ -169,9 +169,12 @@ public class auraPlayerHealth : MonoBehaviour {
 			if (!steppedOffLedge && !gameIsOver) {
 				Invoke ("Fall", fallTimer);
 				steppedOffLedge = true;
-			}
-            anim.SetBool("Falling", true);
+                anim.SetBool("Falling", true);
 
+			}
+            if(gameIsOver){
+                anim.SetTrigger("Ascend");
+            }
 		} else {
 			CancelInvoke ("Fall");
 			steppedOffLedge = false;

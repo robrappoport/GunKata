@@ -44,6 +44,7 @@ public class Turret : MonoBehaviour
 	Collider auraCollider;
 	ParticleSystem.MainModule lightningMain, circleMain, captureParticleMain;
 	Animator anim;
+    GameObject victoryParticles;
 	[Header("CHARGE PROGRESS VARS")]
 	public Renderer[] letterRenderers = new Renderer[5];
 	public Renderer[] piecesRenderers = new Renderer[6];
@@ -429,7 +430,20 @@ public class Turret : MonoBehaviour
 	}
 
 
-
+    public void Win(int ownerNum){
+        contestable = false;
+        neutralColor = playerColors[ownerNum];
+        currentColor = neutralColor;
+        AdjustOwnership(ownerNum);
+        StopAllCoroutines();
+        StartCoroutine(RetractLine());
+        ParticleFollowScript followParts = (Instantiate
+                                            (tp.victoryParticles, transform.position,
+                Quaternion.identity)).GetComponent<ParticleFollowScript>();
+        followParts.owner = ownerNum;
+        followParts.minDist = 1;
+        followParts.winParticles = true;
+    }
 	bool MismatchedOwners(){
 		if (ownerNum == 0 && owner != Owner.Player1) {
 			return true;
@@ -479,9 +493,21 @@ public class Turret : MonoBehaviour
                 yield return null;
             }
         }
+    }
 
-
-        
+    IEnumerator RetractLine(float drawTime = 0.5f){
+        float elapsedTime = 0;
+        while (elapsedTime < drawTime)
+            
+        {
+            if (lineRenderer)
+            {
+                print("retracting");
+                lineRenderer.SetPosition(1, Vector3.Lerp(lineRenderer.GetPosition(1), transform.position, elapsedTime / drawTime));
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+        }
     }
 	void OnTriggerExit(Collider col){
 		if (col.gameObject.GetComponent<AuraGenerator> ()) {

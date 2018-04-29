@@ -589,6 +589,7 @@ ModelImporter:
     7400022: Death
     7400024: Death_Platform
     7400026: Edge_Death_Struggle
+    7400028: Ascendance
     9500000: //RootNode
     13700000: Main_Body
     13700002: Main_Body_001
@@ -632,7 +633,6 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
-    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -642,10 +642,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Default Take
-      takeName: Default Take
+      name: Ascendance
+      takeName: Ascendance
       firstFrame: -1
-      lastFrame: 39
+      lastFrame: 19
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
