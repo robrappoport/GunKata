@@ -93,8 +93,12 @@ public class CameraFollow : MonoBehaviour {
             targetDir = targetDir - transform.position;
             float step = speed * Time.deltaTime;
             newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0F);
-            Debug.DrawRay(transform.position, newDir, Color.red, 50000f);
+            //Debug.DrawRay(transform.position, newDir, Color.red, 50000f);
             transform.LookAt(target);
         }
+    }
+
+    public void LookAtWinner(){
+        
     }
 }

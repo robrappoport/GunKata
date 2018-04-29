@@ -11,52 +11,107 @@ public class EndCutsceneScript : MonoBehaviour {
     public float fadeTime;
     public Image fadeImg;
     private bool fading;
+    public bool watchingPlayerRise = false;
+    private Animator myAnim;
+
+    public Vector3 finalPosition;
+    Transform center;
+
+
 
 	private void Start()
 	{
-        
+        center = FindObjectOfType<TurretCarrier>().center;
+        myAnim = GetComponent<Animator>();
+        finalPosition = GetComponent<CameraFollow>().finalPos;
 	}
 
 	private void Update()
 	{
-        if (winner != null)
+        if (winner != null && watchingPlayerRise)
         {
-            if (Vector3.Distance(winner.transform.position, Camera.main.transform.position) >= 20f)
+            if (timeElapsed < timeToEnd)
             {
                 timeElapsed += Time.deltaTime;
-                winner.transform.position = Vector3.Lerp(winner.transform.position, Camera.main.transform.position, Easing.QuadEaseIn(timeElapsed / timeToEnd));
-
+                winner.transform.Translate(Vector3.up * (Time.deltaTime * 500f), Space.World);
             }
             else
             {
                 if (!fading)
                 {
+                    Debug.Log("hello?");
                     fading = true;
-                    //Debug.Log("fading now");
                     StartCoroutine(FadeToBlack());
+
                 }
 
             }
         }
-       
+
+      
+	}
+	private void LateUpdate()
+	{
+        if (timeElapsed < timeToEnd && winner)
+        {
+            Camera.main.transform.LookAt(winner.GetChild(5));
+        }
 	}
 	public void DetermineWinner(int winNum)
     {
         //Debug.Log("is this happening? " + winNum +" should be winner");
         GetComponentInChildren<CameraMultitarget>().enabled = false;
-        TwoDGameManager.thisInstance.TogglePlayerControl();
         winner = TwoDGameManager.thisInstance.GetPlayer(winNum).transform;
         winnerNum = winNum;
-        StartCoroutine(CameraFlyBy());
+        myAnim.applyRootMotion = false;
+
+        Camera.main.transform.ResetPosition();
+        Camera.main.transform.ResetRotation();
+        Camera.main.transform.ResetLocalScale();
+        StartCoroutine(SetPlayerToCenter());
+        StartCoroutine(CameraFlyBy(1));
+
     }
 
-    public IEnumerator CameraFlyBy()
+    public IEnumerator CameraFlyBy(float lerpTime)
     {
+        float elapsedTime = 0;
+        while(elapsedTime<lerpTime){
+            transform.position = Vector3.Lerp(transform.position, finalPosition, Easing.QuadEaseOut(elapsedTime/lerpTime));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
         //Debug.Log("checking");
-        Camera.main.transform.LookAt(winner.transform.GetChild(5));
-        winner.LookAt(Camera.main.transform, Vector3.up);
+        myAnim.SetTrigger("End Game");
 
-        yield return null;
+    }
+
+    public IEnumerator SetPlayerToCenter(float totalTime = 1, float movementSpeed = 1, float rotSpeed = 2){
+        float elapsedTime = 0;
+        Vector3 targetDir, newDir;
+        Vector3 targetPos = new Vector3(center.position.x, winner.position.y, center.position.z);
+        while (elapsedTime < totalTime)
+        {
+            //face that player over a period of time
+            targetDir = new Vector3(Camera.main.transform.position.x, winner.transform.position.y, Camera.main.transform.position.z) - winner.transform.position;
+            float rotationStep = rotSpeed * Time.deltaTime;
+            newDir = Vector3.RotateTowards(winner.transform.forward, targetDir, rotationStep, 0.0F);
+            winner.transform.rotation = Quaternion.LookRotation(newDir);
+
+            winner.transform.position = Vector3.Lerp(winner.transform.position, targetPos, elapsedTime * movementSpeed / totalTime);
+
+
+            elapsedTime += Time.deltaTime;
+            //print(elapsedTime / totalTime);
+            yield return null;
+        }
+
+    }
+
+
+    public void WatchPlayerRise(){
+        watchingPlayerRise = true;
+
     }
 
     public IEnumerator FadeToBlack()

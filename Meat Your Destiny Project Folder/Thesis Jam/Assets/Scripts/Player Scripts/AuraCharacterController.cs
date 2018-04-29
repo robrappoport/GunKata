@@ -133,9 +133,11 @@ public class AuraCharacterController : PlayControl
             {
                 InputManager.Enabled = true;
             }
+        }else{
+            InputManager.Enabled = false;
         }
        
-		if (hitStunnedTimer <= 0 && !health.dying)
+        if (hitStunnedTimer <= 0 && !health.dying && !inCutscene)
         {
             
                 MoveCharacter(); 

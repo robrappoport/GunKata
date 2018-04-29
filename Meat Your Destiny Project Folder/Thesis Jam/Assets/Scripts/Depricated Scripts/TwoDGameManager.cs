@@ -202,6 +202,8 @@ public class TwoDGameManager : MonoBehaviour {
         resetScore();
         addedScore1 = false;
         addedScore2 = false;
+        TogglePlayerControl();
+
         endGameCutScene.DetermineWinner(winnerNum);
         //yield return new WaitForSeconds(20f);
         //EndGame(winnerNum);
@@ -456,23 +458,29 @@ public class TwoDGameManager : MonoBehaviour {
     }
 	void CheckPlayerWin(){
 		//        if (player1ScoreNum >= maxScore)
-        if (!PlayerCanSpawn (1) && playerHealth2.dead || testDeath){
+        if (!PlayerCanSpawn (1) && playerHealth2.dead || testDeath ){
             //player1.SetActive (false);
-            player1.GetComponent<auraPlayerHealth>().gameIsOver = true;
-			player2.SetActive (false);
-		//	player2Canvas.SetActive (false);
-		//	player1Canvas.SetActive (false);
-			StartCoroutine (GameRestart (0));
+            if (!playerHealth1.gameIsOver)
+            {
+                player1.GetComponent<auraPlayerHealth>().gameIsOver = true;
+                player2.SetActive(false);
+                //	player2Canvas.SetActive (false);
+                //	player1Canvas.SetActive (false);
+
+                StartCoroutine(GameRestart(0));
+            }
 		}
 		//       if (player2ScoreNum >= maxScore)
 		else if (!PlayerCanSpawn (0) && playerHealth1.dead){
-            player2.GetComponent<auraPlayerHealth>().gameIsOver = true;
-			player1.SetActive (false);
-			//player2.SetActive (false);
-		//	player2Canvas.SetActive (false);
-		//	player1Canvas.SetActive (false);
-			StartCoroutine (GameRestart (1));
-
+            if (!playerHealth2.gameIsOver)
+            {
+                player2.GetComponent<auraPlayerHealth>().gameIsOver = true;
+                player1.SetActive(false);
+                //player2.SetActive (false);
+                //	player2Canvas.SetActive (false);
+                //	player1Canvas.SetActive (false);
+                StartCoroutine(GameRestart(1));
+            }
 		}
 
 	}
