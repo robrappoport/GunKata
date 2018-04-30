@@ -463,8 +463,8 @@ public class TwoDGameManager : MonoBehaviour {
 //			winCanvas = Instantiate (winScreenCanvas);
 //			DontDestroyOnLoad (winCanvas);
 			winCanvas = Instantiate (winScreenCanvas);
-			winCanvas.GetComponentInChildren<WinScreenScript>().winText.text = "Godhood waS achieved thiS day. \n The Heavenly Body known aS" + winner + " will be conSigned to the firmament \n their prophet a hero.";
-			winCanvas.GetComponentInChildren<WinScreenScript>().winText.color = playerColors [playerNumber];
+			//winCanvas.GetComponentInChildren<WinScreenScript>().winText.text = "Godhood waS achieved thiS day. \n The Heavenly Body known aS" + winner + " will be conSigned to the firmament \n their prophet a hero.";
+			//winCanvas.GetComponentInChildren<WinScreenScript>().winText.color = playerColors [playerNumber];
             winCanvas.GetComponentInChildren<WinScreenScript>().winnerNum = playerNumber;
 //			foreach (Transform t in FindObjectOfType<WinScreenScript>().transform) {
 //				if (t.name == "Win Text") {
