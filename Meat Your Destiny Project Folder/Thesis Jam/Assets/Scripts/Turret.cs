@@ -633,15 +633,19 @@ public class Turret : MonoBehaviour
 //				curTarget = TwoDGameManager.thisInstance.players[0].transform;
 //			}
 //
+
 			curTarget = TwoDGameManager.thisInstance.players[ownerNum].transform;
-			//face that player over a period of time
-			target = curTarget;
-			float rotSpeed = 2f;
-			targetDir = new Vector3(target.position.x, EmitterRotator.transform.position.y, target.position.z) - EmitterRotator.transform.position;
-			float step = rotSpeed * Time.deltaTime;
-			newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0F);
-			//Debug.DrawRay(transform.position, newDir, Color.red, 50f);
-			transform.rotation = Quaternion.LookRotation(newDir);
+            if (Vector3.Distance(Emitters[0].transform.position, curTarget.position) >40)
+            {
+                //face that player over a period of time
+                target = curTarget;
+                float rotSpeed = 2f;
+                targetDir = new Vector3(target.position.x, EmitterRotator.transform.position.y, target.position.z) - EmitterRotator.transform.position;
+                float step = rotSpeed * Time.deltaTime;
+                newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0F);
+                //Debug.DrawRay(transform.position, newDir, Color.red, 50f);
+                transform.rotation = Quaternion.LookRotation(newDir);
+            }
 		}
 
 
