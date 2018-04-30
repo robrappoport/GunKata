@@ -444,7 +444,7 @@ public class Turret : MonoBehaviour
 
     public void Win(int winnerNum){
         StopAllCoroutines();
-        print("winning");
+        //print("winning");
         contestable = true;
         charge = segmentNum;
         litSegments = (int)charge;
@@ -494,7 +494,7 @@ public class Turret : MonoBehaviour
             //lineRenderer.endColor = TwoDGameManager.thisInstance.playerColors[playerNum];
             while (elapsedTime < drawTime)
             {
-                print("line is drawing");
+                //print("line is drawing");
                 elapsedTime += Time.deltaTime;
                 lineRenderer.SetPosition(1, Vector3.Lerp(transform.position, TwoDGameManager.thisInstance.players[playerNum].transform.position, elapsedTime / drawTime));
                 yield return null;
@@ -505,7 +505,7 @@ public class Turret : MonoBehaviour
             {
                 if (contestable)
                 {
-                    print("line is being maintained");
+                    //print("line is being maintained");
                     if (TwoDGameManager.thisInstance.GetPlayer(playerNum).activeInHierarchy)
                     {
                         lineRenderer.SetPosition(1, Vector3.Lerp(transform.position, TwoDGameManager.thisInstance.players[playerNum].transform.position, elapsedTime / drawTime));

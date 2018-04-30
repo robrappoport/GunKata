@@ -36,7 +36,7 @@ public class SectionScript : MonoBehaviour {
        
         dropSpeed = 15f;
         floorRend = floor.GetComponent<Renderer>();
-        normColor = flashColor;
+        //normColor = flashColor;
         floorRend.material = normColor;
 
     }

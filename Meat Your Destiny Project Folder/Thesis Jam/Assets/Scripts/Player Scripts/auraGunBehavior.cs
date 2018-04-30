@@ -514,7 +514,7 @@ public class auraGunBehavior : MonoBehaviour
                 }
                 else
                 {
-                    print("auraChargeSound playing");
+                    //print("auraChargeSound playing");
                 }
 
 			}

@@ -22,7 +22,6 @@ public static class TimeManipulation : object {
             Time.fixedDeltaTime = Time.timeScale * startingFixedTimeScale;
 			yield return null;
 		}
-        Debug.Log(Time.timeScale);
 		yield return new WaitForSeconds (slowedDuration);
 		elapsedTime = 0;
 		while (elapsedTime < returnDuration) {

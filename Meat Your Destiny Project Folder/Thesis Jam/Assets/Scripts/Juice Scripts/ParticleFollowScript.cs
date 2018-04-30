@@ -98,7 +98,7 @@ public class ParticleFollowScript : MonoBehaviour {
         for (int i = 0; i < particleCount; i++)
         {
            
-            if (particleRandCount[Mathf.Clamp(i, 0, particleRandCount.Length)] > randTimer)
+            if (particleRandCount[Mathf.Clamp(i, 0, particleRandCount.Length-1)] > randTimer)
             {
                 continue;
             }

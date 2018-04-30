@@ -62,11 +62,9 @@ public class EndCutsceneScript : MonoBehaviour {
 	}
 	public void DetermineWinner(int winNum)
     {
-        //Debug.Log("is this happening? " + winNum +" should be winner");
         GetComponentInChildren<CameraMultitarget>().enabled = false;
         winner = TwoDGameManager.thisInstance.GetPlayer(winNum).transform;
         winnerNum = winNum;
-
         Camera.main.transform.ResetPosition();
         Camera.main.transform.ResetRotation();
         Camera.main.transform.ResetLocalScale();

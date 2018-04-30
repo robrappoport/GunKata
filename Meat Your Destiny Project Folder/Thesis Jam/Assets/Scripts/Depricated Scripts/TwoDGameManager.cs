@@ -221,8 +221,8 @@ public class TwoDGameManager : MonoBehaviour {
         TogglePlayerControl();
 
         players[winnerNum].transform.Find("ringarrow").gameObject.SetActive(false);
-        endGameCutScene.DetermineWinner(winnerNum);
         Sound.me.Play(winningSound);
+        endGameCutScene.DetermineWinner(winnerNum);
         foreach(Turret t in allTurrets){
             t.Win(winnerNum);
         }
@@ -490,7 +490,7 @@ public class TwoDGameManager : MonoBehaviour {
                 player2.SetActive(false);
                 //	player2Canvas.SetActive (false);
                 //	player1Canvas.SetActive (false);
-
+                StartCoroutine(TimeManipulation.SlowTimeTemporarily(.00001f, .2f, .2f, .2f));
                 StartCoroutine(GameRestart(0));
             }
 		}
@@ -502,7 +502,7 @@ public class TwoDGameManager : MonoBehaviour {
                 player1.SetActive(false);
                 //player2.SetActive (false);
                 //	player2Canvas.SetActive (false);
-                //	player1Canvas.SetActive (false);
+                StartCoroutine(TimeManipulation.SlowTimeTemporarily(.00001f, .2f, .2f, .2f));
                 StartCoroutine(GameRestart(1));
             }
 		}
