@@ -6,18 +6,23 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LevelSelect : MonoBehaviour {
+    public Transform city, space, heaven;
+    public Material citySkybox, spaceSkybox, heavenSkybox;
 	public static PlayControl instance;
 	public InputDevice myController;
+    public ParticleSystem p;
 
 	public Text[] levels;
 	public GameObject controls;
-	public int selectedText;//0 is start, 1 is controls
+	public int selectedTextCounter;
 	public bool controlsActive, leftStickHeld;
+    private MenuCamControl menuCamControl;
 	// Use this for initialization
 	void Start () {
-		selectedText = 0;
+		selectedTextCounter = 2;
 		controlsActive = false;
 		myController = InputManager.Devices [0];
+        menuCamControl = Camera.main.GetComponent<MenuCamControl>();
 	}
 
 	// Update is called once per frame
@@ -25,7 +30,7 @@ public class LevelSelect : MonoBehaviour {
 
 	
 		for (int i =0; i < levels.Length; i++) {
-			if (i == selectedText) {
+			if (i == selectedTextCounter) {
 				levels [i].color = Color.white;
 			}
 				else{
@@ -34,10 +39,10 @@ public class LevelSelect : MonoBehaviour {
 			}
 
 
-		if(myController.AnyButtonWasReleased){
+        if(myController.Action1.WasPressed){
 
-			if(Application.CanStreamedLevelBeLoaded( levels[selectedText].name)){
-				SceneManager.LoadScene (levels [selectedText].name);	
+			if(Application.CanStreamedLevelBeLoaded( levels[selectedTextCounter].name)){
+                SceneManager.LoadScene (levels [selectedTextCounter].name);
 			
 			} else {
 				SceneManager.LoadScene ("AuraVersion");
@@ -45,13 +50,17 @@ public class LevelSelect : MonoBehaviour {
 			}
 		}
 
+        if(myController.Action2.WasPressed){
+            SceneManager.LoadScene("Start Screen");
+        }
+
 		if (!controlsActive) {
 			if (!leftStickHeld) {
 				if (myController.LeftStick.Y < 0) {
-							selectedText = Mathf.Clamp (selectedText + 1, 0, levels.Length);
+							selectedTextCounter = Mathf.Clamp (selectedTextCounter + 1, 0, levels.Length);
 					leftStickHeld = true;
 				} else if (myController.LeftStick.Y > 0) {
-							selectedText = Mathf.Clamp (selectedText - 1, 0, levels.Length);
+							selectedTextCounter = Mathf.Clamp (selectedTextCounter - 1, 0, levels.Length);
 					leftStickHeld = true;
 
 				}
@@ -59,6 +68,27 @@ public class LevelSelect : MonoBehaviour {
 		}
 		if (myController.LeftStick.Y == 0) {
 			leftStickHeld = false;
+            AssignCameraMount();
+            p.Play();
+
+
 		}
 	}
+    void AssignCameraMount(){
+        switch (levels[selectedTextCounter].name)
+        {
+            case "City":
+                menuCamControl.setMount(city);
+                RenderSettings.skybox = citySkybox;
+                break;
+            case "Space":
+                menuCamControl.setMount(space);
+                RenderSettings.skybox = spaceSkybox;
+                break;
+            case "Heaven":
+                menuCamControl.setMount(heaven);
+                RenderSettings.skybox = heavenSkybox;
+                break;
+        }
+    }
 }
