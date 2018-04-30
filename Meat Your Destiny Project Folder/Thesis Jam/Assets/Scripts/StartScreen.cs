@@ -25,12 +25,12 @@ public class StartScreen : MonoBehaviour {
 
 
 		if (selectedText== 0) {
-			startText.color = Color.white;
+			startText.color = Color.blue;
 			controlsText.color = Color.black;
 
 		} else {
-			startText.color = Color.black;
-			controlsText.color = Color.white;
+            startText.color = Color.black;
+			controlsText.color = Color.blue;
 
 		}
 		if(myController.AnyButtonWasReleased){
@@ -44,9 +44,8 @@ public class StartScreen : MonoBehaviour {
 					controls.SetActive (false);
 				}
 			} else {
-                ///TODO: Replace when more levels are active
-//				SceneManager.LoadScene ("LevelSelectScreen");
-                SceneManager.LoadScene("Heaven");
+				SceneManager.LoadScene ("LevelSelectScreen");
+               // SceneManager.LoadScene("Heaven");
 			}
 		}
 

@@ -85,6 +85,7 @@ public class TwoDGameManager : MonoBehaviour {
     public bool testDeath = false;
 
 
+
 	private GameObject winCanvas;
 
     public EndCutsceneScript endGameCutScene;
@@ -464,6 +465,7 @@ public class TwoDGameManager : MonoBehaviour {
 			winCanvas = Instantiate (winScreenCanvas);
 			winCanvas.GetComponentInChildren<WinScreenScript>().winText.text = "Godhood waS achieved thiS day. \n The Heavenly Body known aS" + winner + " will be conSigned to the firmament \n their prophet a hero.";
 			winCanvas.GetComponentInChildren<WinScreenScript>().winText.color = playerColors [playerNumber];
+            winCanvas.GetComponentInChildren<WinScreenScript>().winnerNum = playerNumber;
 //			foreach (Transform t in FindObjectOfType<WinScreenScript>().transform) {
 //				if (t.name == "Win Text") {
 //					t.GetComponent<Text> ().text = "Godhood waS achieved thiS day. \n The Heavenly Body known aS" + winner + " will be conSigned to the firmament \n their prophet a hero.";

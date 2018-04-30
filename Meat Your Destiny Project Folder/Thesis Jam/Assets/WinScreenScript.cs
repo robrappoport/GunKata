@@ -8,8 +8,10 @@ using UnityEngine.UI;
 public class WinScreenScript : MonoBehaviour
 {
     public static PlayControl instance;
+    public int winnerNum;
+    public MovieTexture[] movies;
     public InputDevice myController;
-
+    public MovieTexture movie;
     public Text yesText, noText, winText;
     public int selectedText;//0 is start, 1 is controls
     public bool controlsActive, leftStickHeld;
@@ -17,10 +19,13 @@ public class WinScreenScript : MonoBehaviour
     void Start()
     {
 		instance = FindObjectOfType<PlayControl> ();
-		
+        movie = movies[winnerNum];
+
         selectedText = 0;
         controlsActive = false;
         myController = InputManager.Devices[0];
+        GetComponent<RawImage>().texture = movie;
+        movie.Play();
     }
 
     // Update is called once per frame
@@ -44,13 +49,11 @@ public class WinScreenScript : MonoBehaviour
 
             if (selectedText == 1)
             {
-                SceneManager.LoadScene("Start Screen");
+                SceneManager.LoadScene ("LevelSelectScreen");
 				noText.color = Color.blue;
             }
             else
             {
-                ///TODO: Replace when more levels are active
-//              SceneManager.LoadScene ("LevelSelectScreen");
 				yesText.color = Color.blue;
 
 				SceneManager.LoadScene(SceneManager.GetActiveScene().name);
