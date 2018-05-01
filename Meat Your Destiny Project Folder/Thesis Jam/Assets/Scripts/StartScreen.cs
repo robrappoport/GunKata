@@ -25,12 +25,12 @@ public class StartScreen : MonoBehaviour {
 
 
 		if (selectedText== 0) {
-			startText.color = Color.blue;
-			controlsText.color = Color.black;
+            startText.color = Color.yellow;
+            controlsText.color = Color.white;
 
 		} else {
-            startText.color = Color.black;
-			controlsText.color = Color.blue;
+            startText.color = Color.white;
+            controlsText.color = Color.yellow;
 
 		}
 		if(myController.AnyButtonWasReleased){

@@ -31,10 +31,10 @@ public class LevelSelect : MonoBehaviour {
 	
 		for (int i =0; i < levels.Length; i++) {
 			if (i == selectedTextCounter) {
-				levels [i].color = Color.white;
+                levels [i].color = Color.yellow;
 			}
 				else{
-					levels[i].color = Color.black;
+                levels[i].color = Color.white;
 				}
 			}
 

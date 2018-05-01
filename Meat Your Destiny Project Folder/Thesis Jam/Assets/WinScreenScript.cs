@@ -15,6 +15,8 @@ public class WinScreenScript : MonoBehaviour
     public Text yesText, noText;
     public int selectedText;//0 is start, 1 is controls
     public bool controlsActive, leftStickHeld;
+    AudioSource gameAudio;
+    public AudioClip endMusic;
     // Use this for initialization
     void Start()
     {
@@ -28,6 +30,8 @@ public class WinScreenScript : MonoBehaviour
         movie.Play();
         movie.loop = true;
         TwoDGameManager.thisInstance.TogglePlayerControl();
+        gameAudio = TwoDGameManager.thisInstance.GetComponent<AudioSource>();
+        gameAudio.clip = endMusic;
 
     }
 

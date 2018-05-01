@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Video;
 public class VideoManager : MonoBehaviour {
 
+    float timeElapsed = 0;
     public VideoPlayer video;
     float currentTime;
 	// Use this for initialization
