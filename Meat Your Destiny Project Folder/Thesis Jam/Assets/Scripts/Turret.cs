@@ -480,7 +480,6 @@ public class Turret : MonoBehaviour
             float elapsedTime = 0;
             while (elapsedTime < recedeTime)
             {
-                print("line is retracting");
 
                 elapsedTime += Time.deltaTime;
                 lineRenderer.SetPosition(1, Vector3.Lerp(lineRenderer.GetPosition(1), transform.position, elapsedTime / recedeTime));

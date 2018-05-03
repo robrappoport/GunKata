@@ -68,7 +68,6 @@ public class auraPlayerHealth : MonoBehaviour {
 
 	}
 	public void Die(){
-
 		dead = true;
 
 		//Instantiate(explosionPrefab, transform.position, transform.rotation);
@@ -90,6 +89,7 @@ public class auraPlayerHealth : MonoBehaviour {
 		deathBeam.transform.SetParent(null);
 		deathBeam.transform.position = transform.position;
 		deathBeam.transform.localScale = Vector3.one;
+		TwoDGameManager.thisInstance.CheckPlayerWin ();
 
    		gameObject.SetActive(false);
         Destroy(deathBeam, 1f);

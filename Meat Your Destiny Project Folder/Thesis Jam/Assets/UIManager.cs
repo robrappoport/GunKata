@@ -480,7 +480,6 @@ public  class UIManager : MonoBehaviour {
             Color tmpA;
             while (elapsedTime > 0f)
             {
-                Debug.Log("wat");
                 elapsedTime -= Time.deltaTime;
                 tmpA = characterPortraitA.GetComponent<Image>().color;
                 tmpA.a = elapsedTime / limit;
@@ -516,7 +515,6 @@ public  class UIManager : MonoBehaviour {
             Color tmpB;
             while (elapsedTime > 0f)
             {
-                Debug.Log("wat");
                 elapsedTime -= Time.deltaTime;
                 tmpB = characterPortraitB.GetComponent<Image>().color;
                 tmpB.a = elapsedTime / limit;

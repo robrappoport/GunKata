@@ -174,21 +174,22 @@ public class TwoDGameManager : MonoBehaviour {
 
 			playerScoreUpdate ();
 			if (playerHealth1.dead || playerHealth2.dead) {
-				CheckPlayerWin ();
 				cam.Shake (shakeWeight, shakeTime);
-                if (playerHealth1.dead && addedScore2 == false && PlayerCanSpawn(0)) {
-					//player1Scale = player1.transform.localScale;
-					StartCoroutine (DelayedSpawnPlayer1 ());
-					addedScore2 = true;
-					//player2ScoreNum += 10f;
-					return;
-				}
-                if (playerHealth2.dead && addedScore1 == false && PlayerCanSpawn(1)) {
-					//player2Scale = player2.transform.localScale;
-					StartCoroutine (DelayedSpawnPlayer2 ());
-					addedScore1 = true;
-					//player1ScoreNum += 10f;
-					return;
+				if (!(playerHealth1.gameIsOver || playerHealth2.gameIsOver)) {
+					if (playerHealth1.dead && addedScore2 == false && PlayerCanSpawn (0)) {
+						//player1Scale = player1.transform.localScale;
+						StartCoroutine (DelayedSpawnPlayer1 ());
+						addedScore2 = true;
+						//player2ScoreNum += 10f;
+						return;
+					}
+					if (playerHealth2.dead && addedScore1 == false && PlayerCanSpawn (1)) {
+						//player2Scale = player2.transform.localScale;
+						StartCoroutine (DelayedSpawnPlayer2 ());
+						addedScore1 = true;
+						//player1ScoreNum += 10f;
+						return;
+					}
 				}
 			}
 			//  playerWin();
@@ -480,7 +481,7 @@ public class TwoDGameManager : MonoBehaviour {
 		}
 
     }
-	void CheckPlayerWin(){
+	public void CheckPlayerWin(){
 		//        if (player1ScoreNum >= maxScore)
         if (!PlayerCanSpawn (1) && playerHealth2.dead || testDeath ){
             //player1.SetActive (false);
