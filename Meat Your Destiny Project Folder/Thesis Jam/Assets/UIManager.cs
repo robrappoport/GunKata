@@ -12,6 +12,8 @@ public  class UIManager : MonoBehaviour {
 	public Hashtable h;
     public GameObject TurretCaptureBar;
     public GameObject TurretCaptureBack;
+    public GameObject characterPortraitA;
+    public GameObject characterPortraitB;
     Image p1Bar, p2Bar;
 	public GameObject scoreCardPrefab;
 	public List<Turret> turretList = new List<Turret> ();
@@ -451,5 +453,78 @@ public  class UIManager : MonoBehaviour {
 			yield return 0;
 		}
 	}
+
+    public IEnumerator characterPortraitASlideIn()
+    {
+        float timeLimit = 1f;
+        bool canLerp = true;
+        while (canLerp)
+        {
+            Vector2 characterAPathPivot = characterPortraitA.GetComponent<RectTransform>().pivot;
+            float charAXPos = Mathf.Lerp(characterAPathPivot.x, 0f, Time.deltaTime/timeLimit);
+            characterAPathPivot = new Vector2(charAXPos, characterAPathPivot.y);
+            characterPortraitA.GetComponent<RectTransform>().pivot = characterAPathPivot;
+
+
+            if (Mathf.Abs (charAXPos) <= .01f)
+            {
+                canLerp = false;
+            }
+        }
+
+        if (canLerp == false)
+        {
+            
+            float elapsedTime = 1;
+            float limit = 1f;
+            Color tmpA;
+            while (elapsedTime > 0f)
+            {
+                Debug.Log("wat");
+                elapsedTime -= Time.deltaTime;
+                tmpA = characterPortraitA.GetComponent<Image>().color;
+                tmpA.a = elapsedTime / limit;
+                characterPortraitA.GetComponent<Image>().color = tmpA;
+                yield return 0;
+            }
+        }
+        yield return null;
+    }
+
+    public IEnumerator characterPortraitBSlideIn()
+    {
+        float timeLimit = 1f;
+        bool canLerp = true;
+        while (canLerp)
+        {
+
+            Vector2 characterBPathPivot = characterPortraitB.GetComponent<RectTransform>().pivot;
+            float charBXPos = Mathf.Lerp(characterBPathPivot.x, 1.4f, Time.deltaTime/timeLimit);
+            characterBPathPivot = new Vector2(charBXPos, characterBPathPivot.y);
+            characterPortraitB.GetComponent<RectTransform>().pivot = characterBPathPivot;
+
+            if (Mathf.Abs(charBXPos) >= 1.38f)
+            {
+                canLerp = false;
+            }
+        }
+
+        if (canLerp == false)
+        {
+            float elapsedTime = 1;
+            float limit = 1f;
+            Color tmpB;
+            while (elapsedTime > 0f)
+            {
+                Debug.Log("wat");
+                elapsedTime -= Time.deltaTime;
+                tmpB = characterPortraitB.GetComponent<Image>().color;
+                tmpB.a = elapsedTime / limit;
+                characterPortraitB.GetComponent<Image>().color = tmpB;
+                yield return 0;
+            }
+        }
+        yield return null;
+    }
 
 }

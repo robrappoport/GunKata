@@ -14,6 +14,7 @@ public class EndCutsceneScript : MonoBehaviour {
     public bool watchingPlayerRise = false;
     private Animator myAnim;
     public AudioClip takeOffSound;
+    private bool takeOffSoundHasPlayed = false;
     public Vector3 finalPosition;
     Transform center;
 
@@ -32,7 +33,8 @@ public class EndCutsceneScript : MonoBehaviour {
         {
             if (timeElapsed < timeToEnd)
             {
-                if(!Sound.me.IsPlaying(takeOffSound)){
+                if(!Sound.me.IsPlaying(takeOffSound) && !takeOffSoundHasPlayed){
+                    takeOffSoundHasPlayed = true;
                     Sound.me.Play(takeOffSound);
                 }
                 timeElapsed += Time.deltaTime;
@@ -75,6 +77,7 @@ public class EndCutsceneScript : MonoBehaviour {
 
     public IEnumerator CameraFlyBy(float lerpTime)
     {
+        UIManager.thisInstance.UIFadeIn(false);
         myAnim.applyRootMotion = false;
         float elapsedTime = 0;
         while(elapsedTime<lerpTime){
