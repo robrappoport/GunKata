@@ -318,18 +318,35 @@ public class Bullet : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player") {
-                other.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (BulletDmg);
+		switch (other.gameObject.tag)
+		{
+			case "Player":
+				other.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (BulletDmg);
                 BMan.DestroyBullet (this);
-            }
+			    break;
+            
+			case "PlayerAura":
+				colliders.Add(other);
+			    auraEntered = true;
+			    break;
+			default:
+				BMan.DestroyBullet(this);
+				break;
+		}
+        //if (other.gameObject.tag == "Player") {
+        //        other.gameObject.GetComponent<auraPlayerHealth> ().takeDamage (BulletDmg);
+        //        BMan.DestroyBullet (this);
+        //    }
 
-        if (other.gameObject.tag == "PlayerAura")
-        {
-            colliders.Add(other);
-            auraEntered = true;
+        //if (other.gameObject.tag == "PlayerAura")
+        //{
+        //    colliders.Add(other);
+        //    auraEntered = true;
 
-            initDistance = Vector3.Distance(transform.position, other.gameObject.transform.position);
-        }
+        //    initDistance = Vector3.Distance(transform.position, other.gameObject.transform.position);
+        //}
+
+
     }
 
     void OnTriggerStay (Collider other)
