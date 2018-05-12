@@ -16,6 +16,7 @@ public class TwoDGameManager : MonoBehaviour {
     const int maxPlayers = 2;
 	public auraGunBehavior[] players;
     public GameObject RespawnBeamPrefab;
+    public AudioClip respawnSound;
     private int restartTime = 1;
 	public Text playerWinner;
     public static Image player1Score;
@@ -430,6 +431,7 @@ public class TwoDGameManager : MonoBehaviour {
         Animator lifeBeamAnim = lifeBeam.GetComponent<Animator>();
         lifeBeamAnim.SetFloat("Direction", -1);
         lifeBeamAnim.Play("Default Take", -1, 1);
+        Sound.me.Play(respawnSound, 1, true);
         yield return new WaitForSeconds(lifeBeamAnim.runtimeAnimatorController.animationClips[0].length);
 
        
@@ -450,7 +452,7 @@ public class TwoDGameManager : MonoBehaviour {
         Animator lifeBeamAnim = lifeBeam.GetComponent<Animator>();
         lifeBeamAnim.SetFloat("Direction", -1);
         lifeBeamAnim.Play("Default Take", -1, 1);
-
+        Sound.me.Play(respawnSound, 1, true);
         yield return new WaitForSeconds(lifeBeamAnim.runtimeAnimatorController.animationClips[0].length);
         Destroy(lifeBeam);
         SpawnPlayer2(spawnPos);

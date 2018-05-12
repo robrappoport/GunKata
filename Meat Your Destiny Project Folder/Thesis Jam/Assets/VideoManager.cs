@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
+using UnityEngine.UI;
 public class VideoManager : MonoBehaviour {
 
     float timeElapsed = 0;
     public VideoPlayer video;
     float currentTime;
+    public GameObject startCanvas;
 	// Use this for initialization
 	void Start () {
         video = GetComponent<VideoPlayer>();
@@ -21,6 +23,12 @@ public class VideoManager : MonoBehaviour {
             {
                 gameObject.SetActive(false);
             }
+        }
+
+        if (Time.time - currentTime > 3f)
+        {
+            if (!startCanvas.activeSelf)
+            startCanvas.SetActive(true);
         }
       
 	}

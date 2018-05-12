@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class StartScreen : MonoBehaviour {
 	public static PlayControl instance;
 	public InputDevice myController;
-
+    public GameObject controlsVideo, introVideo1, introVideo2;
 	public Text startText, controlsText;
 	public GameObject controls;
 	public int selectedText;//0 is start, 1 is controls
@@ -39,9 +39,14 @@ public class StartScreen : MonoBehaviour {
 				if (!controlsActive) {
 					controlsActive = true;
 					controls.SetActive (true);
+                    controlsVideo.SetActive(true);
+                    introVideo1.SetActive(false);
+                    introVideo2.SetActive(false);
+
 				} else {
 					controlsActive = false;
 					controls.SetActive (false);
+                    introVideo2.SetActive(true);
 				}
 			} else {
 				SceneManager.LoadScene ("LevelSelectScreen");

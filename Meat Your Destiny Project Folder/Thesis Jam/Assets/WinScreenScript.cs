@@ -31,7 +31,10 @@ public class WinScreenScript : MonoBehaviour
         movie.loop = true;
         TwoDGameManager.thisInstance.TogglePlayerControl();
         gameAudio = TwoDGameManager.thisInstance.GetComponent<AudioSource>();
+        gameAudio.Stop();
         gameAudio.clip = endMusic;
+        gameAudio.mute = false;
+        gameAudio.Play();
 
     }
 

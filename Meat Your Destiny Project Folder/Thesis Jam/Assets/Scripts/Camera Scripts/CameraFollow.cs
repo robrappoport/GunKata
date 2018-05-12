@@ -9,7 +9,7 @@ public class CameraFollow : MonoBehaviour {
     Transform currentTarget;
     public Transform stageTransform;
     public Transform cityTransform;
-    public AudioClip wooshSound;
+    public AudioClip wooshSound, startSound;
 	private void Awake()
 	{
         transform.position = initPos;
@@ -48,24 +48,26 @@ public class CameraFollow : MonoBehaviour {
 
         //go from stage view to p1 view
         elapsedTime = 0;
-        Sound.me.Play(wooshSound, 1);
+    
         currentTarget = TwoDGameManager.thisInstance.players[0].transform.GetChild(5);
         while(elapsedTime<transitionTime){
             elapsedTime += Time.deltaTime;
             transform.position = Vector3.Lerp(transform.position, player1pos, elapsedTime / transitionTime);
             yield return null;
         }
+        Sound.me.Play(wooshSound, 1, true);
         StartCoroutine(UIManager.thisInstance.characterPortraitASlideIn());
         yield return new WaitForSeconds(introTime);
         //go from p1 view to p2 view
         elapsedTime = 0;
-        Sound.me.Play(wooshSound, 1);
+
         currentTarget = TwoDGameManager.thisInstance.players[1].transform.GetChild(5);
         while(elapsedTime < transitionTime){
             elapsedTime += Time.deltaTime;
             transform.position = Vector3.Lerp(transform.position, player2pos, elapsedTime / transitionTime);
             yield return null;
         }
+        Sound.me.Play(wooshSound, 1, true);
         StartCoroutine(UIManager.thisInstance.characterPortraitBSlideIn());
         yield return new WaitForSeconds(introTime);
         //go from p2 view to stage view again
@@ -87,7 +89,7 @@ public class CameraFollow : MonoBehaviour {
         {
             tc.FadeInAllTurretUIElements();
         }
-
+        Sound.me.Play(startSound);
         //activate the multitarget 
         GetComponentInChildren<CameraMultitarget>().enabled = true;
         currentTarget = null;

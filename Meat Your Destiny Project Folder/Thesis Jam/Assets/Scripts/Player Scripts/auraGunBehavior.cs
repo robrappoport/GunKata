@@ -451,7 +451,7 @@ public class auraGunBehavior : MonoBehaviour
             if(!Sound.me.IsPlaying(inSufficientStaminaSound, myName:name + "InsufficientStaminaSound")){
                 Sound.me.Play(inSufficientStaminaSound, myName:name + "InsufficientStaminaSound");
             }else{
-                print("insufficient stamina sound playing");
+                //print("insufficient stamina sound playing");
             }
             if(!flashing){
                 flashing = true;

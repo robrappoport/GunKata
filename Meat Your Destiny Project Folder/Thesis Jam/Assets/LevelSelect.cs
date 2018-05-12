@@ -8,9 +8,12 @@ using UnityEngine.UI;
 public class LevelSelect : MonoBehaviour {
     public Transform city, space, heaven;
     public Material citySkybox, spaceSkybox, heavenSkybox;
+    public AudioSource cityAudio, spaceAudio, heavenAudio;
+    public AudioClip stickSound;
+    public AudioSource stickAudio;
 	public static PlayControl instance;
 	public InputDevice myController;
-    public ParticleSystem p;
+    //public ParticleSystem p;
 
 	public Text[] levels;
 	public GameObject controls;
@@ -57,10 +60,18 @@ public class LevelSelect : MonoBehaviour {
 		if (!controlsActive) {
 			if (!leftStickHeld) {
 				if (myController.LeftStick.Y < 0) {
-							selectedTextCounter = Mathf.Clamp (selectedTextCounter + 1, 0, levels.Length);
+							selectedTextCounter = Mathf.Clamp (selectedTextCounter + 1, 0, levels.Length-1);
+                    if (!stickAudio.isPlaying)
+                    {
+                        stickAudio.PlayOneShot(stickSound);
+                    }
 					leftStickHeld = true;
 				} else if (myController.LeftStick.Y > 0) {
-							selectedTextCounter = Mathf.Clamp (selectedTextCounter - 1, 0, levels.Length);
+							selectedTextCounter = Mathf.Clamp (selectedTextCounter - 1, 0, levels.Length+1);
+                    if (!stickAudio.isPlaying)
+                    {
+                        stickAudio.PlayOneShot(stickSound);
+                    }
 					leftStickHeld = true;
 
 				}
@@ -69,10 +80,8 @@ public class LevelSelect : MonoBehaviour {
 		if (myController.LeftStick.Y == 0) {
 			leftStickHeld = false;
             AssignCameraMount();
-            p.Play();
-
-
 		}
+       
 	}
     void AssignCameraMount(){
         switch (levels[selectedTextCounter].name)
@@ -80,15 +89,124 @@ public class LevelSelect : MonoBehaviour {
             case "City":
                 menuCamControl.setMount(city);
                 RenderSettings.skybox = citySkybox;
+                StartCoroutine(cityAudioSwitch());
+
                 break;
             case "Space":
                 menuCamControl.setMount(space);
                 RenderSettings.skybox = spaceSkybox;
+                StartCoroutine(spaceAudioSwitch());
+
                 break;
             case "Heaven":
                 menuCamControl.setMount(heaven);
                 RenderSettings.skybox = heavenSkybox;
+                StartCoroutine(heavenAudioSwitch());
                 break;
         }
+    }
+
+    IEnumerator cityAudioSwitch()
+    {
+        float totalTime = 1f;
+        float elapsedTime = 0;
+        StopAllCoroutines();
+        heavenAudio.Stop();
+        if (spaceAudio.isPlaying)
+        {
+            //Debug.Log("debug city");
+            if (!cityAudio.isPlaying)
+            {
+                cityAudio.Stop();
+                cityAudio.Play();
+                cityAudio.volume = 0f;
+            }
+            while (cityAudio.volume < 1)
+            {
+                //Debug.Log(elapsedTime);
+                elapsedTime += Time.deltaTime;
+                spaceAudio.volume = Mathf.Lerp(spaceAudio.volume, 0f, elapsedTime / totalTime);
+                cityAudio.volume = Mathf.Lerp(cityAudio.volume, 1f, elapsedTime / totalTime);
+                yield return 0;
+            }
+            //spaceAudio.Stop();
+           
+        }
+
+    }
+    IEnumerator spaceAudioSwitch()
+    {
+        float totalTime = 1f;
+        float elapsedTime = 0;
+        StopAllCoroutines();
+
+        if (cityAudio.isPlaying)
+        {
+            heavenAudio.Stop();
+            //Debug.Log("debug space");
+            if (!spaceAudio.isPlaying)
+            {
+                spaceAudio.Stop();
+                spaceAudio.Play();
+                spaceAudio.volume = 0f;
+            }
+            while (spaceAudio.volume < 1)
+            {
+                //Debug.Log(elapsedTime);
+                elapsedTime += Time.deltaTime;
+                cityAudio.volume = Mathf.Lerp(cityAudio.volume, 0f, elapsedTime / totalTime);
+                spaceAudio.volume = Mathf.Lerp(spaceAudio.volume, 1f, elapsedTime / totalTime);
+                yield return 0;
+            }
+            cityAudio.Stop();
+                }
+        if (heavenAudio.isPlaying)
+        {
+            cityAudio.Stop();
+            //Debug.Log("debug space2");
+            if (!spaceAudio.isPlaying)
+            {
+                spaceAudio.Stop();
+                spaceAudio.Play();
+                spaceAudio.volume = 0f;
+            }
+            while (spaceAudio.volume < 1)
+            {
+                //Debug.Log(elapsedTime);
+                elapsedTime += Time.deltaTime;
+                heavenAudio.volume = Mathf.Lerp(heavenAudio.volume, 0f, elapsedTime / totalTime);
+                spaceAudio.volume = Mathf.Lerp(spaceAudio.volume, 1f, elapsedTime / totalTime);
+                yield return 0;
+            }
+            heavenAudio.Stop();
+        }
+    }
+    IEnumerator heavenAudioSwitch()
+    {
+       
+        float totalTime = 1f;
+        float elapsedTime = 0;
+        StopAllCoroutines();
+        cityAudio.Stop();
+
+        if (spaceAudio.isPlaying)
+        {
+            //Debug.Log("debug heaven");
+            if (!heavenAudio.isPlaying)
+            {
+                heavenAudio.Stop();
+                heavenAudio.Play();
+                heavenAudio.volume = 0f;
+            }
+            while (heavenAudio.volume < 1)
+            {
+                //Debug.Log(elapsedTime);
+                elapsedTime += Time.deltaTime;
+                spaceAudio.volume = Mathf.Lerp(spaceAudio.volume, 0f, elapsedTime / totalTime);
+                heavenAudio.volume = Mathf.Lerp(heavenAudio.volume, 1f, elapsedTime / totalTime);
+                yield return 0;
+            }
+            spaceAudio.Stop();
+                }
     }
 }

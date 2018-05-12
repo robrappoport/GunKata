@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class Sound : MonoBehaviour {
 
     public static Sound me;
     public GameObject sourcePrefab;
     public AudioSource[] sources;
+    public AudioMixerGroup SFXMixer;
     public int sourceNum;
     bool interrupt;
     string defaultName;
@@ -20,6 +22,11 @@ public class Sound : MonoBehaviour {
             sources[i] = ((GameObject)Instantiate(sourcePrefab, Vector3.zero, Quaternion.identity)).GetComponent<AudioSource>();
         }
         defaultName = sources[0].name;
+
+        foreach(AudioSource a in sources)
+        {
+            a.outputAudioMixerGroup = SFXMixer;
+        }
 	}
 
 	public void ToggleMuteAllSound(){
