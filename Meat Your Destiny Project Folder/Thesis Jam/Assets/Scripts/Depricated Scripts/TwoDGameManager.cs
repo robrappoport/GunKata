@@ -527,6 +527,7 @@ public class TwoDGameManager : MonoBehaviour {
 
 		yield return new WaitForSeconds(.5f);
 		StartCoroutine(GameRestart(winNum));
+		StartCoroutine(UIManager.thisInstance.UIFadeIn(false));
 		
 	}
 //    void playerWin()

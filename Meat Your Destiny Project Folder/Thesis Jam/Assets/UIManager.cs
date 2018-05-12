@@ -140,23 +140,26 @@ public  class UIManager : MonoBehaviour {
     public IEnumerator FlashPip(int playerNum, int pipNum, float flashTime = 0.2f){
         pipNum = Mathf.Clamp(pipNum, 0, PlayerTickMarListList[playerNum].Count -1);
         float elapsedTime = 0;
-        //lerp the color to yellow
-        while (elapsedTime < flashTime){
-            
-            elapsedTime += Time.deltaTime;
-            PlayerTickMarListList[playerNum][pipNum].color = Color.Lerp(TwoDGameManager.thisInstance.playerColors[playerNum], Color.yellow, elapsedTime / flashTime);
-            yield return null;
+		//lerp the color to yellow
 
-        }
-        elapsedTime = 0;
-        while (elapsedTime < flashTime)
-        {
+		while (elapsedTime < flashTime)
+		{
 
-            elapsedTime += Time.deltaTime;
-            PlayerTickMarListList[playerNum][pipNum].color = Color.Lerp(Color.yellow, TwoDGameManager.thisInstance.playerColors[playerNum], elapsedTime / flashTime);
-            yield return null;
+			elapsedTime += Time.deltaTime;
+			PlayerTickMarListList[playerNum][pipNum].color = Color.Lerp(TwoDGameManager.thisInstance.playerColors[playerNum], Color.yellow, elapsedTime / flashTime);
+			yield return null;
 
-        }
+		}
+		elapsedTime = 0;
+		while (elapsedTime < flashTime)
+		{
+
+			elapsedTime += Time.deltaTime;
+			PlayerTickMarListList[playerNum][pipNum].color = Color.Lerp(Color.yellow, TwoDGameManager.thisInstance.playerColors[playerNum], elapsedTime / flashTime);
+			yield return null;
+
+		}
+
         
     }
     public IEnumerator Flash(int playerNum, float flashTime = 0.25f){
@@ -418,6 +421,7 @@ public  class UIManager : MonoBehaviour {
 			alphaList.Add (i);
 
 		}
+        
 		if (!fadingIn) {
 			//set all their alphas to 0 if not fading in
 

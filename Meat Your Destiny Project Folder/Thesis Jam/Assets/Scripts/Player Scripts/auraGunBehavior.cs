@@ -430,8 +430,11 @@ public class auraGunBehavior : MonoBehaviour
         remainingStamina = Mathf.Clamp(remainingStamina + increment, 0, staminaSegmentNum);
         int newPipCount = Mathf.Clamp((int)remainingStamina , 0, staminaSegmentNum - 1);
         if (newPipCount > filledPipCount){
-            StartCoroutine(UIManager.thisInstance.FlashPip(playerNum, newPipCount -1));
-            Sound.me.Play(pipFillSound);
+			if (!health.gameIsOver)
+			{
+				StartCoroutine(UIManager.thisInstance.FlashPip(playerNum, newPipCount - 1));
+				Sound.me.Play(pipFillSound);
+			}
         }
 
     }
