@@ -16,11 +16,14 @@ AuraGenerator : MonoBehaviour {
     public bool isSuper;
     ParticleSystem p;
     ParticleSystem.MainModule auraParticles;
+	Renderer renderer;
+	Color initParticleColor;
+	Color initMainColor;
+	Color particlesTempColor;
+	Color mainTempColor;
+	bool fading = false;
+
 	// Use this for initialization
-	void Start () {
-
-
-	}
 
 	void DeformMultiple(Collider col, int totalPoints = 6, float radiusFactor = 1, int iterations = 1){
 		bool firstIteration;
@@ -96,24 +99,46 @@ AuraGenerator : MonoBehaviour {
             Destroy(gameObject);
         }
         if (!isSuper){
-            if (auraCurLife > (.98f * auraLifeTime))
+            if (auraCurLife > (.85f * auraLifeTime))
             {
-
-                gameObject.transform.localScale = Vector3.Lerp(gameObject.transform.localScale, new Vector3(gameObject.transform.localScale.x + 1, gameObject.transform.localScale.y + 1, gameObject.transform.localScale.z + 1), auraCurLife / auraLifeTime);
-
+				if(!fading){
+					StartCoroutine(Fade(auraLifeTime - auraCurLife));
+				}
+				fading = true;
+                
+                gameObject.transform.localScale = Vector3.Lerp(gameObject.transform.localScale, new Vector3(gameObject.transform.localScale.x + 5, gameObject.transform.localScale.y + 5, gameObject.transform.localScale.z + 5), auraCurLife / auraLifeTime);
+				auraParticles.startColor = Color.Lerp(initParticleColor, particlesTempColor, auraCurLife / auraLifeTime);
+				renderer.material.color = Color.Lerp(initMainColor, mainTempColor, auraCurLife / auraLifeTime);
+				print(auraParticles.startColor.color.a);
             }
         }
         else
         {
-            if (auraCurLife > (.10f * auraLifeTime))
+            if (auraCurLife > (.30f * auraLifeTime))
             {
-
+                
                 gameObject.transform.localScale = Vector3.Lerp(gameObject.transform.localScale, new Vector3(0,0,0), auraCurLife / auraLifeTime);
 
             } 
         }
 
 
+	}
+
+	IEnumerator Fade(float totalTime){
+		float elapsedTime = 0;
+		float elapsedRatio;
+		while(elapsedTime < totalTime){
+			elapsedRatio = elapsedTime / totalTime;
+			gameObject.transform.localScale = Vector3.Lerp(gameObject.transform.localScale, new Vector3(gameObject.transform.localScale.x + 5, gameObject.transform.localScale.y + 5, gameObject.transform.localScale.z + 5), elapsedRatio);
+			auraParticles.startColor = Color.Lerp(initParticleColor, particlesTempColor, elapsedRatio);
+			renderer.material.color = Color.Lerp(initMainColor, mainTempColor, elapsedRatio);
+
+			elapsedTime += Time.deltaTime;
+			yield return null;
+
+		}
+		
 	}
 
 //	void OnTriggerEnter(Collider col){
@@ -177,6 +202,14 @@ AuraGenerator : MonoBehaviour {
         auraParticles = p.main;
         GetComponent<Renderer>().material.color = TwoDGameManager.thisInstance.playerColors[auraPlayerNum];
         auraParticles.startColor = TwoDGameManager.thisInstance.playerColors[auraPlayerNum];
+
+		initParticleColor = auraParticles.startColor.color;
+		particlesTempColor = initParticleColor;
+        particlesTempColor.a = 0;
+		renderer = GetComponent<Renderer>();
+		initMainColor = renderer.material.color;
+		mainTempColor = initMainColor;
+		mainTempColor.a = 0;
 
 
     }

@@ -98,6 +98,7 @@ public class AuraCharacterController : PlayControl
             controlType = ControlType.Controller;
             myController = InputManager.Devices[playerNum];
 			myController.LeftStick.Sensitivity = 10;
+            
         }
         else
         {
@@ -469,12 +470,13 @@ public class AuraCharacterController : PlayControl
 //			dir = directionPos - transform.position;
 //			//			Debug.Log (dir + "checking secondary");
 		if (RightStickMove().magnitude > .01f) {
+			//Quaternion newRot = Quaternion.Euler(RightStickMove());
+			//characterCtr.MoveRotation(newRot * characterCtr.rotation);
 				characterCtr.rotation = 
 					Quaternion.Slerp (transform.rotation,
 						Quaternion.LookRotation (dir), 
 						turnSpeed * Time.deltaTime);
 			
-			return;
 			//
 		} 
 
