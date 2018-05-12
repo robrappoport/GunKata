@@ -34,6 +34,8 @@ public  class UIManager : MonoBehaviour {
     public GameObject tickMarkPrefab;
     public float UIPlayer1X, UIExtremeX,UIY, tickMarkLeftX, tickMarkY;
     private List<List<Image>> PlayerTickMarListList = new List<List<Image>>();
+
+	private IEnumerator winCo;
     int currentTurretNum;
 	void Awake(){
 		thisInstance = this;
@@ -89,7 +91,8 @@ public  class UIManager : MonoBehaviour {
 			if (canWin) {
 				if (!winChanceCoroutinesStarted) {
 					winChanceCoroutinesStarted = true;
-					StartCoroutine (TimeManipulation.SlowTimeTemporarily (timeSlowScale, timeSlowingDuration, timeSlowedDuration, timeReturnDuration));
+					winCo = TimeManipulation.SlowTimeTemporarily (timeSlowScale, timeSlowingDuration, timeSlowedDuration, timeReturnDuration);
+					StartCoroutine(winCo);
 					StartCoroutine (SendWinChanceTextUp (winningPlayer, winChanceSendUpTime, winChanceRemainTime, winChanceTargetSize));
 					StartCoroutine (TimeSlowCamZoom (timeSlowZoomMaxDistance, timeSlowZoomInDuration, timeSlowZoomOutDuration));
 				
@@ -117,6 +120,11 @@ public  class UIManager : MonoBehaviour {
 		}
 	}
 
+	public void InterruptTimeSlow(){
+		StopCoroutine(winCo);
+		Time.timeScale = 1;
+		Time.fixedDeltaTime = 0.02f;
+	}
     void UpdateScoreBar(){
 		currentTurretNum = 0;
 		foreach(List<Turret> t in TwoDGameManager.thisInstance.activeTurrets){

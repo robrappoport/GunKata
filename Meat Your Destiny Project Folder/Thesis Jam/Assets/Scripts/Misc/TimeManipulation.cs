@@ -19,7 +19,7 @@ public static class TimeManipulation : object {
 
 			elapsedTime += Time.deltaTime;
 			Time.timeScale = Mathf.Lerp (1, slowedTimeScale, elapsedTime / slowingDuration);
-            Time.fixedDeltaTime = Time.timeScale * startingFixedTimeScale;
+           // Time.fixedDeltaTime = Time.timeScale * 0.02f;
 			yield return null;
 		}
 		yield return new WaitForSeconds (slowedDuration);
@@ -27,7 +27,7 @@ public static class TimeManipulation : object {
 		while (elapsedTime < returnDuration) {
 			elapsedTime += Time.deltaTime; 
 			Time.timeScale = Mathf.Lerp (slowedTimeScale, 1, elapsedTime / returnDuration);
-            Time.fixedDeltaTime = Time.timeScale * startingFixedTimeScale;
+           // Time.fixedDeltaTime = Time.timeScale * 0.02f;
 			yield return null;
 		}
 	}

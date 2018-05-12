@@ -210,7 +210,7 @@ public class TwoDGameManager : MonoBehaviour {
 
 			}
 		} else {
-			StopAllCoroutines ();
+			//StopAllCoroutines ();
 		}
 	}
     public IEnumerator GameRestart (int winnerNum)
@@ -489,27 +489,45 @@ public class TwoDGameManager : MonoBehaviour {
             //player1.SetActive (false);
             if (!playerHealth1.gameIsOver)
             {
+				StartCoroutine(BeginGameEnding(0, .0000001f, .2f, 1f, .01f));
                 player1.GetComponent<auraPlayerHealth>().gameIsOver = true;
                 player2.SetActive(false);
                 //	player2Canvas.SetActive (false);
                 //	player1Canvas.SetActive (false);
-                StartCoroutine(TimeManipulation.SlowTimeTemporarily(.00001f, .2f, .2f, .2f));
-                StartCoroutine(GameRestart(0));
+
             }
 		}
 		//       if (player2ScoreNum >= maxScore)
 		else if (!PlayerCanSpawn (0) && playerHealth1.dead){
             if (!playerHealth2.gameIsOver)
             {
+				StartCoroutine(BeginGameEnding(1, .0000001f, .2f, 1f, .01f));
                 player2.GetComponent<auraPlayerHealth>().gameIsOver = true;
                 player1.SetActive(false);
                 //player2.SetActive (false);
                 //	player2Canvas.SetActive (false);
-                StartCoroutine(TimeManipulation.SlowTimeTemporarily(.00001f, .2f, .2f, .2f));
-                StartCoroutine(GameRestart(1));
+
             }
 		}
 
+	}
+
+	IEnumerator BeginGameEnding(int winNum, float slowedTimeScale = 0.5f, float slowingDuration = .1f, float slowedDuration = 1, float returnDuration = 1){
+		float totalTime = slowedDuration + slowingDuration + returnDuration;
+		float elapsedTime = 0;
+		float lastFrameTime = Time.unscaledTime;
+		UIManager.thisInstance.InterruptTimeSlow();
+		StartCoroutine(TimeManipulation.SlowTimeTemporarily(slowedTimeScale, slowingDuration, slowedDuration, returnDuration));
+		while (elapsedTime < totalTime)
+		{
+			elapsedTime += Time.unscaledTime - lastFrameTime;
+			lastFrameTime = Time.unscaledTime;
+			yield return null;
+		}
+
+		yield return new WaitForSeconds(.5f);
+		StartCoroutine(GameRestart(winNum));
+		
 	}
 //    void playerWin()
 //    {

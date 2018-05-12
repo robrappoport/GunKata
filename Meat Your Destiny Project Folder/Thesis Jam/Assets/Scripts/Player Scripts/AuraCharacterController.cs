@@ -128,16 +128,13 @@ public class AuraCharacterController : PlayControl
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (!inCutscene)
+		if (!inCutscene && !health.gameIsOver)
         {
             if (InputManager.Enabled == false)
             {
                 InputManager.Enabled = true;
             }
-        }else{
-            InputManager.Enabled = false;
-        }
-       
+        
         if (hitStunnedTimer <= 0 && !health.dying && !inCutscene)
         {
             
@@ -154,18 +151,20 @@ public class AuraCharacterController : PlayControl
         //		storeDir = cameraTrans.right;
         //		MyCharacterActions ();
         //stuckTimer -= Time.deltaTime;
+		}else{
+            InputManager.Enabled = false;
+        }
+       
         if (startButton())
         {
             TwoDGameManager.player1ScoreNum = 0;
             TwoDGameManager.player2ScoreNum = 0;
             SceneManager.LoadScene("LevelSelectScreen");
         }
+
     }
     private void Update()
     {
-		if(slow){
-			print("slowed!");
-		}
         if (!inCutscene)
         {
             AuraCheck();

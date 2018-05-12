@@ -31,6 +31,7 @@ public class Bullet : MonoBehaviour {
 
 	public Material playerOneBullet;
 	public Material playerTwoBullet;
+	public Material bulletTrailMaterial;
 	public Material normBullet;
 	public Material frozenBullet;
 	public bool isDestroyedOnHit = true;
@@ -82,7 +83,7 @@ public class Bullet : MonoBehaviour {
 		normalBehavior = RigidbodyConstraints.FreezePositionY;
 		r.constraints = normalBehavior | freezeVal;
 		//render.enabled = false;
-
+        
 	}
 
 	// Update is called once per frame
