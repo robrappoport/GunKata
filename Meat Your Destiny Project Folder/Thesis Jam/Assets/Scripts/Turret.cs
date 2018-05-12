@@ -745,16 +745,8 @@ public class Turret : MonoBehaviour
 				cannonBall.GetComponent<Cannonball> ().myTurret = this;
 				Cannonball newBall = cannonBall.GetComponent<Cannonball> ();
 				newBall.impactPrefab = impactPrefabs [ownerNum];
-
-				if (owner == Owner.Player1) {
-
-					newBall.ownerNum = 0;
-
-				} else if (owner == Owner.Player2) {
-					newBall.ownerNum = 1;
-				} else {
-					newBall.ownerNum = 2;
-				}
+				newBall.ownerNum = ownerNum;
+			
 				//	Cannonball cball = cannonBall.GetComponent<Cannonball> ();
 				//cannonBallList.Add(cball);
 				//            if (completelyOwned)

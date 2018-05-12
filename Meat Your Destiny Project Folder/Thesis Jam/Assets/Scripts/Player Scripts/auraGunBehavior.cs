@@ -325,16 +325,16 @@ public class auraGunBehavior : MonoBehaviour
                 }
             }
 			if (laserIsFiring) {
-				gameObject.GetComponent<AuraCharacterController> ().turnSpeed = .5f;
-				gameObject.GetComponent<AuraCharacterController> ().prevMoveForce = .2f;
-				laserFiring += Time.deltaTime;
+				//gameObject.GetComponent<AuraCharacterController> ().turnSpeed = .5f;
+				//gameObject.GetComponent<AuraCharacterController> ().prevMoveForce = .2f;
+				//laserFiring += Time.deltaTime;
 				//play laser sound
 
 				if (laserFiring >= totalLaserShotTime) {
 					myCont.GetComponent<Animator> ().SetBool ("Laser Firing", false);
 					laserShotSys.Stop ();
-					gameObject.GetComponent<AuraCharacterController> ().turnSpeed = 20f;
-					gameObject.GetComponent<AuraCharacterController> ().prevMoveForce = 4f;
+					//gameObject.GetComponent<AuraCharacterController> ().turnSpeed = 20f;
+					//gameObject.GetComponent<AuraCharacterController> ().prevMoveForce = 4f;
 					//                    foreach (GameObject g in wings)
 					//                    {
 					//                        Renderer [] wingArray = g.GetComponentsInChildren<Renderer>();

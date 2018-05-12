@@ -205,7 +205,7 @@ public class TwoDGameManager : MonoBehaviour {
 			//}
 
 			if (readyToMakeNewOrb) {
-				ball.SetActive (true);
+				//ball.SetActive (true);
 				//readyToMakeNewOrb = false;
 
 			}

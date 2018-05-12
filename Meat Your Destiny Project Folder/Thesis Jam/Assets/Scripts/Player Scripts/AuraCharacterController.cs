@@ -97,7 +97,7 @@ public class AuraCharacterController : PlayControl
         { //two controllers or player 1 with one controller
             controlType = ControlType.Controller;
             myController = InputManager.Devices[playerNum];
-
+			myController.LeftStick.Sensitivity = 10;
         }
         else
         {
@@ -112,6 +112,7 @@ public class AuraCharacterController : PlayControl
         //		YAttackAnim = GetComponent<Animator>();
         //		BAttackAnim = GetComponent<Animator>();
 		health = GetComponent<auraPlayerHealth>();
+
     }
 
     public void shootSlowDown()
@@ -162,6 +163,9 @@ public class AuraCharacterController : PlayControl
     }
     private void Update()
     {
+		if(slow){
+			print("slowed!");
+		}
         if (!inCutscene)
         {
             AuraCheck();
@@ -422,7 +426,7 @@ public class AuraCharacterController : PlayControl
 		} else {
 			isDashing = false;
 		}
-			
+
 		//moveDirection *= currentSpeed;
 
 		//		if (moveDirection.magnitude < .25f) {
@@ -433,8 +437,14 @@ public class AuraCharacterController : PlayControl
 		//			moveDirection = moveDirection.normalized;
 
 
-		characterCtr.AddForce((moveDirForward + moveDirSides).normalized * curForce() * Time.deltaTime * moveMultiplier);
+		if ((moveDirSides + moveDirSides).magnitude > 0)
+		{
 
+			characterCtr.AddForce((moveDirForward + moveDirSides).normalized * curForce() * Time.deltaTime * moveMultiplier);
+		}
+		else{
+			characterCtr.velocity = Vector3.zero;
+		}
 		//		}
 
 		directionPos = transform.position + (RightStickMove());
