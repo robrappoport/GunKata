@@ -477,8 +477,10 @@ public class auraGunBehavior : MonoBehaviour
 	void AuraCharge(){
         if (myCont.secondaryFireDown() == true)
         {
+			
             if (EnoughStamina(.99f))
-            {
+			{
+				print("ENOUGH STAMINA");
                 Sound.me.Play(auraCreationSound);
                 currentAuraChargeLimit = remainingStamina;
                 sprAura.SetActive(true);
@@ -541,6 +543,7 @@ public class auraGunBehavior : MonoBehaviour
             }
             if (!Sound.me.IsPlaying(auraScaleIncreaseSound, chargeIndex / (staminaSegmentNum - 1)))
             {
+				
                 //Sound.me.Play(auraScaleIncreaseSound, chargeIndex/(staminaSegmentNum - 1));
 
                 //		remainingAuraCharge = Mathf.Clamp (remainingAuraCharge - Time.deltaTime * auraChargeRate, 0, auraStamImgArray.Length);
@@ -559,13 +562,13 @@ public class auraGunBehavior : MonoBehaviour
                             //r.material.c = activeWingColor;
                             if (chargeIndex != staminaSegmentNum)
                             {
-                                r.material.SetColor("_EmissionColor", activeWingColor);
+                                //r.material.SetColor("_EmissionColor", activeWingColor);
 
                             }
                             else
                             {
-                                r.material.SetColor("_EmissionColor", Color.white);
-                                r.material.color = Color.white;
+                                //r.material.SetColor("_EmissionColor", Color.white);
+                                //r.material.color = Color.white;
                             }
 
                         }
@@ -590,13 +593,13 @@ public class auraGunBehavior : MonoBehaviour
 					if (remainingStamina > 0.02f) {
 
 						//anim.settrigger("open wings")
-						r.material.SetColor ("_EmissionColor", inactiveWingColor);
-						r.material.color = inactiveWingColor;
-                        wingAnim.SetBool("Out Of Stamina", false);
+						//r.material.SetColor ("_EmissionColor", inactiveWingColor);
+						//r.material.color = inactiveWingColor;
+                        //wingAnim.SetBool("Out Of Stamina", false);
 					} else {
-						r.material.SetColor ("_EmissionColor", new Color(0, 0, 0, 0));
-						r.material.color = Color.black;
-                        wingAnim.SetBool("Out Of Stamina", true);
+						//r.material.SetColor ("_EmissionColor", new Color(0, 0, 0, 0));
+						//r.material.color = Color.black;
+                        //wingAnim.SetBool("Out Of Stamina", true);
 
 					}
 				}
@@ -629,6 +632,42 @@ public class auraGunBehavior : MonoBehaviour
 	public void drawStamina()
 	{
         UIManager.thisInstance.UpdatePlayerCanvas(playerNum, remainingStamina);
+
+		for (int i = 0; i < (int)remainingStamina; i++)
+        {
+			int j = Mathf.Clamp(i, 0, wings.Length - 1);
+            Renderer[] wingArray = wings[j].GetComponentsInChildren<Renderer>();
+            foreach (Renderer r in wingArray)
+            {
+                r.material.color = inactiveWingColor;
+				r.material.SetColor ("_EmissionColor", inactiveWingColor);
+
+            }
+        }
+
+        for (int i = (int)remainingStamina; i < staminaSegmentNum; i++)
+        {
+			int j = Mathf.Clamp(i, 0, wings.Length - 1);
+
+            Renderer[] wingArray = wings[j].GetComponentsInChildren<Renderer>();
+            foreach (Renderer r in wingArray)
+            {
+                r.material.color = Color.black;
+				r.material.SetColor ("_EmissionColor", new Color(0, 0, 0, 1));
+                
+                
+            }
+        }
+        if (remainingStamina < 1f)
+        {
+            wingAnim.SetBool("Out Of Stamina", true);
+        }
+        else
+        {
+            wingAnim.SetBool("Out Of Stamina", false);
+        }
+
+
 		////draw all full bars
 		//for (int i = 0; i < staminaSegmentNum; i++) {
 		//	if ((int)remainingStamina > i ) {

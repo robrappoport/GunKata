@@ -508,7 +508,7 @@ public class AuraCharacterController : PlayControl
 
 	}
 
-	float curForce(){
+	public float curForce(){
 		//TODO redo in terms of multipliers instead of mutual exclusive branches
 		float dashBuff =1, slowDebuff = 1, ledgeDebuff = 1;
 		if (health.steppedOffLedge) {
