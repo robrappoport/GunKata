@@ -391,11 +391,20 @@ public class auraGunBehavior : MonoBehaviour
     }
 	public IEnumerator DrainAuraOverTime(float cost = 1, float drainRate = 1){
 		float totalDrainAmount = 0;
+		float expectedStamina = remainingStamina - cost;
 		while (totalDrainAmount < cost) {
-			DrainAura (Time.deltaTime * drainRate);
-			totalDrainAmount += Time.deltaTime * drainRate;
+			float drainDelta = Time.deltaTime * drainRate;
+			float remainingDistance = Mathf.Abs(cost - totalDrainAmount);
+			if (drainDelta > remainingDistance)
+			{
+				drainDelta = remainingDistance;
+			}
+			DrainAura (drainDelta);
+			totalDrainAmount += drainDelta;
 			yield return null;
 		}
+		remainingStamina = expectedStamina;
+
 
 	}
 
@@ -448,7 +457,7 @@ public class auraGunBehavior : MonoBehaviour
         }
     }
     public bool EnoughStamina(float cost = 0){
-        if(remainingStamina > cost){
+        if(remainingStamina >= cost){
             return true;
         }else{
             if(!Sound.me.IsPlaying(inSufficientStaminaSound, myName:name + "InsufficientStaminaSound")){

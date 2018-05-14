@@ -151,11 +151,14 @@ public class Turret : MonoBehaviour
         //find canvas
 
         UICanvas = Instantiate(UICanvasPrefab, gameObject.transform) as GameObject;
+	//	UICanvas.transform.parent = gameObject.transform;
         if (UICanvas)
         {
 
             //TODO:alter the position of the UI relative to the transform here!
             UICanvas.transform.localPosition = UILocalPos;
+			//UICanvas.GetComponent<RectTransform>().position = transform.position;
+			         
             progressBar = UICanvas.transform.Find("TurretFill").GetComponent<Image>();
             outlineBar = UICanvas.transform.Find("TurretFillBack").GetComponent<Image>();
             UIRot = UICanvas.transform.rotation;
@@ -179,7 +182,7 @@ public class Turret : MonoBehaviour
 	{
 		if (UICanvas) {
 			UICanvas.transform.rotation = UIRot;
-			UICanvas.transform.position = UIPos;
+			//UICanvas.transform.position = UIPos;
 
 		}
 		AuraCheck();

@@ -68,6 +68,7 @@ public  class UIManager : MonoBehaviour {
 
 
 	void GenerateCardPool (int j){
+		Debug.Log("this is running. j="+j);
 		for (int i = 0; i < j; i++) {
 			GameObject scoreCard = Instantiate (scoreCardPrefab) as GameObject;
 			scoreCardPool.Add (scoreCard);
