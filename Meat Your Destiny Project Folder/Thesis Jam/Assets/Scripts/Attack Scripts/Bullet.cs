@@ -329,7 +329,7 @@ public class Bullet : MonoBehaviour {
 				colliders.Add(other);
 			    auraEntered = true;
 			    break;
-			default:
+			case "Wall":
 				BMan.DestroyBullet(this);
 				break;
 		}
