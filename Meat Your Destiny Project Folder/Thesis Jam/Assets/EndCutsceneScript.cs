@@ -33,10 +33,7 @@ public class EndCutsceneScript : MonoBehaviour {
         {
             if (timeElapsed < timeToEnd)
             {
-                if(!Sound.me.IsPlaying(takeOffSound) && !takeOffSoundHasPlayed){
-                    takeOffSoundHasPlayed = true;
-                    Sound.me.Play(takeOffSound);
-                }
+                
                 timeElapsed += Time.deltaTime;
                 winner.transform.Translate(Vector3.up * (Time.deltaTime * 500f), Space.World);
             }
@@ -115,6 +112,11 @@ public class EndCutsceneScript : MonoBehaviour {
 
     public void WatchPlayerRise(){
         watchingPlayerRise = true;
+		if (!Sound.me.IsPlaying(takeOffSound) && !takeOffSoundHasPlayed)
+        {
+            takeOffSoundHasPlayed = true;
+            Sound.me.Play(takeOffSound);
+        }
 
     }
 
