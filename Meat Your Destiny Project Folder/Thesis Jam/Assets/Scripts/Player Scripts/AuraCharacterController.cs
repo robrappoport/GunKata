@@ -129,7 +129,7 @@ public class AuraCharacterController : PlayControl
     // Update is called once per frame
     void FixedUpdate()
     {
-		if (!inCutscene && !health.gameIsOver)
+		if (!inCutscene)
         {
             if (InputManager.Enabled == false)
             {
@@ -500,11 +500,20 @@ public class AuraCharacterController : PlayControl
 
 	IEnumerator AuraDashDrain(float dashCostLimit = 1){
 		float totalDrainAmount = 0;
+		float expectedStamina = gunBehave.remainingStamina - dashCostLimit;
 		while (totalDrainAmount < dashCostLimit) {
-			gunBehave.DrainAura (Time.deltaTime * dashAuraDrainRate);
-			totalDrainAmount += Time.deltaTime * dashAuraDrainRate;
+			float drainDelta = Time.deltaTime * dashAuraDrainRate;
+			float remainingDistance = Mathf.Abs(dashCostLimit - totalDrainAmount);
+			if (drainDelta > remainingDistance)
+			{
+				drainDelta = remainingDistance;
+			}
+         
+			gunBehave.DrainAura (drainDelta);
+			totalDrainAmount += drainDelta;
 			yield return null;
 		}
+		gunBehave.remainingStamina = expectedStamina;
 
 	}
 

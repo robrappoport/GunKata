@@ -246,9 +246,13 @@ public class auraGunBehavior : MonoBehaviour
 					isFiring = true;
 					shootTime = initShootTime;
 					PrimaryFire ();
-
+					float desiredShotValue = currentAuraCharge - (int)currentAuraCharge;
+					if (desiredShotValue <= 0)
+					{
+						desiredShotValue = shootingStaminaCost;
+					}
 					StartCoroutine (ShootSound ());
-					StartCoroutine (DrainAuraOverTime (shootingStaminaCost, shootingStaminaDrainRate));
+					StartCoroutine(DrainAuraOverTime(desiredShotValue, shootingStaminaDrainRate));
 				}
                 if (myCont.primaryFire () == true && EnoughStamina(shootingStaminaCost)) {
 					//Debug.Log(chargeTime);

@@ -29,7 +29,9 @@ public class WinScreenScript : MonoBehaviour
         GetComponent<RawImage>().texture = movie;
         movie.Play();
         movie.loop = true;
-        TwoDGameManager.thisInstance.TogglePlayerControl();
+		Debug.Log(InputManager.Enabled);
+		TwoDGameManager.thisInstance.TogglePlayerControl(false);
+		Debug.Log(InputManager.Enabled);
         gameAudio = TwoDGameManager.thisInstance.GetComponent<AudioSource>();
         gameAudio.Stop();
         gameAudio.clip = endMusic;

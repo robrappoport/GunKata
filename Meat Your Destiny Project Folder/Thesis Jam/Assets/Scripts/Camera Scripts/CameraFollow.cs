@@ -31,7 +31,7 @@ public class CameraFollow : MonoBehaviour {
 
     IEnumerator IntroSequence(float introTime, float transitionTime){
 
-        TwoDGameManager.thisInstance.TogglePlayerControl();
+		TwoDGameManager.thisInstance.TogglePlayerControl(true);
         float elapsedTime = 0;
         //go from start view to stage view
         yield return new WaitForSeconds(3f);
@@ -93,7 +93,7 @@ public class CameraFollow : MonoBehaviour {
         //activate the multitarget 
         GetComponentInChildren<CameraMultitarget>().enabled = true;
         currentTarget = null;
-        TwoDGameManager.thisInstance.TogglePlayerControl();
+		TwoDGameManager.thisInstance.TogglePlayerControl(false);
     }
 
     void RotateTowards(Transform target, float speed){

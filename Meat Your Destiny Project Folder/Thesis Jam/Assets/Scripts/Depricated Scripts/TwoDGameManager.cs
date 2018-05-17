@@ -139,9 +139,10 @@ public class TwoDGameManager : MonoBehaviour {
 
 	}
 
-    public void TogglePlayerControl(){
-        players[0].GetComponent<AuraCharacterController>().inCutscene = !players[0].GetComponent<AuraCharacterController>().inCutscene;
-        players[1].GetComponent<AuraCharacterController>().inCutscene = !players[1].GetComponent<AuraCharacterController>().inCutscene;
+    public void TogglePlayerControl(bool on){
+		players[0].GetComponent<AuraCharacterController>().inCutscene = on;
+		players[1].GetComponent<AuraCharacterController>().inCutscene = on;
+
     }
     private void Start()
     {
@@ -215,12 +216,13 @@ public class TwoDGameManager : MonoBehaviour {
 	}
     public IEnumerator GameRestart (int winnerNum)
 	{
-        
-		yield return new WaitForSeconds (restartTime);
+		//Debug.Log("waiting for " + restartTime + "seconds");
+		yield return new WaitForSecondsRealtime (restartTime);
+		Time.timeScale = 1f;
         resetScore();
         addedScore1 = false;
         addedScore2 = false;
-        TogglePlayerControl();
+		TogglePlayerControl(true);
 
         players[winnerNum].transform.Find("ringarrow").gameObject.SetActive(false);
         Sound.me.Play(winningSound);
@@ -520,12 +522,14 @@ public class TwoDGameManager : MonoBehaviour {
 		StartCoroutine(TimeManipulation.SlowTimeTemporarily(slowedTimeScale, slowingDuration, slowedDuration, returnDuration));
 		while (elapsedTime < totalTime)
 		{
-			elapsedTime += Time.unscaledTime - lastFrameTime;
+			elapsedTime += Time.unscaledDeltaTime;
 			lastFrameTime = Time.unscaledTime;
+			//Debug.Log("elapsed time: " + elapsedTime);
 			yield return null;
 		}
-
-		yield return new WaitForSeconds(.5f);
+		//Debug.Log("waiting 0.5 seconds");
+		yield return new WaitForSecondsRealtime(.5f);
+		//Debug.Log("wait over");
 		StartCoroutine(GameRestart(winNum));
 		StartCoroutine(UIManager.thisInstance.UIFadeIn(false));
 		

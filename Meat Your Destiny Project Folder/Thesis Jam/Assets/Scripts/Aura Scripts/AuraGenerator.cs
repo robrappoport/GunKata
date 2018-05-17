@@ -109,7 +109,7 @@ AuraGenerator : MonoBehaviour {
                 gameObject.transform.localScale = Vector3.Lerp(gameObject.transform.localScale, new Vector3(gameObject.transform.localScale.x + 5, gameObject.transform.localScale.y + 5, gameObject.transform.localScale.z + 5), auraCurLife / auraLifeTime);
 				auraParticles.startColor = Color.Lerp(initParticleColor, particlesTempColor, auraCurLife / auraLifeTime);
 				renderer.material.color = Color.Lerp(initMainColor, mainTempColor, auraCurLife / auraLifeTime);
-				print(auraParticles.startColor.color.a);
+				//print(auraParticles.startColor.color.a);
             }
         }
         else
